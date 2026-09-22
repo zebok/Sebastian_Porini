@@ -1,0 +1,2141 @@
+{
+  "personal": {
+    "name": "Sebastián Porini",
+    "tagline": {
+      "en": "Product Strategist | Solution Architect",
+      "es": "Estratega de Producto | Arquitecto de Soluciones",
+      "de": "Produktstratege | Lösungsarchitekt"
+    },
+    "description": {
+      "en": "A professional, mathematical, and creative approach to data-driven problem solving and product development.",
+      "es": "Un enfoque profesional, matemático y creativo para la resolución de problemas basada en datos y el desarrollo de productos.",
+      "de": "Ein professioneller, mathematischer und kreativer Ansatz zur datengesteuerten Problemlösung und Produktentwicklung."
+    },
+    "story": {
+      "title": {
+        "en": "My Mindset",
+        "es": "Mi Mentalidad",
+        "de": "Meine Denkweise"
+      },
+      "paragraphs": [
+        {
+          "en": "Driven by technical curiosity, I excel in high-growth, complex environments, turning cross-functional challenges into scalable architecture and product value.",
+          "es": "Me apasiona moverme en entornos complejos y de alto crecimiento, transformando desafíos transversales en arquitectura escalable y valor real de producto.",
+          "de": "Getrieben von technischer Neugier zeichne ich mich in dynamischen, komplexen Umgebungen aus und verwandle domänenübergreifende Herausforderungen in skalierbare Architektur und echten Produktwert."
+        },
+        {
+          "en": "I focus on clear communication and active listening to provide structure through rigorous logical analysis.",
+          "es": "Priorizo la escucha activa y la comunicación clara para aportar estructura a través de un análisis lógico y riguroso.",
+          "de": "Ich konzentriere mich auf klare Kommunikation und aktives Zuhören, um durch strenge logische Analyse Struktur zu schaffen."
+        }
+      ]
+    },
+    "focus": {
+      "circle1": {
+        "title": {
+          "en": "What I do well",
+          "es": "Lo que hago bien",
+          "de": "Was ich gut kann"
+        },
+        "description": {
+          "en": "My capabilities and strengths",
+          "es": "Mis capacidades y fortalezas",
+          "de": "Meine Fähigkeiten und Stärken"
+        },
+        "items": [
+          {
+            "en": "Connecting systemic ideas",
+            "es": "Conectar ideas sistémicas",
+            "de": "Systemische Ideen verbinden"
+          },
+          {
+            "en": "First-principles thinking",
+            "es": "Desarmar problemas desde la raíz",
+            "de": "Probleme von Grund auf analysieren"
+          },
+          {
+            "en": "Synthesizing cross-domain knowledge",
+            "es": "Sintetizar conocimiento cruzado",
+            "de": "Domänenübergreifendes Wissen synthetisieren"
+          }
+        ],
+        "tags": [
+          {
+            "en": "Architecture",
+            "es": "Arquitectura",
+            "de": "Architektur"
+          },
+          {
+            "en": "Clean Code",
+            "es": "Código Limpio",
+            "de": "Sauberer Code"
+          },
+          {
+            "en": "Systems",
+            "es": "Sistemas",
+            "de": "Systeme"
+          },
+          {
+            "en": "Scalability",
+            "es": "Escalabilidad",
+            "de": "Skalierbarkeit"
+          }
+        ]
+      },
+      "circle2": {
+        "title": {
+          "en": "What motivates me",
+          "es": "Qué me motiva",
+          "de": "Was mich motiviert"
+        },
+        "description": {
+          "en": "What drives my curiosity and commitment",
+          "es": "Lo que impulsa mi curiosidad y compromiso",
+          "de": "Was meine Neugier und mein Engagement antreibt"
+        },
+        "items": [
+          {
+            "en": "Uncovering data-driven insights",
+            "es": "Descubrir patrones ocultos en los datos",
+            "de": "Datengestützte Erkenntnisse aufdecken"
+          },
+          {
+            "en": "Understanding the core 'why'",
+            "es": "Entender el 'porqué' profundo",
+            "de": "Das tiefe 'Warum' verstehen"
+          },
+          {
+            "en": "Dissecting complex systems",
+            "es": "Desarmar sistemas complejos",
+            "de": "Komplexe Systeme zerlegen"
+          }
+        ],
+        "tags": [
+          {
+            "en": "Interactivity",
+            "es": "Interactividad",
+            "de": "Interaktivität"
+          },
+          {
+            "en": "Animation",
+            "es": "Animación",
+            "de": "Animationen"
+          },
+          {
+            "en": "Components",
+            "es": "Componentes",
+            "de": "Komponenten"
+          },
+          {
+            "en": "Experience",
+            "es": "Experiencia",
+            "de": "Nutzererfahrung"
+          }
+        ]
+      },
+      "circle3": {
+        "title": {
+          "en": "How I work",
+          "es": "Cómo trabajo",
+          "de": "Wie ich arbeite"
+        },
+        "description": {
+          "en": "My approach to delivering results:",
+          "es": "Mi enfoque para entregar resultados:",
+          "de": "Mein Ansatz zur Erzielung von Ergebnissen:"
+        },
+        "items": [
+          {
+            "en": "Flexible structure",
+            "es": "Estructura flexible",
+            "de": "Flexible Struktur"
+          },
+          {
+            "en": "Transparent communication",
+            "es": "Comunicación transparente",
+            "de": "Transparente Kommunikation"
+          },
+          {
+            "en": "Radical candor",
+            "es": "Franqueza radical",
+            "de": "Radikale Offenheit"
+          }
+        ],
+        "tags": [
+          {
+            "en": "Neural Networks",
+            "es": "Redes Neuronales",
+            "de": "Neuronale Netze"
+          },
+          {
+            "en": "Embeddings",
+            "es": "Embeddings",
+            "de": "Vektoreinbettungen"
+          },
+          {
+            "en": "Models",
+            "es": "Modelos",
+            "de": "Modelle"
+          },
+          {
+            "en": "Algorithms",
+            "es": "Algoritmos",
+            "de": "Algorithmen"
+          }
+        ]
+      },
+      "intersection01": {
+        "title": {
+          "en": "Innovative Logic",
+          "es": "Lógica Innovadora",
+          "de": "Innovative Logik"
+        },
+        "items": [
+          {
+            "en": "Unconventional problem solving",
+            "es": "Resolución no convencional",
+            "de": "Unkonventionelle Problemlösung"
+          },
+          {
+            "en": "Analytical Creativity",
+            "es": "Creatividad Analítica",
+            "de": "Analytische Kreativität"
+          },
+          {
+            "en": "Strategic Thinking",
+            "es": "Pensamiento Estratégico",
+            "de": "Strategisches Denken"
+          }
+        ]
+      },
+      "intersection02": {
+        "title": {
+          "en": "Creative Results",
+          "es": "Resultados Creativos",
+          "de": "Kreative Ergebnisse"
+        },
+        "items": [
+          {
+            "en": "Visual Data Storytelling",
+            "es": "Visual Data Storytelling",
+            "de": "Visuelles Data Storytelling"
+          },
+          {
+            "en": "Functional Design",
+            "es": "Diseño Funcional",
+            "de": "Funktionales Design"
+          },
+          {
+            "en": "User-centric logic",
+            "es": "Lógica centrada en el usuario",
+            "de": "Nutzerzentrierte Logik"
+          }
+        ]
+      },
+      "intersection12": {
+        "title": {
+          "en": "Structured Passion",
+          "es": "Pasión Estructurada",
+          "de": "Strukturierte Leidenschaft"
+        },
+        "items": [
+          {
+            "en": "Reliable Innovation",
+            "es": "Innovación Confiable",
+            "de": "Zuverlässige Innovation"
+          },
+          {
+            "en": "Disciplined Curiosity",
+            "es": "Curiosidad Disciplinada",
+            "de": "Disziplinierte Neugier"
+          },
+          {
+            "en": "Consistent Excellence",
+            "es": "Excelencia Constante",
+            "de": "Konsistente Exzellenz"
+          }
+        ]
+      },
+      "intersectionAll": {
+        "title": {
+          "en": "The Point of Impact",
+          "es": "El Punto de Impacto",
+          "de": "Der Schnittpunkt des Impacts"
+        },
+        "items": [
+          {
+            "en": "The core of my professional value: where logic, creativity, and results converge.",
+            "es": "El núcleo de mi valor profesional: donde la lógica, la creatividad y los resultados convergen.",
+            "de": "Der Kern meines beruflichen Mehrwerts: wo Logik, Kreativität und Ergebnisse zusammenlaufen."
+          }
+        ]
+      }
+    },
+    "contactDetails": {
+      "fullName": "Sebastián Porini",
+      "dob": {
+        "en": "October 20, 1998 (28 yo)",
+        "es": "20 de Octubre de 1998 (28 años)",
+        "de": "20. Oktober 1998 (28 J.)"
+      },
+      "nationality": {
+        "en": "Argentine",
+        "es": "Argentino",
+        "de": "Argentinisch"
+      },
+      "workModes": {
+        "en": "Remote / Hybrid / On-site",
+        "es": "Remoto / Híbrido / Presencial",
+        "de": "Remote / Hybrid / Vor Ort"
+      },
+      "location": "Buenos Aires, Argentina",
+      "status": {
+        "en": "Available",
+        "es": "Disponible",
+        "de": "Verfügbar"
+      },
+      "email": "sebastian.porini.work@gmail.com",
+      "github": "https://github.com/zebok",
+      "linkedin": "https://linkedin.com/in/sebastian-porini",
+      "cvPath": {
+        "en": "/SebastianPorini_English.pdf",
+        "es": "/SebastianPorini_Espanol.pdf",
+        "de": "/SebastianPorini_Deutsch.pdf"
+      }
+    }
+  },
+  "ui": {
+    "nav": {
+      "whoAmI": {
+        "en": "How Am I",
+        "es": "Cómo Soy",
+        "de": "Wie ich bin"
+      },
+      "skills": {
+        "en": "Skills",
+        "es": "Habilidades",
+        "de": "Fähigkeiten"
+      },
+      "timeline": {
+        "en": "Timeline",
+        "es": "Trayectoria",
+        "de": "Zeitleiste"
+      },
+      "projects": {
+        "en": "Projects",
+        "es": "Proyectos",
+        "de": "Projekte"
+      }
+    },
+    "hero": {
+      "greeting": {
+        "en": "Hi, I'm",
+        "es": "Hola, soy",
+        "de": "Hallo, ich bin"
+      },
+      "ctaProjects": {
+        "en": "View Projects",
+        "es": "Ver Proyectos",
+        "de": "Projekte ansehen"
+      },
+      "ctaContact": {
+        "en": "Get in Touch",
+        "es": "Contactar",
+        "de": "Kontakt aufnehmen"
+      }
+    },
+    "footer": {
+      "tagline": {
+        "en": "Logic, mathematics, and creativity.",
+        "es": "Lógica, matemática y creatividad.",
+        "de": "Logik, Mathematik und Kreativität."
+      },
+      "rights": {
+        "en": "All rights reserved.",
+        "es": "Todos los derechos reservados.",
+        "de": "Alle Rechte vorbehalten."
+      }
+    },
+    "skills": {
+      "title": {
+        "en": "Skills",
+        "es": "Habilidades",
+        "de": "Fähigkeiten"
+      },
+      "subtitle": {
+        "en": "My skill architecture: a balanced neural network of technical and soft skills.",
+        "es": "Mi arquitectura de habilidades: una red neuronal equilibrada de skills técnicas y blandas.",
+        "de": "Meine Kompetenzarchitektur: Ein neuronales Netz aus technischen und zwischenmenschlichen Fähigkeiten."
+      }
+    },
+    "radar": {
+      "curiosity": {
+        "en": "Curiosity",
+        "es": "Curiosidad",
+        "de": "Neugier"
+      },
+      "observation": {
+        "en": "Observation",
+        "es": "Observación",
+        "de": "Beobachtung"
+      },
+      "structure": {
+        "en": "Structure",
+        "es": "Estructura",
+        "de": "Struktur"
+      },
+      "chaosMgmt": {
+        "en": "Chaos Management",
+        "es": "Gestión del Caos",
+        "de": "Chaos-Management"
+      },
+      "bureaucracy": {
+        "en": "Bureaucracy",
+        "es": "Burocracia",
+        "de": "Bürokratie"
+      },
+      "formalism": {
+        "en": "Formalism",
+        "es": "Formalismo",
+        "de": "Formalismus"
+      }
+    },
+    "whoAmI": {
+      "title": {
+        "en": "Who I Am",
+        "es": "Cómo Soy",
+        "de": "Wer ich bin"
+      },
+      "subtitle": {
+        "en": "Structure and adaptability in action",
+        "es": "Estructura y adaptabilidad en acción",
+        "de": "Struktur und Anpassungsfähigkeit in Aktion"
+      },
+      "chartTitle": {
+        "en": "Aptitudes Profile",
+        "es": "Perfil de Aptitudes",
+        "de": "Kompetenzprofil"
+      }
+    },
+    "timeline": {
+      "title": {
+        "en": "The evolution of my changes",
+        "es": "La evolución de mis cambios",
+        "de": "Die Entwicklung meiner Änderungen"
+      },
+      "subtitle": {
+        "en": "A Git history of the decisions, roles, and learning that shaped how I build products and systems.",
+        "es": "Una historia Git de las decisiones, los roles y el aprendizaje que dieron forma a cómo construyo productos y sistemas.",
+        "de": "Eine Git-Historie der Entscheidungen, Rollen und Lernschritte, die meine Arbeit an Produkten und Systemen geprägt haben."
+      },
+      "repositoryLabel": {
+        "en": "career-repository",
+        "es": "career-repository",
+        "de": "karriere-repository"
+      },
+      "commitLabel": {
+        "en": "commit",
+        "es": "commit",
+        "de": "Commit"
+      },
+      "mergeLabel": {
+        "en": "merge",
+        "es": "merge",
+        "de": "Merge"
+      },
+      "branchLabel": {
+        "en": "branch",
+        "es": "branch",
+        "de": "Branch"
+      },
+      "headLabel": {
+        "en": "HEAD",
+        "es": "HEAD",
+        "de": "HEAD"
+      },
+      "wipLabel": {
+        "en": "WIP",
+        "es": "WIP",
+        "de": "In Arbeit"
+      },
+      "forecastLabel": {
+        "en": "forecast",
+        "es": "forecast",
+        "de": "Prognose"
+      },
+      "historyLabel": {
+        "en": "Commit history",
+        "es": "Historial de commits",
+        "de": "Historie"
+      },
+      "stagingLabel": {
+        "en": "Staging area",
+        "es": "Área de staging",
+        "de": "Staging-Bereich"
+      },
+      "scrollHint": {
+        "en": "Scroll through the graph · select a commit to inspect it",
+        "es": "Recorré el grafo · seleccioná un commit para inspeccionarlo",
+        "de": "Scrollen, um die Entwicklung zu erkunden"
+      }
+    },
+    "contact": {
+      "downloadCv": {
+        "en": "Download CV",
+        "es": "Descargar CV",
+        "de": "Lebenslauf herunterladen"
+      }
+    },
+    "projects": {
+      "title": {
+        "en": "Projects Catalog",
+        "es": "Catálogo de Proyectos",
+        "de": "Ausgewählte Projekte"
+      },
+      "subtitle": {
+        "en": "Explore my work across software engineering, data analytics, and product strategy.",
+        "es": "Explora mi trabajo en ingeniería de software, analítica de datos y estrategia de producto.",
+        "de": "Systeme, Datenarchitektur und Produktlösungen"
+      },
+      "metaDescription": {
+        "en": "Software, data, and AI projects built with React, Next.js, Python, and more.",
+        "es": "Proyectos de software, datos e IA construidos con React, Next.js, Python y más.",
+        "de": "Portfolio-Projekte: Backend-Systeme, Datenarchitektur und Softwareentwicklung von Sebastián Porini"
+      },
+      "all": {
+        "en": "All Projects",
+        "es": "Todos",
+        "de": "Alle"
+      },
+      "categories": {
+        "software": {
+          "en": "Software Development",
+          "es": "Desarrollo de Software",
+          "de": "Software & APIs"
+        },
+        "data": {
+          "en": "Data & Analytics",
+          "es": "Datos y Analítica",
+          "de": "Daten & Analytik"
+        },
+        "ai": {
+          "en": "AI & Automation",
+          "es": "IA y Automatización",
+          "de": "Angewandte KI"
+        },
+        "product": {
+          "en": "Product & Ops",
+          "es": "Producto y Ops",
+          "de": "Produkt & Führung"
+        }
+      },
+      "filterGroups": {
+        "type": {
+          "en": "Project Type",
+          "es": "Tipo de Proyecto",
+          "de": "Projekttyp"
+        },
+        "area": {
+          "en": "Area",
+          "es": "Área",
+          "de": "Fachbereich"
+        },
+        "tech": {
+          "en": "Technologies",
+          "es": "Tecnologías",
+          "de": "Technologie"
+        }
+      },
+      "types": {
+        "work": {
+          "en": "Professional Work",
+          "es": "Trabajo Profesional",
+          "de": "Beruflich"
+        },
+        "personal": {
+          "en": "Personal Project",
+          "es": "Proyecto Personal",
+          "de": "Persönlich"
+        }
+      },
+      "clearAll": {
+        "en": "Clear Filters",
+        "es": "Limpiar Filtros",
+        "de": "Filter zurücksetzen"
+      },
+      "showFilters": {
+        "en": "Show Filters",
+        "es": "Mostrar Filtros",
+        "de": "Filter anzeigen"
+      },
+      "hideFilters": {
+        "en": "Hide Filters",
+        "es": "Ocultar Filtros",
+        "de": "Filter ausblenden"
+      },
+      "resultsCountOne": {
+        "en": "1 project found",
+        "es": "1 proyecto encontrado",
+        "de": "1 Projekt gefunden"
+      },
+      "resultsCountMany": {
+        "en": "{count} projects found",
+        "es": "{count} proyectos encontrados",
+        "de": "{count} Projekte gefunden"
+      },
+      "viewDemo": {
+        "en": "Live Preview",
+        "es": "Vista Previa",
+        "de": "Demo ansehen"
+      },
+      "viewCode": {
+        "en": "Source Code",
+        "es": "Código Fuente",
+        "de": "Code ansehen"
+      },
+      "moreDetails": {
+        "en": "More Info",
+        "es": "Más Info",
+        "de": "Mehr Details"
+      },
+      "closeDetails": {
+        "en": "Close Details",
+        "es": "Cerrar Detalles",
+        "de": "Schließen"
+      },
+      "keyHighlights": {
+        "en": "Key Achievements & Technical Stack",
+        "es": "Logros Clave y Stack Tecnológico",
+        "de": "Wichtigste Meilensteine"
+      },
+      "noProjects": {
+        "en": "No projects found matching the selected filters.",
+        "es": "No se encontraron proyectos con los filtros seleccionados.",
+        "de": "Keine Projekte gefunden, die den ausgewählten Kriterien entsprechen."
+      }
+    }
+  },
+  "identity": {
+    "radarProfile": [
+      {
+        "axis": "curiosity",
+        "value": 95
+      },
+      {
+        "axis": "observation",
+        "value": 90
+      },
+      {
+        "axis": "structure",
+        "value": 90
+      },
+      {
+        "axis": "chaosMgmt",
+        "value": 95
+      },
+      {
+        "axis": "bureaucracy",
+        "value": 50
+      },
+      {
+        "axis": "formalism",
+        "value": 55
+      }
+    ]
+  },
+  "skills": {
+    "hard": [
+      {
+        "id": "software-engineering",
+        "name": {
+          "en": "SOFTWARE ENGINEERING",
+          "es": "SOFTWARE ENGINEERING",
+          "de": "Programmiersprachen"
+        },
+        "level": 90,
+        "subSkills": [
+          {
+            "name": {
+              "en": "React & Node",
+              "es": "React y Node",
+              "de": "TypeScript / JavaScript"
+            },
+            "level": 85
+          },
+          {
+            "name": {
+              "en": "TypeScript",
+              "es": "TypeScript",
+              "de": "Python"
+            },
+            "level": 90
+          },
+          {
+            "name": {
+              "en": "AWS Serverless",
+              "es": "AWS Serverless",
+              "de": "SQL"
+            },
+            "level": 85
+          }
+        ]
+      },
+      {
+        "id": "data-analytics",
+        "name": {
+          "en": "DATA ANALYTICS",
+          "es": "DATA ANALYTICS",
+          "de": "Cloud & DevOps"
+        },
+        "level": 85,
+        "subSkills": [
+          {
+            "name": {
+              "en": "SQL & NoSQL",
+              "es": "SQL y NoSQL",
+              "de": "AWS & Serverless"
+            },
+            "level": 85
+          },
+          {
+            "name": {
+              "en": "Power BI",
+              "es": "Power BI",
+              "de": "Docker & Container"
+            },
+            "level": 85
+          },
+          {
+            "name": {
+              "en": "Data Pipelines",
+              "es": "Data Pipelines",
+              "de": "CI/CD-Pipelines"
+            },
+            "level": 80
+          }
+        ]
+      },
+      {
+        "id": "devops",
+        "name": {
+          "en": "DEV OPS",
+          "es": "DEV OPS",
+          "de": "Daten & KI"
+        },
+        "level": 85,
+        "subSkills": [
+          {
+            "name": {
+              "en": "CI / CD",
+              "es": "CI / CD",
+              "de": "Datenmodellierung & ETL"
+            },
+            "level": 80
+          },
+          {
+            "name": {
+              "en": "IaC (SAM)",
+              "es": "IaC (SAM)",
+              "de": "Vektordatenbanken & LLMs"
+            },
+            "level": 85
+          },
+          {
+            "name": {
+              "en": "Git",
+              "es": "Git",
+              "de": "Datenvisualisierung & BI"
+            },
+            "level": 85
+          }
+        ]
+      },
+      {
+        "id": "product-management",
+        "name": {
+          "en": "PRODUCT MANAGEMENT",
+          "es": "GESTIÓN DE PRODUCTO",
+          "de": "System- & API-Design"
+        },
+        "level": 90,
+        "subSkills": [
+          {
+            "name": {
+              "en": "Agile / Scrum",
+              "es": "Agile / Scrum",
+              "de": "RESTful & gRPC APIs"
+            },
+            "level": 90
+          },
+          {
+            "name": {
+              "en": "Product Discovery",
+              "es": "Product Discovery",
+              "de": "Microservices & Event-Driven"
+            },
+            "level": 85
+          },
+          {
+            "name": {
+              "en": "Tech Docs",
+              "es": "Tech Docs",
+              "de": "Sicherheit & Auth"
+            },
+            "level": 85
+          }
+        ]
+      }
+    ],
+    "soft": [
+      {
+        "id": "empathy",
+        "name": {
+          "en": "EMPATHY",
+          "es": "EMPATÍA",
+          "de": "Strategisches Denken"
+        },
+        "subSkills": [
+          {
+            "en": "Active Listening",
+            "es": "Escucha Activa",
+            "de": "Systemanalytik"
+          },
+          {
+            "en": "UX Empathy",
+            "es": "Empatía UX",
+            "de": "Architekturvision"
+          },
+          {
+            "en": "Feedback",
+            "es": "Feedback",
+            "de": "Priorisierung"
+          }
+        ]
+      },
+      {
+        "id": "communication",
+        "name": {
+          "en": "COMMUNICATION",
+          "es": "COMUNICACIÓN",
+          "de": "Zusammenarbeit & Führung"
+        },
+        "subSkills": [
+          {
+            "en": "Tech Translation",
+            "es": "Traducción Técnica",
+            "de": "Mentoring"
+          },
+          {
+            "en": "Public Speaking",
+            "es": "Oratoria",
+            "de": "Stakeholder-Management"
+          },
+          {
+            "en": "Storytelling",
+            "es": "Storytelling",
+            "de": "Cross-funktionale Führung"
+          }
+        ]
+      },
+      {
+        "id": "adaptability",
+        "name": {
+          "en": "ADAPTABILITY",
+          "es": "ADAPTABILIDAD",
+          "de": "Problemlösung"
+        },
+        "subSkills": [
+          {
+            "en": "Fast Learning",
+            "es": "Aprendizaje Rápido",
+            "de": "Ursachenanalyse"
+          },
+          {
+            "en": "Resilience",
+            "es": "Resiliencia",
+            "de": "Pragmatismus"
+          },
+          {
+            "en": "Flexibility",
+            "es": "Flexibilidad",
+            "de": "Krisenmanagement"
+          }
+        ]
+      },
+      {
+        "id": "leadership",
+        "name": {
+          "en": "LEADERSHIP",
+          "es": "LIDERAZGO",
+          "de": "Kommunikation"
+        },
+        "subSkills": [
+          {
+            "en": "Mentoring",
+            "es": "Mentoría",
+            "de": "Technische Dokumentation"
+          },
+          {
+            "en": "Decision Making",
+            "es": "Toma de Decisiones",
+            "de": "Aktives Zuhören"
+          },
+          {
+            "en": "Ownership",
+            "es": "Ownership",
+            "de": "Präsentationen"
+          }
+        ]
+      }
+    ],
+    "languages": [
+      {
+        "id": "spanish",
+        "name": {
+          "en": "SPANISH",
+          "es": "ESPAÑOL",
+          "de": "SPANISCH"
+        },
+        "level": {
+          "en": "Native",
+          "es": "Nativo",
+          "de": "Muttersprache"
+        }
+      },
+      {
+        "id": "english",
+        "name": {
+          "en": "ENGLISH",
+          "es": "INGLÉS",
+          "de": "ENGLISCH"
+        },
+        "level": {
+          "en": "B2 Upper Intermediate",
+          "es": "B2 Intermedio Alto",
+          "de": "B2 Obere Mittelstufe"
+        }
+      },
+      {
+        "id": "german",
+        "name": {
+          "en": "GERMAN",
+          "es": "ALEMÁN",
+          "de": "DEUTSCH"
+        },
+        "level": {
+          "en": "A2 Beginner",
+          "es": "A2 Principiante",
+          "de": "A2 Grundkenntnisse"
+        }
+      }
+    ]
+  },
+  "brain": {
+    "intro": {
+      "ariaLabel": {
+        "en": "Introduction to my {count} concepts",
+        "es": "Introducción a mis {count} conceptos",
+        "de": "Einführung in meine {count} Konzepte"
+      },
+      "title": {
+        "en": "{count}\nconcepts\nTo resume my mindset",
+        "es": "{count}\nconceptos\nPara resumir mi mentalidad",
+        "de": "{count}\nKonzepte\nUm meine Denkweise zusammenzufassen"
+      },
+      "instruction": {
+        "en": "Explore to discover · click to go deeper",
+        "es": "Recorré para descubrir · hacé clic para profundizar",
+        "de": "Erkunden zum Entdecken · Klicken zum Vertiefen"
+      },
+      "skip": {
+        "en": "Skip intro",
+        "es": "Omitir",
+        "de": "Intro überspringen"
+      },
+      "play": {
+        "en": "Repeat intro",
+        "es": "Repetir intro",
+        "de": "Intro wiederholen"
+      }
+    },
+    "ui": {
+      "mapAriaLabel": {
+        "en": "Brain map of discovered concepts",
+        "es": "Mapa cerebral de conceptos descubiertos",
+        "de": "Cerebrale Karte der entdeckten Konzepte"
+      },
+      "undiscoveredConcept": {
+        "en": "Concept not discovered yet",
+        "es": "Concepto todavía no descubierto",
+        "de": "Noch nicht entdecktes Konzept"
+      },
+      "backToMapAriaLabel": {
+        "en": "Back to brain map",
+        "es": "Volver al mapa cerebral",
+        "de": "Zurück zur Concept Map"
+      },
+      "back": {
+        "en": "BACK",
+        "es": "BACK",
+        "de": "ZURÜCK"
+      },
+      "connectedIdeas": {
+        "en": "connected ideas",
+        "es": "ideas conectadas",
+        "de": "verknüpfte Ideen"
+      },
+      "expandedNetwork": {
+        "en": "expanded neural network",
+        "es": "red neuronal ampliada",
+        "de": "erweitertes neuronales Netz"
+      }
+    },
+    "cores": [
+      {
+        "id": "read-complexity",
+        "title": {
+          "en": "Deconstructing complexity",
+          "es": "Descomponer la complejidad",
+          "de": "Komplexität dekonstruieren"
+        },
+        "subtitles": [
+          {
+            "en": "Patterns",
+            "es": "Patrones",
+            "de": "Muster"
+          },
+          {
+            "en": "Root cause",
+            "es": "Causa raíz",
+            "de": "Ursachenanalyse"
+          },
+          {
+            "en": "Logical analysis",
+            "es": "Análisis lógico",
+            "de": "Logische Analyse"
+          },
+          {
+            "en": "Curiosity",
+            "es": "Curiosidad",
+            "de": "Neugier"
+          }
+        ]
+      },
+      {
+        "id": "language-context",
+        "title": {
+          "en": "Open communication",
+          "es": "Comunicación abierta",
+          "de": "Offene Kommunikation"
+        },
+        "subtitles": [
+          {
+            "en": "Spanish",
+            "es": "Español",
+            "de": "Spanisch"
+          },
+          {
+            "en": "English",
+            "es": "Inglés",
+            "de": "Englisch"
+          },
+          {
+            "en": "German",
+            "es": "Alemán",
+            "de": "Deutsch"
+          }
+        ]
+      },
+      {
+        "id": "connect-people",
+        "title": {
+          "en": "Aligning purpose",
+          "es": "Alinear propósitos",
+          "de": "Menschen & Ideen verbinden"
+        },
+        "subtitles": [
+          {
+            "en": "Empathy",
+            "es": "Empatía",
+            "de": "Aktives Zuhören"
+          },
+          {
+            "en": "Effort",
+            "es": "Esfuerzo",
+            "de": "Empathie"
+          },
+          {
+            "en": "Consensus",
+            "es": "Consenso",
+            "de": "Zusammenarbeit"
+          }
+        ]
+      },
+      {
+        "id": "shape-product",
+        "title": {
+          "en": "Product strategy",
+          "es": "Estrategia de producto",
+          "de": "Produkt & Vision formen"
+        },
+        "subtitles": [
+          {
+            "en": "Disruption",
+            "es": "Disrupción",
+            "de": "Nutzerbedürfnisse"
+          },
+          {
+            "en": "Methodology",
+            "es": "Metodología",
+            "de": "Wertschöpfung"
+          },
+          {
+            "en": "Innovation",
+            "es": "Innovación",
+            "de": "Roadmap"
+          },
+          {
+            "en": "Wonder",
+            "es": "Asombro",
+            "de": "Entdeckung"
+          }
+        ]
+      },
+      {
+        "id": "build-systems",
+        "title": {
+          "en": "Materializing solutions",
+          "es": "Materializar soluciones",
+          "de": "Robuste Systeme bauen"
+        },
+        "subtitles": [
+          {
+            "en": "Architecture",
+            "es": "Arquitectura",
+            "de": "Architektur"
+          },
+          {
+            "en": "Commitment",
+            "es": "Compromiso",
+            "de": "Skalierbarkeit"
+          },
+          {
+            "en": "Pragmatism",
+            "es": "Pragmatismo",
+            "de": "Zuverlässigkeit"
+          }
+        ]
+      },
+      {
+        "id": "adapt-lead",
+        "title": {
+          "en": "Dynamic leadership",
+          "es": "Liderazgo dinámico",
+          "de": "Anpassen & Führen"
+        },
+        "subtitles": [
+          {
+            "en": "Adaptability",
+            "es": "Adaptabilidad",
+            "de": "Agilität"
+          },
+          {
+            "en": "Trust",
+            "es": "Confianza",
+            "de": "Resilienz"
+          },
+          {
+            "en": "Synergy",
+            "es": "Sinergia",
+            "de": "Entscheidungsfindung"
+          }
+        ]
+      },
+      {
+        "id": "sustain-evolve",
+        "title": {
+          "en": "Presence & growth",
+          "es": "Presencia y crecimiento",
+          "de": "Nachhaltigkeit & Weiterentwicklung"
+        },
+        "subtitles": [
+          {
+            "en": "Learning",
+            "es": "Aprendizaje",
+            "de": "Kontinuierliches Lernen"
+          },
+          {
+            "en": "Rigor",
+            "es": "Rigurosidad",
+            "de": "Wartbarkeit"
+          },
+          {
+            "en": "Vitality",
+            "es": "Vitalidad",
+            "de": "Iterative Verbesserung"
+          }
+        ]
+      }
+    ]
+  },
+  "careerRepository": {
+    "name": "career-repository",
+    "headIdentity": {
+      "en": "Product Strategist / Solution Architect",
+      "es": "Estratega de Producto / Arquitecto de Soluciones",
+      "de": "Produktstratege / Lösungsarchitekt"
+    },
+    "branches": [
+      {
+        "id": "main",
+        "label": "main",
+        "description": {
+          "en": "Integrated professional identity and released outcomes.",
+          "es": "Identidad profesional integrada y resultados consolidados.",
+          "de": "Integrierte berufliche Identität und konsolidierte Ergebnisse."
+        },
+        "color": "#1A1A18"
+      },
+      {
+        "id": "feature/cloud-infra",
+        "label": "feature/cloud-infra",
+        "description": {
+          "en": "Cloud infrastructure, automation, and operational reliability.",
+          "es": "Infraestructura cloud, automatización y confiabilidad operativa.",
+          "de": "Cloud-Infrastruktur, Automatisierung und betriebliche Zuverlässigkeit."
+        },
+        "color": "#62d6c6"
+      },
+      {
+        "id": "feature/backend-api",
+        "label": "feature/backend-api",
+        "description": {
+          "en": "Backend systems, APIs, security, and delivery.",
+          "es": "Sistemas backend, APIs, seguridad y entrega.",
+          "de": "Backend-Systeme, APIs, Sicherheit und Umsetzung."
+        },
+        "color": "#69a7ff"
+      },
+      {
+        "id": "feature/data-ai",
+        "label": "feature/data-ai",
+        "description": {
+          "en": "Analytics, data products, and applied AI.",
+          "es": "Analítica, productos de datos e IA aplicada.",
+          "de": "Analytik, Datenprodukte und angewandte KI."
+        },
+        "color": "#b58cff"
+      },
+      {
+        "id": "feature/product-delivery",
+        "label": "feature/product-delivery",
+        "description": {
+          "en": "Product discovery, delivery, and cross-functional alignment.",
+          "es": "Descubrimiento de producto, entrega y alineación transversal.",
+          "de": "Produktentdeckung, Umsetzung und bereichsübergreifende Abstimmung."
+        },
+        "color": "#ffad66"
+      },
+      {
+        "id": "learn/education",
+        "label": "learn/education",
+        "description": {
+          "en": "Formal education and durable technical foundations.",
+          "es": "Educación formal y fundamentos técnicos duraderos.",
+          "de": "Formale Ausbildung und nachhaltige technische Grundlagen."
+        },
+        "color": "#ffd166"
+      }
+    ],
+    "commits": [
+      {
+        "id": "ort-technical-foundations",
+        "sha": "84084f7",
+        "branchId": "main",
+        "parents": [],
+        "status": "committed",
+        "kind": "foundation",
+        "time": {
+          "value": "2016",
+          "precision": "year"
+        },
+        "period": {
+          "en": "2011–2016",
+          "es": "2011–2016",
+          "de": "2011–2016"
+        },
+        "title": {
+          "en": "ORT technical foundations",
+          "es": "Fundamentos técnicos en ORT",
+          "de": "Technische Grundlagen an der ORT"
+        },
+        "organization": "ORT",
+        "summary": {
+          "en": "Chemical Technician training established a rigorous base in laboratory work, exact sciences, and structured problem solving.",
+          "es": "La formación como Técnico Químico construyó una base rigurosa en laboratorio, ciencias exactas y resolución estructurada de problemas.",
+          "de": "Die Ausbildung zum Chemietechniker schuf eine fundierte Basis in Laborarbeit, exakten Wissenschaften und strukturierter Problemlösung."
+        },
+        "details": {
+          "en": [
+            "Learned to turn observation, measurement, and evidence into repeatable decisions."
+          ],
+          "es": [
+            "Aprendí a convertir observación, medición y evidencia en decisiones repetibles."
+          ],
+          "de": [
+            "Ich lernte, Beobachtung, Messung und Evidenz in wiederholbare Entscheidungen zu übersetzen."
+          ]
+        }
+      },
+      {
+        "id": "devborn-operations-automation",
+        "sha": "abc7015",
+        "branchId": "feature/product-delivery",
+        "parents": [
+          {
+            "id": "ort-technical-foundations",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "role",
+        "time": {
+          "value": "2020-07",
+          "precision": "month"
+        },
+        "period": {
+          "en": "Jul 2020–May 2023",
+          "es": "Jul 2020–May 2023",
+          "de": "Jul 2020–Mai 2023"
+        },
+        "title": {
+          "en": "Operations and automation",
+          "es": "Operaciones y automatización",
+          "de": "Betrieb und Automatisierung"
+        },
+        "organization": "Devborn",
+        "summary": {
+          "en": "Moved from IT recruiting into operations by automating the workflows behind the work.",
+          "es": "Pasé de recruiting IT a operaciones automatizando los flujos detrás del trabajo.",
+          "de": "Durch die Automatisierung der zugrunde liegenden Abläufe entwickelte ich mich vom IT-Recruiting in Richtung Operations."
+        },
+        "details": {
+          "en": [
+            "Connected Google Apps Script, Zapier, HubSpot, Google Workspace, and Microsoft 365."
+          ],
+          "es": [
+            "Conecté Google Apps Script, Zapier, HubSpot, Google Workspace y Microsoft 365."
+          ],
+          "de": [
+            "Ich verband Google Apps Script, Zapier, HubSpot, Google Workspace und Microsoft 365."
+          ]
+        }
+      },
+      {
+        "id": "flexways-channel-analyst",
+        "sha": "0fe3491",
+        "branchId": "feature/data-ai",
+        "parents": [
+          {
+            "id": "devborn-operations-automation",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "role",
+        "time": {
+          "value": "2023-07",
+          "precision": "month"
+        },
+        "period": {
+          "en": "Jul 2023–Sep 2024",
+          "es": "Jul 2023–Sep 2024",
+          "de": "Juli 2023–Sept. 2024"
+        },
+        "title": {
+          "en": "Channel Analyst",
+          "es": "Analista de Canales",
+          "de": "Kanal- & Datenanalyst"
+        },
+        "organization": "Flexways",
+        "summary": {
+          "en": "Made operations observable by translating workflows into API behavior, SQL analysis, and decision-ready dashboards.",
+          "es": "Hice observables las operaciones traduciendo flujos en comportamiento de APIs, análisis SQL y dashboards para decidir.",
+          "de": "Ich machte Abläufe sichtbar, indem ich Workflows in API-Verhalten, SQL-Analysen und entscheidungsreife Dashboards übersetzte."
+        },
+        "details": {
+          "en": [
+            "Built Metabase dashboards and automated daily operations with Apps Script and Zapier."
+          ],
+          "es": [
+            "Construí dashboards en Metabase y automaticé operaciones diarias con Apps Script y Zapier."
+          ],
+          "de": [
+            "Ich erstellte Metabase-Dashboards und automatisierte den Tagesbetrieb mit Apps Script und Zapier."
+          ]
+        }
+      },
+      {
+        "id": "flexways-technical-product-owner",
+        "sha": "6a4d01b",
+        "branchId": "feature/product-delivery",
+        "parents": [
+          {
+            "id": "devborn-operations-automation",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "role",
+        "time": {
+          "value": "2024-04",
+          "precision": "month"
+        },
+        "period": {
+          "en": "Apr 2024–Apr 2025",
+          "es": "Abr 2024–Abr 2025",
+          "de": "Apr. 2024–Apr. 2025"
+        },
+        "title": {
+          "en": "Technical Product Owner",
+          "es": "Technical Product Owner",
+          "de": "Technischer Product Owner"
+        },
+        "organization": "Flexways",
+        "summary": {
+          "en": "Connected stakeholders and delivery teams through roadmaps, clear requirements, and measurable product outcomes.",
+          "es": "Conecté stakeholders y equipos de entrega mediante roadmaps, requisitos claros y resultados de producto medibles.",
+          "de": "Ich verband Stakeholder und Umsetzungsteams durch Roadmaps, klare Anforderungen und messbare Produktergebnisse."
+        },
+        "details": {
+          "en": [
+            "Prioritized backlogs for digital transformation and AI integration."
+          ],
+          "es": [
+            "Prioricé backlogs para transformación digital e integración de IA."
+          ],
+          "de": [
+            "Ich priorisierte Backlogs für digitale Transformation und KI-Integration."
+          ]
+        }
+      },
+      {
+        "id": "product-discovery-ops-automations",
+        "sha": "43a2634",
+        "branchId": "main",
+        "parents": [
+          {
+            "id": "flexways-technical-product-owner",
+            "target": "commit",
+            "kind": "first-parent"
+          },
+          {
+            "id": "flexways-channel-analyst",
+            "target": "commit",
+            "kind": "merge-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "project",
+        "time": {
+          "value": "2024",
+          "precision": "year"
+        },
+        "period": {
+          "en": "2024",
+          "es": "2024",
+          "de": "2024"
+        },
+        "title": {
+          "en": "Product Discovery & Ops Automations",
+          "es": "Discovery de Producto y Automatizaciones de Ops",
+          "de": "Product Discovery & Ops-Automatisierungen"
+        },
+        "summary": {
+          "en": "Merged operational data and product discovery into automated feedback loops that guided delivery priorities.",
+          "es": "Integré datos operativos y discovery de producto en ciclos automatizados de feedback para guiar prioridades de entrega.",
+          "de": "Ich verband Betriebsdaten und Product Discovery zu automatisierten Feedbackschleifen für die Lieferpriorisierung."
+        },
+        "details": {
+          "en": [
+            "Connected CRM signals to project workflows and reduced repetitive operational work."
+          ],
+          "es": [
+            "Conecté señales del CRM con flujos de proyecto y reduje trabajo operativo repetitivo."
+          ],
+          "de": [
+            "Ich verband CRM-Signale mit Projektabläufen und reduzierte repetitive Betriebsarbeit."
+          ]
+        }
+      },
+      {
+        "id": "srk-cloud-infrastructure",
+        "sha": "971ab72",
+        "branchId": "feature/cloud-infra",
+        "parents": [
+          {
+            "id": "product-discovery-ops-automations",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "role",
+        "time": {
+          "value": "2025-05",
+          "precision": "month"
+        },
+        "period": {
+          "en": "May 2025–Apr 2026",
+          "es": "May 2025–Abr 2026",
+          "de": "Mai 2025–Apr 2026"
+        },
+        "title": {
+          "en": "Cloud infrastructure",
+          "es": "Infraestructura cloud",
+          "de": "Cloud-Infrastruktur"
+        },
+        "organization": "SRK Consulting",
+        "summary": {
+          "en": "Designed scalable cloud-native and on-premises infrastructure, turning complex deployments into repeatable delivery.",
+          "es": "Diseñé infraestructura cloud-native y on-premise escalable, convirtiendo despliegues complejos en entregas repetibles.",
+          "de": "Ich konzipierte skalierbare Cloud-native- und On-Premises-Infrastruktur und machte komplexe Deployments wiederholbar."
+        },
+        "details": {
+          "en": [
+            "Standardized operational workflows while contributing to product strategy and secure system design."
+          ],
+          "es": [
+            "Estandaricé flujos operativos mientras contribuía a la estrategia de producto y al diseño seguro de sistemas."
+          ],
+          "de": [
+            "Ich standardisierte Betriebsabläufe und wirkte an Produktstrategie sowie sicherem Systemdesign mit."
+          ]
+        }
+      },
+      {
+        "id": "gea-backend-api-delivery",
+        "sha": "1790844",
+        "branchId": "feature/backend-api",
+        "parents": [
+          {
+            "id": "product-discovery-ops-automations",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "role",
+        "time": {
+          "value": "2026-04",
+          "precision": "month"
+        },
+        "period": {
+          "en": "Apr 2026–Present",
+          "es": "Abr 2026–Presente",
+          "de": "Apr 2026–Heute"
+        },
+        "title": {
+          "en": "Backend and API delivery",
+          "es": "Entrega de backend y APIs",
+          "de": "Backend- und API-Umsetzung"
+        },
+        "organization": "Geólogos Asociados (GEA)",
+        "summary": {
+          "en": "Built secure serverless APIs and translated business rules into observable, role-aware backend systems.",
+          "es": "Construí APIs serverless seguras y traduje reglas de negocio en sistemas backend observables y conscientes de roles.",
+          "de": "Ich entwickelte sichere serverlose APIs und übersetzte Geschäftsregeln in beobachtbare, rollenbasierte Backend-Systeme."
+        },
+        "details": {
+          "en": [
+            "Used AWS Lambda, API Gateway, Cognito, RDS, and externalized secrets."
+          ],
+          "es": [
+            "Trabajé con AWS Lambda, API Gateway, Cognito, RDS y secretos externalizados."
+          ],
+          "de": [
+            "Ich arbeitete mit AWS Lambda, API Gateway, Cognito, RDS und ausgelagerten Secrets."
+          ]
+        }
+      },
+      {
+        "id": "it-management-degree",
+        "sha": "21dced6",
+        "branchId": "learn/education",
+        "parents": [
+          {
+            "id": "product-discovery-ops-automations",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "education",
+        "time": {
+          "value": "2026",
+          "precision": "year"
+        },
+        "period": {
+          "en": "2021–2026",
+          "es": "2021–2026",
+          "de": "2021–2026"
+        },
+        "title": {
+          "en": "B.S. in IT Management completed",
+          "es": "Lic. en Gestión de Tecnología de la Información completada",
+          "de": "Bachelor in IT-Management abgeschlossen"
+        },
+        "organization": "UADE",
+        "summary": {
+          "en": "Consolidated the link between business management, information systems, and technology architecture.",
+          "es": "Consolidé el vínculo entre gestión de negocios, sistemas de información y arquitectura tecnológica.",
+          "de": "Ich festigte die Verbindung zwischen Unternehmensführung, Informationssystemen und Technologiearchitektur."
+        },
+        "details": {
+          "en": [
+            "Formalized the business and systems context behind technical product decisions."
+          ],
+          "es": [
+            "Formalizó el contexto de negocio y sistemas detrás de las decisiones de producto técnico."
+          ],
+          "de": [
+            "Ich formalisierte den Geschäfts- und Systemkontext technischer Produktentscheidungen."
+          ]
+        }
+      },
+      {
+        "id": "geological-data-analytics-platform",
+        "sha": "6cf897d",
+        "branchId": "main",
+        "parents": [
+          {
+            "id": "gea-backend-api-delivery",
+            "target": "commit",
+            "kind": "first-parent"
+          },
+          {
+            "id": "it-management-degree",
+            "target": "commit",
+            "kind": "merge-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "project",
+        "time": {
+          "value": "2026",
+          "precision": "year"
+        },
+        "period": {
+          "en": "2026",
+          "es": "2026",
+          "de": "2026"
+        },
+        "title": {
+          "en": "Geological Data Analytics Platform",
+          "es": "Plataforma Analítica de Datos Geológicos",
+          "de": "Analyseplattform für geologische Daten"
+        },
+        "summary": {
+          "en": "Merged backend delivery and systems thinking into a PostgreSQL analytics platform for operational visibility.",
+          "es": "Integré entrega backend y pensamiento sistémico en una plataforma analítica PostgreSQL para dar visibilidad operativa.",
+          "de": "Ich verband Backend-Umsetzung und Systemdenken in einer PostgreSQL-Analyseplattform für betriebliche Transparenz."
+        },
+        "details": {
+          "en": [
+            "Modeled operational data and exposed geological signals through decision-ready dashboards."
+          ],
+          "es": [
+            "Modelé datos operativos y expuse señales geológicas mediante dashboards orientados a decisiones."
+          ],
+          "de": [
+            "Ich modellierte Betriebsdaten und machte geologische Signale in entscheidungsreifen Dashboards sichtbar."
+          ]
+        }
+      },
+      {
+        "id": "serverless-iac-data-pipeline",
+        "sha": "f012a97",
+        "branchId": "main",
+        "parents": [
+          {
+            "id": "geological-data-analytics-platform",
+            "target": "commit",
+            "kind": "first-parent"
+          },
+          {
+            "id": "srk-cloud-infrastructure",
+            "target": "commit",
+            "kind": "merge-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "project",
+        "time": {
+          "value": "2026",
+          "precision": "year"
+        },
+        "period": {
+          "en": "2026–Present",
+          "es": "2026–Presente",
+          "de": "2026–Heute"
+        },
+        "title": {
+          "en": "Serverless IaC Data Pipeline",
+          "es": "Pipeline de Datos Serverless con IaC",
+          "de": "Serverlose IaC-Datenpipeline"
+        },
+        "summary": {
+          "en": "Merged cloud infrastructure, backend delivery, and data architecture into a secure, repeatable product system.",
+          "es": "Integré infraestructura cloud, entrega backend y arquitectura de datos en un sistema de producto seguro y repetible.",
+          "de": "Ich verband Cloud-Infrastruktur, Backend-Umsetzung und Datenarchitektur zu einem sicheren, wiederholbaren Produktsystem."
+        },
+        "details": {
+          "en": [
+            "HEAD identity: Product Strategist / Solution Architect.",
+            "Reduced monthly cloud cost from $85 to $23 through architecture changes."
+          ],
+          "es": [
+            "Identidad en HEAD: Estratega de Producto / Arquitecto de Soluciones.",
+            "Reduje el costo cloud mensual de USD 85 a USD 23 mediante cambios de arquitectura."
+          ],
+          "de": [
+            "Identität an HEAD: Produktstratege / Lösungsarchitekt.",
+            "Ich senkte die monatlichen Cloud-Kosten durch Architekturänderungen von 85 auf 23 USD."
+          ]
+        }
+      }
+    ],
+    "staging": [
+      {
+        "id": "senior-technical-product-lead",
+        "branchId": "main",
+        "parents": [
+          {
+            "id": "serverless-iac-data-pipeline",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "wip",
+        "kind": "milestone",
+        "time": {
+          "value": "2026",
+          "precision": "year"
+        },
+        "title": {
+          "en": "Senior Technical Product / Lead role",
+          "es": "Rol Senior de Producto Técnico / Liderazgo",
+          "de": "Senior Technical Product / Lead-Rolle"
+        },
+        "summary": {
+          "en": "Current work in progress: increasing ownership across architecture, product direction, and team enablement.",
+          "es": "Trabajo en progreso: ampliar el ownership sobre arquitectura, dirección de producto y habilitación de equipos.",
+          "de": "Aktuelle Arbeit: mehr Verantwortung für Architektur, Produktausrichtung und Teambefähigung übernehmen."
+        }
+      },
+      {
+        "id": "international-remote-expansion",
+        "branchId": "main",
+        "parents": [
+          {
+            "id": "senior-technical-product-lead",
+            "target": "staging",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "forecast",
+        "kind": "milestone",
+        "time": {
+          "value": "2027",
+          "precision": "year"
+        },
+        "title": {
+          "en": "International remote market expansion",
+          "es": "Expansión al mercado remoto internacional",
+          "de": "Expansion in den internationalen Remote-Markt"
+        },
+        "summary": {
+          "en": "Forecast: bring the same product and architecture practice to international, distributed teams.",
+          "es": "Proyección: llevar la misma práctica de producto y arquitectura a equipos internacionales y distribuidos.",
+          "de": "Prognose: dieselbe Produkt- und Architekturpraxis in internationale, verteilte Teams einbringen."
+        }
+      },
+      {
+        "id": "custom-ai-data-products",
+        "branchId": "feature/data-ai",
+        "parents": [
+          {
+            "id": "international-remote-expansion",
+            "target": "staging",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "forecast",
+        "kind": "milestone",
+        "time": {
+          "value": "2028",
+          "precision": "year-plus"
+        },
+        "title": {
+          "en": "Custom AI/data products",
+          "es": "Productos propios de IA y datos",
+          "de": "Eigene KI- und Datenprodukte"
+        },
+        "summary": {
+          "en": "Forecast: build focused AI and data products where systems thinking can compound into lasting value.",
+          "es": "Proyección: construir productos de IA y datos donde el pensamiento sistémico se convierta en valor duradero.",
+          "de": "Prognose: fokussierte KI- und Datenprodukte entwickeln, bei denen Systemdenken nachhaltigen Wert schafft."
+        }
+      }
+    ],
+    "refs": [
+      {
+        "id": "ref-head",
+        "kind": "head",
+        "name": "HEAD",
+        "targetId": "serverless-iac-data-pipeline"
+      },
+      {
+        "id": "ref-main",
+        "kind": "branch",
+        "name": "main",
+        "targetId": "serverless-iac-data-pipeline"
+      },
+      {
+        "id": "ref-cloud-infra",
+        "kind": "branch",
+        "name": "feature/cloud-infra",
+        "targetId": "srk-cloud-infrastructure"
+      },
+      {
+        "id": "ref-backend-api",
+        "kind": "branch",
+        "name": "feature/backend-api",
+        "targetId": "gea-backend-api-delivery"
+      },
+      {
+        "id": "ref-data-ai",
+        "kind": "branch",
+        "name": "feature/data-ai",
+        "targetId": "flexways-channel-analyst"
+      },
+      {
+        "id": "ref-product-delivery",
+        "kind": "branch",
+        "name": "feature/product-delivery",
+        "targetId": "flexways-technical-product-owner"
+      },
+      {
+        "id": "ref-education",
+        "kind": "branch",
+        "name": "learn/education",
+        "targetId": "it-management-degree"
+      },
+      {
+        "id": "tag-v0-1",
+        "kind": "tag",
+        "name": "v0.1",
+        "targetId": "ort-technical-foundations"
+      },
+      {
+        "id": "tag-v1-0",
+        "kind": "tag",
+        "name": "v1.0",
+        "targetId": "devborn-operations-automation"
+      },
+      {
+        "id": "tag-v1-4",
+        "kind": "tag",
+        "name": "v1.4",
+        "targetId": "flexways-channel-analyst"
+      },
+      {
+        "id": "tag-v2-0",
+        "kind": "tag",
+        "name": "v2.0",
+        "targetId": "flexways-technical-product-owner"
+      },
+      {
+        "id": "tag-v2-1",
+        "kind": "tag",
+        "name": "v2.1",
+        "targetId": "product-discovery-ops-automations"
+      },
+      {
+        "id": "tag-v2-4",
+        "kind": "tag",
+        "name": "v2.4",
+        "targetId": "srk-cloud-infrastructure"
+      },
+      {
+        "id": "tag-v2-6",
+        "kind": "tag",
+        "name": "v2.6",
+        "targetId": "gea-backend-api-delivery"
+      },
+      {
+        "id": "tag-v2-8",
+        "kind": "tag",
+        "name": "v2.8",
+        "targetId": "geological-data-analytics-platform"
+      },
+      {
+        "id": "tag-v3-0",
+        "kind": "tag",
+        "name": "v3.0",
+        "targetId": "serverless-iac-data-pipeline"
+      }
+    ]
+  },
+  "contact": {
+    "openTo": {
+      "en": [
+        "Full-time engineering roles",
+        "Freelance data products",
+        "Technical consulting"
+      ],
+      "es": [
+        "Roles de ingeniería a tiempo completo",
+        "Productos de datos freelance",
+        "Consultoría técnica"
+      ],
+      "de": [
+        "Vollzeit-Ingenieurstellen",
+        "Freiberufliche Datenprodukte",
+        "Technische Beratung"
+      ]
+    },
+    "superpower": {
+      "en": "Data-driven problem solving and connecting logic with creativity",
+      "es": "Resolución de problemas impulsada por datos y conexión de la lógica con la creatividad",
+      "de": "Datengetriebene Problemlösung und die Verbindung von Logik und Kreativität"
+    },
+    "passion": {
+      "en": "Building beautiful, math-inspired software that drives real business value",
+      "es": "Construir software hermoso e inspirado en las matemáticas que genere valor comercial real",
+      "de": "Entwicklung eleganter, mathematisch inspirierter Software mit echtem geschäftlichem Mehrwert"
+    }
+  },
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": {
+        "en": "Serverless IaC Data Pipeline",
+        "es": "Pipeline de Datos Serverless IaC",
+        "de": "Serverlose IaC-Datenpipeline"
+      },
+      "description": {
+        "en": "Cloud native infrastructure automation using AWS SAM, deploying secure serverless APIs with role-based access control.",
+        "es": "Automatización de infraestructura cloud nativa con AWS SAM, desplegando APIs serverless seguras con control de acceso por roles.",
+        "de": "Cloud-native Infrastrukturautomatisierung mit AWS SAM zur Bereitstellung sicherer serverloser APIs mit rollenbasierter Zugriffskontrolle."
+      },
+      "category": "software",
+      "projectType": "work",
+      "tags": [
+        "AWS SAM",
+        "AWS Lambda",
+        "API Gateway",
+        "RDS",
+        "IaC",
+        "CI/CD",
+        "TypeScript"
+      ],
+      "highlights": {
+        "en": [
+          "Reduced infrastructure deployment overhead by 70% using SAM & CloudFormation templates.",
+          "Implemented Cognito user pools with custom authorization claims for fine-grained client routing.",
+          "Externalized configuration secrets via AWS Secrets Manager for enterprise security compliance."
+        ],
+        "es": [
+          "Reduje el tiempo de despliegue de infraestructura en un 70% mediante plantillas SAM y CloudFormation.",
+          "Implementé grupos de usuarios de Cognito con claims de autorización personalizados para el enrutamiento de clientes.",
+          "Externalicé secretos de configuración mediante AWS Secrets Manager para el cumplimiento de seguridad empresarial."
+        ],
+        "de": [
+          "Reduzierung des Bereitstellungsaufwands um 70 % durch SAM- und CloudFormation-Vorlagen.",
+          "Implementierung von Cognito-Benutzerpools mit benutzerdefinierten Autorisierungsansprüchen für granulare Client-Routen.",
+          "Auslagerung von Konfigurationsgeheimnissen über AWS Secrets Manager zur Einhaltung von Sicherheitsstandards."
+        ]
+      },
+      "featured": true,
+      "demoUrl": "#",
+      "codeUrl": "https://github.com/sebiporini"
+    },
+    {
+      "id": "proj-2",
+      "title": {
+        "en": "Enterprise AI Agent Integration",
+        "es": "Integración de Agente de IA Empresarial",
+        "de": "Unternehmens-KI-Agentenintegration"
+      },
+      "description": {
+        "en": "Advanced AI agents connecting large language models (LLMs) with SQL databases to automate geological document summaries and intelligence reports.",
+        "es": "Agentes de IA avanzados que conectan modelos de lenguaje (LLMs) con bases de datos SQL para automatizar resúmenes de documentos geológicos e informes.",
+        "de": "Fortschrittliche KI-Agenten, die Large Language Models (LLMs) mit SQL-Datenbanken verknüpfen, um geologische Berichte und Analysen automatisiert zusammenzufassen."
+      },
+      "category": "ai",
+      "projectType": "work",
+      "tags": [
+        "LLMs",
+        "LangChain",
+        "OpenAI",
+        "Python",
+        "Vector DBs",
+        "API Gateway"
+      ],
+      "highlights": {
+        "en": [
+          "Designed semantic retrieval QA over 10,000+ internal geological and mineralogical reports.",
+          "Leveraged LangChain to orchestrate structured, JSON-validated workflows, cutting manual review time by 50%.",
+          "Engineered intelligent caching layers to optimize API latency and reduce LLM token usage costs by 30%."
+        ],
+        "es": [
+          "Diseñé búsqueda semántica tipo QA sobre más de 10,000 informes geológicos y mineralógicos internos.",
+          "Utilicé LangChain para orquestar flujos de trabajo estructurados y validados por JSON, reduciendo a la mitad el tiempo de revisión manual.",
+          "Desarrollé capas de almacenamiento en caché inteligente para optimizar latencias y reducir costos de tokens de LLM en un 30%."
+        ],
+        "de": [
+          "Entwicklung einer semantischen Retrieval-QA über 10.000+ interne Berichte.",
+          "Einsatz von LangChain zur Orchestrierung strukturierter, JSON-validierter Workflows mit 50 % Zeitersparnis bei der manuellen Prüfung.",
+          "Konzeption intelligenter Caching-Schichten zur Optimierung der API-Latenz und Senkung der LLM-Token-Kosten um 30 %."
+        ]
+      },
+      "featured": true,
+      "demoUrl": "#",
+      "codeUrl": "https://github.com/sebiporini"
+    },
+    {
+      "id": "proj-3",
+      "title": {
+        "en": "Geological Data Analytics Platform",
+        "es": "Plataforma Analítica de Datos Geológicos",
+        "de": "Plattform für geologische Datenanalytik"
+      },
+      "description": {
+        "en": "Robust SQL analytics engine and custom Metabase dashboards visualizing structural drilling operations and geological anomalies.",
+        "es": "Motor analítico robusto de SQL y tableros interactivos en Metabase para la visualización de operaciones de perforación y anomalías geológicas.",
+        "de": "Robuste SQL-Analytik-Engine und maßgeschneiderte Metabase-Dashboards zur Visualisierung struktureller Bohrvorgänge und geologischer Anomalien."
+      },
+      "category": "data",
+      "projectType": "work",
+      "tags": [
+        "PostgreSQL",
+        "Metabase",
+        "SQL",
+        "Python",
+        "Pandas",
+        "AWS RDS"
+      ],
+      "highlights": {
+        "en": [
+          "Architected PostgreSQL relational schema in AWS RDS optimized to store millions of sensor telemetry readings.",
+          "Wrote complex analytical window functions and spatial queries to detect structural anomalies dynamically.",
+          "Deployed and configured Metabase dashboard suite, delivering real-time operations visibility to stakeholders."
+        ],
+        "es": [
+          "Diseñé la arquitectura relacional de PostgreSQL en AWS RDS optimizada para almacenar millones de lecturas de telemetría.",
+          "Construí funciones de ventana analíticas complejas y consultas espaciales para detectar anomalías estructurales dinámicamente.",
+          "Desplegué y configuré la suite de tableros de Metabase, brindando visibilidad en tiempo real de operaciones a los directivos."
+        ],
+        "de": [
+          "Architektur eines PostgreSQL-Schemas in AWS RDS zur Speicherung von Millionen Telemetriedatenpunkten.",
+          "Entwicklung komplexer analytischer Fensterfunktionen und räumlicher Abfragen zur dynamischen Erkennung struktureller Anomalien.",
+          "Bereitstellung und Konfiguration einer Metabase-Dashboard-Suite mit Echtzeit-Transparenz für Stakeholder."
+        ]
+      },
+      "featured": true,
+      "demoUrl": "#",
+      "codeUrl": "https://github.com/sebiporini"
+    },
+    {
+      "id": "proj-4",
+      "title": {
+        "en": "Product Discovery & Ops Automations",
+        "es": "Descubrimiento de Producto y Ops Automatizadas",
+        "de": "Produktentdeckung & Betriebsautomatisierung"
+      },
+      "description": {
+        "en": "Seamless automation workflows connecting CRM systems to project management spaces, optimizing product delivery cycles.",
+        "es": "Flujos de automatización integrados que conectan sistemas CRM con espacios de gestión de proyectos, optimizando los ciclos de entrega de productos.",
+        "de": "Nahtlose Automatisierungs-Workflows zur Verbindung von CRM-Systemen mit Projektmanagement-Tools zur Optimierung von Produktbereitstellungszyklen."
+      },
+      "category": "product",
+      "projectType": "work",
+      "tags": [
+        "Google Apps Script",
+        "Zapier",
+        "HubSpot",
+        "Agile",
+        "Scrum",
+        "API Integrations",
+        "JavaScript"
+      ],
+      "highlights": {
+        "en": [
+          "Built custom Google Apps Script extensions synchronizing candidate databases and operational workflows.",
+          "Integrated multi-step Zapier automation plans, saving operations and HR teams 15+ manual hours weekly.",
+          "Mapped customer feedback loops directly from HubSpot CRM to Jira/GitHub projects to guide sprint priorities."
+        ],
+        "es": [
+          "Desarrollé extensiones en Google Apps Script que sincronizan de manera autónoma bases de datos de candidatos.",
+          "Integré automatizaciones complejas en Zapier que ahorraron al equipo operativo más de 15 horas manuales semanales.",
+          "Diseñé el mapeo de feedback de clientes directamente desde HubSpot CRM hacia proyectos de desarrollo para priorizar sprints."
+        ],
+        "de": [
+          "Entwicklung benutzerdefinierter Google Apps Script-Erweiterungen zur Synchronisierung von Datenbanken und operativen Workflows.",
+          "Integration mehrstufiger Zapier-Automatisierungen mit über 15 eingesparten Arbeitsstunden pro Woche.",
+          "Direkte Verknüpfung von Kundenfeedback aus HubSpot CRM mit Entwicklungs-Tickets zur Priorisierung von Sprints."
+        ]
+      },
+      "featured": false,
+      "demoUrl": "#",
+      "codeUrl": "https://github.com/sebiporini"
+    },
+    {
+      "id": "proj-5",
+      "title": {
+        "en": "Interactive Brain Graph Visualizer",
+        "es": "Visualizador Interactivo de Grafo Cerebral",
+        "de": "Interaktiver Gehirn-Graph-Visualisierer"
+      },
+      "description": {
+        "en": "High-fidelity interactive D3 force-directed network showing skills, technologies, and language proficiency with dynamic spring physics.",
+        "es": "Red interactiva D3 con simulación de fuerzas físicas de alta fidelidad que muestra habilidades, tecnologías y nivel de idiomas con física de resortes.",
+        "de": "Hochpräzises interaktives D3-Kräftesimulationsnetzwerk zur Darstellung von Fähigkeiten, Technologien und Sprachkenntnissen mit dynamischer Federphysik."
+      },
+      "category": "software",
+      "projectType": "personal",
+      "tags": [
+        "D3.js",
+        "React",
+        "TypeScript",
+        "Framer Motion",
+        "SVG Canvas",
+        "Mathematical Physics"
+      ],
+      "highlights": {
+        "en": [
+          "Configured responsive multi-force simulation including custom collision, link distance, and center bounding forces.",
+          "Designed clean vector graphics rendering engine using pure SVG elements and react-ref hooks.",
+          "Implemented complex hover physics, changing particle states and expanding node paths smoothly."
+        ],
+        "es": [
+          "Configuré una simulación de fuerzas múltiples responsiva con colisiones personalizadas, distancia de enlaces y límites.",
+          "Diseñé un motor de renderizado vectorial limpio usando elementos puros SVG y hooks reactivos.",
+          "Implementé física compleja al pasar el cursor, alterando estados de partículas y expandiendo nodos fluidamente."
+        ],
+        "de": [
+          "Konfiguration einer responsiven Mehrkraftsimulation mit benutzerdefinierten Kollisionen, Verbindungslängen und Begrenzungen.",
+          "Entwicklung einer sauberen Vektorgrafik-Rendering-Engine mit reinen SVG-Elementen und React-Hooks.",
+          "Implementierung flüssiger Hover-Physik zur dynamischen Veränderung von Partikelzuständen und sanfter Knotenausdehnung."
+        ]
+      },
+      "featured": true,
+      "demoUrl": "#",
+      "codeUrl": "https://github.com/sebiporini"
+    }
+  ]
+}

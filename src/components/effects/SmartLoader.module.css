@@ -1,0 +1,74 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.svgWrapper {
+  width: 280px;
+  height: 280px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loaderSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 15px 35px rgba(45, 91, 227, 0.08));
+}
+
+.progressText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.number {
+  font-family: var(--font-mono), monospace;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.15em;
+  text-indent: 0.15em; /* offsets last char spacing */
+}
+
+.label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  max-width: 320px;
+  line-height: 1.4;
+  height: 1.4rem; /* Prevent layout shift when text length varies */
+}
+
+.edgeLine {
+  transition: opacity 0.5s ease-out;
+}
+
+.nodeCircle {
+  transition: r 0.4s ease-out, opacity 0.4s ease-out;
+}

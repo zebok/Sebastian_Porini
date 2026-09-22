@@ -1,0 +1,88 @@
+.section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 30% 52%, rgba(239, 68, 68, 0.035), transparent 31%),
+    radial-gradient(circle at 70% 52%, rgba(45, 91, 227, 0.045), transparent 31%);
+  pointer-events: none;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.graphWrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.brainSkeleton {
+  width: min(610px, 52vw);
+  height: min(64vh, 610px);
+  margin: auto;
+  background:
+    radial-gradient(circle at 35% 50%, rgba(239, 68, 68, 0.08), transparent 50%),
+    radial-gradient(circle at 65% 50%, rgba(45, 91, 227, 0.08), transparent 50%);
+  animation: brainLoading 1.7s ease-in-out infinite;
+}
+
+@keyframes brainLoading {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .section {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+}
+
+@media (max-width: 680px) {
+  .section {
+    padding: 0;
+  }
+
+  .container {
+    padding: 0;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brainSkeleton {
+    animation: none;
+  }
+}

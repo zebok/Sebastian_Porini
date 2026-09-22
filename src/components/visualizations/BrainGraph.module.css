@@ -1,0 +1,1209 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.brainStage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.brainScene {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  grid-template-areas:
+    "zoom brain detail"
+    "zoom brain menu";
+  grid-template-columns:
+    minmax(220px, 1fr) minmax(520px, 760px) minmax(220px, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.75rem, 1.35vw, 1.35rem);
+  padding: 0 clamp(0.9rem, 2.15vw, 2.1rem);
+  min-width: 0;
+  pointer-events: none;
+}
+
+.brainAnchor {
+  grid-area: brain;
+  position: relative;
+  z-index: 4;
+  width: min(100%, 910px, 88vw, 80.5vh);
+  aspect-ratio: 1;
+  justify-self: center;
+  align-self: center;
+  transform: translateY(4.5vh) scale(1);
+  transform-origin: center;
+  pointer-events: auto;
+}
+
+.brainNavigationSlot {
+  grid-area: menu;
+  position: relative;
+  z-index: 32;
+  width: clamp(170px, 14.5vw, 210px);
+  align-self: end;
+  justify-self: center;
+  margin-bottom: clamp(1.1rem, 2.4vh, 2rem);
+  padding-top: 1.7rem;
+  pointer-events: auto;
+}
+
+.areaLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  overflow: hidden;
+  cursor: none;
+}
+
+.sequenceRunning .areaLayer {
+  pointer-events: none;
+}
+
+.zoomed .areaLayer {
+  pointer-events: none;
+}
+
+.areaHotspot {
+  position: absolute;
+  display: block;
+  width: clamp(44px, 11%, 72px);
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: none;
+}
+
+.areaHotspot:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--accent-2) 54%, transparent);
+  outline-offset: 5px;
+}
+
+.brainCursor {
+  --cursor-color: var(--ink-muted);
+  --cursor-size: 14px;
+  --cursor-x: -100px;
+  --cursor-y: -100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  border: 1px solid color-mix(in srgb, var(--cursor-color) 68%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 transparent;
+  transform: translate3d(var(--cursor-x), var(--cursor-y), 0) translate(-50%, -50%);
+  pointer-events: none;
+  will-change: transform;
+  transition:
+    width 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 260ms ease;
+}
+
+.brainCursor::before,
+.brainCursor::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: color-mix(in srgb, var(--cursor-color) 78%, var(--ink));
+  transform: translate(-50%, -50%);
+  transition:
+    width 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 220ms ease;
+}
+
+.brainCursor::before {
+  width: 5px;
+  height: 1px;
+}
+
+.brainCursor::after {
+  width: 1px;
+  height: 5px;
+}
+
+.brainCursorNear {
+  --cursor-size: 28px;
+  border-color: color-mix(in srgb, var(--cursor-color) 88%, transparent);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--cursor-color) 22%, transparent),
+    inset 0 0 9px color-mix(in srgb, var(--cursor-color) 8%, transparent);
+}
+
+.brainCursorNear::before {
+  width: 8px;
+}
+
+.brainCursorNear::after {
+  height: 8px;
+}
+
+.brainIntro {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-areas:
+    "zoom brain detail"
+    "zoom brain menu";
+  grid-template-columns:
+    minmax(220px, 1fr) minmax(520px, 760px) minmax(220px, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.75rem, 1.35vw, 1.35rem);
+  padding: 0 clamp(0.9rem, 2.15vw, 2.1rem);
+  overflow: hidden;
+  background: transparent;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  isolation: isolate;
+  will-change: opacity;
+}
+
+.introSkip {
+  position: absolute;
+  top: clamp(1.45rem, 3.5vh, 2.8rem);
+  right: clamp(1.4rem, 3vw, 3.4rem);
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.72rem;
+  padding: 0.55rem 0.15rem;
+  color: color-mix(in srgb, var(--ink-muted) 72%, transparent);
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.64rem, 0.72vw, 0.74rem);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+  transition: color 220ms ease;
+}
+
+.introSkip i {
+  position: relative;
+  width: 1.9rem;
+  height: 1px;
+  overflow: visible;
+  background: color-mix(in srgb, var(--ink-muted) 42%, transparent);
+  transform-origin: right center;
+  transition:
+    width 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 220ms ease;
+}
+
+.introSkip i::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 5px;
+  height: 5px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.introSkip:hover,
+.introSkip:focus-visible {
+  color: var(--ink);
+  outline: none;
+}
+
+.introSkip:hover i,
+.introSkip:focus-visible i {
+  width: 2.45rem;
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
+}
+
+.introSkip:focus-visible {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--accent-2) 55%, transparent);
+}
+
+.introConceptStage {
+  grid-area: zoom;
+  position: relative;
+  z-index: 8;
+  width: 100%;
+  min-width: 0;
+  height: min(59vh, 540px);
+  min-height: 370px;
+  align-self: center;
+  justify-self: end;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg,
+      transparent 0,
+      #000 7%,
+      #000 93%,
+      transparent 100%);
+}
+
+.introCopy {
+  --concept-spectrum: linear-gradient(90deg,
+      var(--hard-color),
+      var(--accent),
+      var(--accent-2));
+  grid-area: detail;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 8rem;
+  align-self: center;
+  justify-self: center;
+  padding: clamp(1.2rem, 2vw, 1.85rem) clamp(1rem, 2.5vw, 2.5rem) clamp(1.45rem, 2.25vw, 2rem) clamp(0.2rem, 0.7vw, 0.7rem);
+  text-align: center;
+  pointer-events: none;
+}
+
+.introTitle {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  transform-origin: center center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+  background: none !important;
+  background-clip: initial !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  color: inherit !important;
+}
+
+.introTitleNumber {
+  display: block;
+  font-size: clamp(5rem, 8.5vw, 10rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  background: var(--concept-spectrum);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.15rem;
+}
+
+.introTitleText {
+  display: block;
+  font-size: clamp(1.4rem, 2.2vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.05em;
+  background: none !important;
+  background-clip: initial !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  color: var(--ink) !important;
+  text-transform: uppercase;
+}
+
+.introTitleSubText {
+  display: block;
+  font-family: var(--font-serif), serif;
+  font-size: clamp(0.96rem, 1.35vw, 1.48rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  background: none !important;
+  background-clip: initial !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: color-mix(in srgb, var(--ink) 62%, transparent) !important;
+  color: color-mix(in srgb, var(--ink) 62%, transparent) !important;
+  text-transform: none;
+  margin-top: 0.55rem;
+}
+
+.introTitleWriting {
+  display: block;
+  width: 100%;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.introTitleWriting [data-intro-writing="title"] {
+  display: inline-block;
+  background: var(--concept-spectrum);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity, clip-path;
+}
+
+.introConceptWriting [data-intro-writing] {
+  display: inline-block;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity, clip-path;
+}
+
+.introConceptList {
+  position: absolute;
+  inset: 0;
+}
+
+.introConcept {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.2rem, 2.2vw, 2.2rem);
+  color: color-mix(in srgb, var(--node-color) 92%, var(--ink));
+  transform-origin: center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.introConceptWriting {
+  display: block;
+  width: min(100%, 470px);
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 2.75vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  padding-bottom: 0.5rem;
+  letter-spacing: -0.058em;
+  text-align: center;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--node-color) 13%, transparent);
+  text-wrap: balance;
+}
+
+.introInstructionLine {
+  display: block;
+  margin-bottom: 0.55rem;
+}
+
+.introInstructionLine:last-child {
+  margin-bottom: 0;
+}
+
+.introInstructionContainer {
+  grid-area: zoom;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.2rem, 2.2vw, 2.2rem);
+  pointer-events: none;
+}
+
+.introInstruction {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding-block: 0.25rem;
+  color: color-mix(in srgb, var(--ink-muted) 78%, var(--accent-2));
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.95rem, 1.1vw, 1.3rem);
+  font-weight: 700;
+  max-width: min(100%, 480px);
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: normal;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.brainIntro [data-intro-char] {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+}
+
+.miniBrainMenu {
+  position: relative;
+  z-index: 32;
+  width: 100%;
+  aspect-ratio: 180 / 145;
+  filter: drop-shadow(0 10px 24px color-mix(in srgb, var(--accent-2) 7%, transparent));
+  transform-origin: center;
+}
+
+.miniBrainMenu::before {
+  content: "";
+  position: absolute;
+  inset: 8% 5%;
+  background: radial-gradient(ellipse,
+      color-mix(in srgb, var(--accent-2) 5%, transparent),
+      transparent 68%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.miniBrainShape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.miniBrainOutline,
+.miniBrainFissure,
+.miniBrainFold {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.miniBrainOutline {
+  fill: color-mix(in srgb, var(--accent-2) 3.5%, transparent);
+  stroke: color-mix(in srgb, var(--ink-muted) 38%, transparent);
+  stroke-width: 0.95;
+}
+
+.miniBrainFissure {
+  stroke: color-mix(in srgb, var(--ink-muted) 24%, transparent);
+  stroke-width: 0.65;
+  stroke-dasharray: 1 3;
+}
+
+.miniBrainFold {
+  stroke: color-mix(in srgb, var(--ink-muted) 16%, transparent);
+  stroke-width: 0.65;
+  stroke-linecap: round;
+}
+
+.miniBrainLink {
+  stroke: color-mix(in srgb, var(--ink-muted) 20%, transparent);
+  stroke-width: 0.85;
+  vector-effect: non-scaling-stroke;
+  transition:
+    stroke 320ms ease,
+    stroke-width 320ms ease,
+    filter 320ms ease;
+}
+
+.miniBrainLinkActive {
+  stroke: color-mix(in srgb, var(--accent-2) 28%, transparent);
+  stroke-width: 0.85;
+}
+
+.miniBrainLinkSelected {
+  stroke: color-mix(in srgb, var(--accent-2) 55%, transparent);
+  stroke-width: 1.25;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent-2) 36%, transparent));
+}
+
+.miniBrainNeuron {
+  --node-color: var(--accent-2);
+  position: absolute;
+  width: clamp(14.5px, 1.25vw, 18.5px);
+  aspect-ratio: 1;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  opacity: 0.38;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  transition:
+    opacity 260ms ease,
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.miniBrainNeuron:disabled {
+  pointer-events: none;
+}
+
+.miniBrainNeuron>span,
+.miniBrainNeuron>i {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.miniBrainNeuron>span {
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--ink-muted) 38%, transparent);
+  box-shadow: inset 0 0 6px color-mix(in srgb, var(--ink-muted) 9%, transparent);
+  transition:
+    border-color 280ms ease,
+    box-shadow 320ms ease,
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.miniBrainNeuron>i {
+  top: 50%;
+  left: 50%;
+  width: 36%;
+  height: 36%;
+  transform: translate(-50%, -50%);
+  background: color-mix(in srgb, var(--ink-muted) 30%, transparent);
+  transition:
+    background 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.miniBrainDiscovered {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+.miniBrainDiscovered>span {
+  border-color: color-mix(in srgb, var(--node-color) 62%, transparent);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--node-color) 18%, transparent),
+    inset 0 0 7px color-mix(in srgb, var(--node-color) 12%, transparent);
+}
+
+.miniBrainDiscovered>i {
+  background: var(--node-color);
+  box-shadow: 0 0 6px var(--node-color);
+}
+
+.miniBrainCandidate,
+.miniBrainPreselected,
+.miniBrainDiscovered:hover,
+.miniBrainDiscovered:focus-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.24);
+  outline: none;
+}
+
+.miniBrainCandidate>span,
+.miniBrainPreselected>span,
+.miniBrainDiscovered:hover>span,
+.miniBrainDiscovered:focus-visible>span {
+  border-color: color-mix(in srgb, var(--node-color) 78%, transparent);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--node-color) 6%, transparent),
+    0 0 12px color-mix(in srgb, var(--node-color) 28%, transparent);
+}
+
+.miniBrainPreselected {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+.miniBrainSelected {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.48);
+}
+
+.miniBrainSelected>span {
+  border-color: var(--node-color);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--node-color) 7%, transparent),
+    0 0 14px color-mix(in srgb, var(--node-color) 38%, transparent);
+}
+
+.hard {
+  --node-color: var(--hard-color);
+}
+
+.soft {
+  --node-color: var(--accent);
+}
+
+.language {
+  --node-color: var(--accent-3);
+}
+
+.conceptTitle {
+  grid-area: detail;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-width: 0;
+  max-height: min(68vh, 560px);
+  padding: clamp(1.2rem, 2vw, 1.85rem) clamp(0.2rem, 0.7vw, 0.7rem) clamp(1.45rem, 2.25vw, 2rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  justify-self: start;
+  text-align: center;
+  pointer-events: auto;
+  scrollbar-color: color-mix(in srgb, var(--accent-2) 28%, transparent) transparent;
+  scrollbar-width: thin;
+  will-change: opacity, filter, transform;
+}
+
+.conceptTitle h2,
+.introTitle {
+  margin: 0;
+  padding-block: 0.04em 0.16em;
+  color: transparent;
+  background: var(--concept-spectrum);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 2.8vw, 3.25rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.058em;
+  opacity: 0.88;
+  filter: blur(0.12px);
+  overflow-wrap: anywhere;
+  text-shadow: 0 0 18px color-mix(in srgb, var(--accent-2) 11%, transparent);
+  text-wrap: balance;
+}
+
+.conceptZoom {
+  grid-area: zoom;
+  position: relative;
+  z-index: 8;
+  width: 100%;
+  min-width: 0;
+  height: min(59vh, 540px);
+  min-height: 370px;
+  align-self: center;
+  justify-self: end;
+  overflow: hidden;
+  pointer-events: auto;
+  isolation: isolate;
+  mask-image: linear-gradient(180deg,
+      transparent 0,
+      #000 7%,
+      #000 93%,
+      transparent 100%);
+}
+
+.conceptZoomField {
+  position: absolute;
+  inset: 5%;
+  background:
+    radial-gradient(ellipse at 48% 47%,
+      color-mix(in srgb, var(--accent-2) 8%, transparent),
+      transparent 30%),
+    radial-gradient(ellipse at 32% 68%,
+      color-mix(in srgb, var(--accent) 3.5%, transparent),
+      transparent 36%),
+    radial-gradient(ellipse at 74% 28%,
+      color-mix(in srgb, var(--hard-color) 3%, transparent),
+      transparent 34%);
+  filter: blur(0.35px);
+  pointer-events: none;
+}
+
+.conceptZoomField::before,
+.conceptZoomField::after {
+  content: none;
+}
+
+.conceptNeuronLabels {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.labelConnectors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.connectorLine {
+  stroke: var(--node-color, var(--accent-2));
+  stroke-width: 0.18;
+  stroke-dasharray: 0.4 0.6;
+  opacity: 0.52;
+}
+
+.conceptNeuronLabel {
+  --node-color: var(--accent-2);
+  position: absolute;
+  width: max-content;
+  max-width: min(220px, 48%);
+  color: color-mix(in srgb, var(--node-color) 88%, #ffffff);
+  font-family: var(--font-serif), serif;
+  font-size: clamp(1.05rem, 1.4vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  white-space: normal;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.leftLabel {
+  left: 2%;
+  text-align: left;
+}
+
+.rightLabel {
+  right: 2%;
+  text-align: right;
+}
+
+.backControl {
+  position: absolute;
+  top: -1.85rem;
+  right: 0;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: max-content;
+  padding: 0.25rem 0 0.32rem;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink-muted) 42%, transparent);
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(0.68rem, 0.8vw, 0.85rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition:
+    gap 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 220ms ease,
+    border-color 220ms ease;
+}
+
+.backControl i {
+  color: var(--accent-2);
+  font-size: 0.98rem;
+  font-style: normal;
+  line-height: 1;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent-2) 48%, transparent);
+}
+
+.backControl:hover,
+.backControl:focus-visible {
+  gap: 0.72rem;
+  color: var(--ink);
+  border-color: var(--accent-2);
+  outline: none;
+}
+
+@media (max-width: 1180px) and (min-width: 921px) {
+
+  .brainScene,
+  .brainIntro {
+    grid-template-columns:
+      minmax(180px, 1fr) minmax(460px, 600px) minmax(180px, 1fr);
+    gap: 0.65rem;
+    padding-inline: 0.75rem;
+  }
+
+  .conceptTitle,
+  .introCopy {
+    padding-inline: 0.1rem;
+  }
+
+  .conceptTitle h2,
+  .introTitle {
+    font-size: clamp(1.85rem, 3vw, 2.85rem);
+  }
+
+  .conceptZoom,
+  .introConceptStage {
+    min-height: 340px;
+  }
+}
+
+@media (max-width: 920px) {
+  .brainStage {
+    height: clamp(900px, calc(100vh - var(--header-height)), 940px);
+    overflow: visible;
+  }
+
+  .brainScene {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    grid-template-areas:
+      "brain brain"
+      ". menu";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    align-content: start;
+    gap: 1rem 1.35rem;
+    padding: 0 clamp(1.25rem, 4vw, 2.2rem) 2rem;
+  }
+
+  .brainIntro {
+    grid-template-areas: "zoom detail";
+    grid-template-columns: minmax(0, 1fr) minmax(190px, 0.7fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-content: center;
+    gap: 1rem;
+    padding: 0 clamp(1.25rem, 4vw, 2.2rem);
+  }
+
+  .zoomed .brainStage {
+    height: auto;
+    min-height: 1380px;
+    overflow: hidden;
+  }
+
+  .brainScenePinned {
+    min-height: 1380px;
+    grid-template-areas:
+      "brain brain"
+      ". menu"
+      "zoom detail";
+    grid-template-rows: auto auto minmax(430px, auto);
+  }
+
+  .brainAnchor {
+    align-self: start;
+    width: min(92vw, 620px);
+    margin-top: 5.75rem;
+    transform: scale(1);
+  }
+
+  .conceptTitle {
+    width: 100%;
+    max-height: none;
+    align-self: start;
+    padding: 1.35rem 0.25rem 1.6rem;
+  }
+
+  .conceptTitle h2,
+  .introTitle {
+    font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  }
+
+  .conceptZoom,
+  .introConceptStage {
+    height: 430px;
+    min-height: 0;
+    align-self: start;
+  }
+
+  .brainNavigationSlot {
+    width: clamp(128px, 16vw, 148px);
+    margin-bottom: 1.25rem;
+  }
+
+  .introCopy {
+    width: min(100%, 420px);
+    min-height: 7rem;
+    padding: 1.35rem 0.25rem 1.6rem;
+  }
+
+  .conceptNeuronLabel {
+    font-size: clamp(0.9rem, 2.6vw, 1.35rem);
+  }
+}
+
+@media (max-width: 680px) {
+  .brainStage {
+    height: 760px;
+    place-items: start center;
+    overflow: hidden;
+  }
+
+  .zoomed .brainStage {
+    height: auto;
+    min-height: 1300px;
+  }
+
+  .brainIntro {
+    grid-template-areas:
+      "detail"
+      "zoom";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: start;
+    padding: 0 1rem;
+  }
+
+  .introSkip {
+    top: 1.2rem;
+    right: 1.05rem;
+    font-size: 0.62rem;
+  }
+
+  .introSkip i {
+    width: 1.45rem;
+  }
+
+  .introCopy {
+    width: min(88vw, 440px);
+    min-height: 6.5rem;
+    margin-top: 5.8rem;
+    padding: 1rem 0.1rem 1.25rem;
+    justify-self: center;
+  }
+
+  .introTitle {
+    text-align: center;
+  }
+
+  .introTitleNumber {
+    font-size: clamp(3.5rem, 16vw, 6.2rem);
+    line-height: 0.9;
+  }
+
+  .introTitleText {
+    font-size: clamp(1.15rem, 5.5vw, 1.65rem);
+    line-height: 1.1;
+  }
+
+  .introTitleSubText {
+    font-size: clamp(0.9rem, 4.8vw, 1.25rem);
+    margin-top: 0.45rem;
+  }
+
+  .introConcept {
+    justify-content: center;
+    padding-left: clamp(1.2rem, 2.2vw, 2.2rem);
+    transform-origin: center;
+  }
+
+  .introConceptWriting {
+    width: min(88vw, 440px);
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+    text-align: center;
+  }
+
+  .introConceptStage {
+    width: 100%;
+    height: 390px;
+    min-height: 0;
+    align-self: start;
+    justify-self: center;
+  }
+
+  .introInstruction {
+    max-width: 100%;
+    font-size: clamp(0.68rem, 2.8vw, 0.82rem);
+    white-space: normal;
+  }
+
+  .brainScene {
+    grid-template-areas:
+      "brain"
+      "menu";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0.75rem;
+    padding: 0 1rem 2rem;
+  }
+
+  .brainScenePinned {
+    min-height: 1300px;
+    grid-template-areas:
+      "brain"
+      "menu"
+      "detail"
+      "zoom";
+    grid-template-rows: auto auto auto minmax(410px, auto);
+  }
+
+  .brainAnchor {
+    width: min(106vw, 530px);
+    margin-top: 5.25rem;
+  }
+
+  .conceptTitle {
+    width: min(100%, 560px);
+    padding: 1.65rem 0.35rem 1.55rem;
+  }
+
+  .conceptTitle h2 {
+    font-size: clamp(2.65rem, 12vw, 4.2rem);
+  }
+
+  .conceptZoom {
+    width: min(100%, 560px);
+    height: 430px;
+    justify-self: center;
+  }
+
+  .conceptNeuronLabel {
+    font-size: clamp(0.85rem, 4.4vw, 1.25rem);
+    max-width: min(180px, 45%);
+    padding: 0;
+  }
+
+  .brainNavigationSlot {
+    width: 118px;
+    justify-self: end;
+    margin: 0 0.5rem 0.25rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .areaHotspot,
+  .backControl,
+  .brainCursor,
+  .brainCursor::before,
+  .brainCursor::after,
+  .brainAnchor,
+  .miniBrainNeuron,
+  .miniBrainNeuron>span,
+  .miniBrainNeuron>i,
+  .miniBrainLink,
+  .introSkip {
+    transition: none;
+  }
+
+  .conceptNeuronLabel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+
+.miniBrainNeuron:not(.miniBrainDiscovered) {
+  --node-color: var(--ink-muted);
+  opacity: 0.52;
+  cursor: default;
+}
+
+/* Undiscovered neurons pulse/blink effect in mini-map (only central dot pulses) */
+@keyframes pulseUndiscoveredInner {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    background: color-mix(in srgb, var(--ink-muted) 32%, transparent);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.48);
+    background: color-mix(in srgb, var(--ink-muted) 72%, transparent);
+  }
+}
+
+.miniBrainNeuron:not(.miniBrainDiscovered)>i {
+  animation: pulseUndiscoveredInner 3.8s infinite ease-in-out;
+}
+
+/* Hover over miniBrainMenu dims all neurons and pauses their idle animations */
+.miniBrainMenu:hover .miniBrainNeuron {
+  opacity: 0.26 !important;
+}
+
+.miniBrainMenu:hover .miniBrainNeuron>i {
+  animation-play-state: paused !important;
+}
+
+/* Hovering a specific neuron OR hovering in main graph (preselected) highlights it, scales it up, and triggers a fast pulse */
+@keyframes pulseHoverNeuron {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.48);
+  }
+}
+
+.miniBrainMenu .miniBrainNeuron:hover,
+.miniBrainMenu .miniBrainNeuron.miniBrainPreselected {
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.35) !important;
+}
+
+.miniBrainMenu .miniBrainNeuron:hover>i,
+.miniBrainMenu .miniBrainNeuron.miniBrainPreselected>i {
+  animation: pulseHoverNeuron 1.3s infinite ease-in-out !important;
+  animation-play-state: running !important;
+  background: var(--node-color) !important;
+  box-shadow: 0 0 8px var(--node-color) !important;
+}
+
+/* Restore color on undiscovered hard, soft, language neurons when hovered or preselected */
+.miniBrainNeuron.hard:hover,
+.miniBrainNeuron.hard.miniBrainPreselected {
+  --node-color: var(--hard-color) !important;
+}
+
+.miniBrainNeuron.soft:hover,
+.miniBrainNeuron.soft.miniBrainPreselected {
+  --node-color: var(--accent) !important;
+}
+
+.miniBrainNeuron.language:hover,
+.miniBrainNeuron.language.miniBrainPreselected {
+  --node-color: var(--accent-3) !important;
+}
+
+/* Play button custom styling and play triangle icon */
+.introPlay {
+  color: color-mix(in srgb, var(--accent-2) 72%, transparent);
+}
+
+.introPlay:hover {
+  color: var(--accent-2) !important;
+}
+
+.introPlay i {
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  border-top: 5px solid transparent !important;
+  border-bottom: 5px solid transparent !important;
+  border-left: 8px solid color-mix(in srgb, var(--ink-muted) 55%, transparent) !important;
+  transform: scale(1.1) !important;
+  transition: border-left-color 220ms ease !important;
+}
+
+.introPlay:hover i {
+  border-left-color: var(--accent-2) !important;
+}
+
+.brainIntroExplore {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+.brainIntroExplore .introConceptStage,
+.brainIntroExplore .introCopy {
+  display: none !important;
+}
