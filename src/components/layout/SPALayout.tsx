@@ -192,7 +192,7 @@ export default function SPALayout({
           setConstructionMode,
         }}
       >
-        <Header dict={dict} />
+        <Header dict={dict} cvPath={data.personal.contactDetails.cvPath} />
         
         {/* Background Network Layer */}
         {!showLoader && (
@@ -212,7 +212,7 @@ export default function SPALayout({
               className={layoutStyles.sectionLayer}
               style={getSectionStyle("how-am-i")}
             >
-              <Hero personal={data.personal} />
+              <Hero personal={data.personal} dict={dict} lang={lang} />
             </div>
 
             {/* Skills Section */}
@@ -250,7 +250,7 @@ export default function SPALayout({
           </div>
         </main>
 
-        <Footer dict={dict} personal={data.personal} />
+        <Footer dict={dict} personal={data.personal} lang={lang} />
       </SPAContext.Provider>
     </>
   );

@@ -1489,14 +1489,14 @@
           "precision": "month"
         },
         "period": {
-          "en": "May 2025–Apr 2026",
-          "es": "May 2025–Abr 2026",
-          "de": "Mai 2025–Apr 2026"
+          "en": "May 2025–May 2026",
+          "es": "May 2025–May 2026",
+          "de": "Mai 2025–Mai 2026"
         },
         "title": {
-          "en": "Cloud infrastructure",
-          "es": "Infraestructura cloud",
-          "de": "Cloud-Infrastruktur"
+          "en": "Cloud infrastructure & Software Architecture",
+          "es": "Infraestructura cloud & Arquitectura de Software",
+          "de": "Cloud-Infrastruktur & Software-Architektur"
         },
         "organization": "SRK Consulting",
         "summary": {
@@ -1506,13 +1506,13 @@
         },
         "details": {
           "en": [
-            "Standardized operational workflows while contributing to product strategy and secure system design."
+            "Standardized operational workflows and telemetry architectures with structured technical documentation in dbDiagram and UML."
           ],
           "es": [
-            "Estandaricé flujos operativos mientras contribuía a la estrategia de producto y al diseño seguro de sistemas."
+            "Estandaricé flujos operativos y arquitecturas de telemetría con documentación técnica estructurada en dbDiagram y UML."
           ],
           "de": [
-            "Ich standardisierte Betriebsabläufe und wirkte an Produktstrategie sowie sicherem Systemdesign mit."
+            "Ich standardisierte Betriebsabläufe und Telemetrie-Architekturen mit strukturierter technischer Dokumentation in dbDiagram und UML."
           ]
         }
       },
@@ -1530,34 +1530,34 @@
         "status": "committed",
         "kind": "role",
         "time": {
-          "value": "2026-04",
+          "value": "2026-05",
           "precision": "month"
         },
         "period": {
-          "en": "Apr 2026–Present",
-          "es": "Abr 2026–Presente",
-          "de": "Apr 2026–Heute"
+          "en": "May 2026–Present",
+          "es": "May 2026–Presente",
+          "de": "Mai 2026–Heute"
         },
         "title": {
-          "en": "Backend and API delivery",
-          "es": "Entrega de backend y APIs",
-          "de": "Backend- und API-Umsetzung"
+          "en": "Cloud & Software Application Development",
+          "es": "Desarrollo de Aplicaciones & Cloud",
+          "de": "Cloud- & Software-Entwicklung"
         },
-        "organization": "Geólogos Asociados (GEA)",
+        "organization": "Geólogos Asociados",
         "summary": {
-          "en": "Built secure serverless APIs and translated business rules into observable, role-aware backend systems.",
-          "es": "Construí APIs serverless seguras y traduje reglas de negocio en sistemas backend observables y conscientes de roles.",
-          "de": "Ich entwickelte sichere serverlose APIs und übersetzte Geschäftsregeln in beobachtbare, rollenbasierte Backend-Systeme."
+          "en": "Architected serverless cloud infrastructure on AWS (SAM, CloudFormation) and cut operating costs by over 70% ($85 to $23/mo).",
+          "es": "Diseñé arquitectura serverless en AWS (SAM, CloudFormation) y optimicé costos operativos en más del 70% ($85 a $23 USD/mes).",
+          "de": "Architektur serverloser Cloud-Infrastruktur in AWS (SAM, CloudFormation) und Senkung der Betriebskosten um über 70 % ($85 auf $23/Monat)."
         },
         "details": {
           "en": [
-            "Used AWS Lambda, API Gateway, Cognito, RDS, and externalized secrets."
+            "Built serverless APIs on AWS Lambda (Node.js), automated GitHub Actions CI/CD with staged DB migrations, and managed zero-trust Cognito security."
           ],
           "es": [
-            "Trabajé con AWS Lambda, API Gateway, Cognito, RDS y secretos externalizados."
+            "Desarrollé APIs serverless en AWS Lambda (Node.js), CI/CD automatizado en GitHub Actions con migraciones de BD y seguridad Zero-Trust con Cognito."
           ],
           "de": [
-            "Ich arbeitete mit AWS Lambda, API Gateway, Cognito, RDS und ausgelagerten Secrets."
+            "Entwicklung serverloser APIs mit AWS Lambda (Node.js), automatisiertes CI/CD in GitHub Actions mit Datenbankschemata-Migrationen und Cognito Zero-Trust."
           ]
         }
       },

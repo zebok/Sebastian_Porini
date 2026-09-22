@@ -38,7 +38,3 @@ next-env.d.ts
 # agent skills
 .agents/
 skills-lock.json
-
-# Resumes (private by default, except public website CVs)
-*.pdf
-!public/*.pdf

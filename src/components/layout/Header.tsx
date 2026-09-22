@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, FileDown } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Dictionary } from "@/lib/i18n";
 import { useSPA, SectionType } from "./SPAContext";
@@ -11,14 +11,29 @@ import styles from "./Header.module.css";
 
 interface HeaderProps {
   dict: Dictionary;
+  cvPath?: string;
 }
 
-export default function Header({ dict }: HeaderProps) {
+export default function Header({ dict, cvPath }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
   const lang = (params?.lang as string) || "en";
+
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const cleanBasePath = basePath.replace(/\/$/, "");
+  const cleanCvPath = (cvPath || "/SebastianPorini_English.pdf").startsWith("/")
+    ? (cvPath || "/SebastianPorini_English.pdf")
+    : `/${cvPath}`;
+  const activeCvUrl = `${cleanBasePath}${cleanCvPath}`;
+
+  const downloadFilename =
+    lang === "es"
+      ? "Sebastian_Porini_CV_ES.pdf"
+      : lang === "de"
+      ? "Sebastian_Porini_Lebenslauf_DE.pdf"
+      : "Sebastian_Porini_CV_EN.pdf";
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
@@ -86,7 +101,20 @@ export default function Header({ dict }: HeaderProps) {
         </nav>
 
         <div className={styles.rightSection}>
+          <a
+            href={activeCvUrl}
+            download={downloadFilename}
+            className={styles.cvDownloadBtn}
+            aria-label={dict.contact.downloadCv}
+            title={`${dict.contact.downloadCv} (PDF)`}
+          >
+            <FileDown size={14} className={styles.cvIcon} />
+            <span className={styles.cvBtnLabel}>{dict.contact.downloadCv}</span>
+            <span className={styles.pdfBadge}>PDF</span>
+          </a>
+
           <LanguageSwitcher />
+
           <button
             className={styles.mobileToggle}
             onClick={toggleMenu}
@@ -116,6 +144,16 @@ export default function Header({ dict }: HeaderProps) {
                 </Link>
               );
             })}
+            <a
+              href={activeCvUrl}
+              download={downloadFilename}
+              className={styles.mobileCvBtn}
+              onClick={closeMenu}
+            >
+              <FileDown size={18} />
+              <span>{dict.contact.downloadCv}</span>
+              <span className={styles.mobilePdfBadge}>PDF</span>
+            </a>
           </nav>
         </div>
       )}

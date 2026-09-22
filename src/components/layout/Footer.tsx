@@ -5,13 +5,25 @@ import styles from "./Footer.module.css";
 interface FooterProps {
   dict: Dictionary;
   personal: LocalizedPortfolioData["personal"];
+  lang?: string;
 }
 
-export default function Footer({ dict, personal }: FooterProps) {
+export default function Footer({ dict, personal, lang = "en" }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const { contactDetails, name } = personal;
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  const cvUrl = `${basePath}${contactDetails.cvPath}`;
+  const cleanBasePath = basePath.replace(/\/$/, "");
+  const cleanCvPath = (contactDetails.cvPath || "/SebastianPorini_English.pdf").startsWith("/")
+    ? (contactDetails.cvPath || "/SebastianPorini_English.pdf")
+    : `/${contactDetails.cvPath}`;
+  const cvUrl = `${cleanBasePath}${cleanCvPath}`;
+
+  const downloadFilename =
+    lang === "es"
+      ? "Sebastian_Porini_CV_ES.pdf"
+      : lang === "de"
+      ? "Sebastian_Porini_Lebenslauf_DE.pdf"
+      : "Sebastian_Porini_CV_EN.pdf";
 
   return (
     <footer className={styles.footer}>
@@ -48,10 +60,10 @@ export default function Footer({ dict, personal }: FooterProps) {
 
           <a
             href={cvUrl}
-            download
+            download={downloadFilename}
             className={styles.socialLink}
             aria-label={dict.contact.downloadCv}
-            title={dict.contact.downloadCv}
+            title={`${dict.contact.downloadCv} (PDF)`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

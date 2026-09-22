@@ -186,3 +186,98 @@
     transform: translateY(0);
   }
 }
+
+/* CV Download Button (Desktop) */
+.cvDownloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.36rem 0.85rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all var(--transition-smooth);
+}
+
+.cvDownloadBtn:hover {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cvIcon {
+  flex-shrink: 0;
+  transition: transform var(--transition-smooth);
+}
+
+.cvDownloadBtn:hover .cvIcon {
+  transform: translateY(1px);
+}
+
+.pdfBadge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  transition: background var(--transition-smooth);
+}
+
+.cvDownloadBtn:hover .pdfBadge {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 640px) {
+  .cvDownloadBtn {
+    display: none;
+  }
+}
+
+/* Mobile Drawer CV Button */
+.mobileCvBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.4rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background: var(--ink);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.mobileCvBtn:hover {
+  background: var(--accent);
+}
+
+.mobilePdfBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+

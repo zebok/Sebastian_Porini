@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useSPA } from "@/components/layout/SPAContext";
 import { LocalizedPersonalInfo } from "@/lib/data";
+import { Dictionary } from "@/lib/i18n";
 import styles from "./Hero.module.css";
 
 const AnimatedText = ({ text, delay = 0, className = "", stagger = 0.02, style = {} }: { text: string; delay?: number; className?: string; stagger?: number; style?: React.CSSProperties }) => {
@@ -37,6 +38,8 @@ const AnimatedText = ({ text, delay = 0, className = "", stagger = 0.02, style =
 
 interface HeroProps {
   personal: LocalizedPersonalInfo;
+  dict?: Dictionary;
+  lang?: string;
 }
 
 interface SegmentContentData {
@@ -50,6 +53,9 @@ interface SegmentContentData {
   greeting?: string;
   name?: string;
   tagline?: string;
+  cvUrl?: string;
+  downloadFilename?: string;
+  downloadLabel?: string;
 }
 
 interface SegmentContentProps {
@@ -135,7 +141,7 @@ const SegmentContent = ({ content }: SegmentContentProps) => {
   );
 };
 
-export default function Hero({ personal }: HeroProps) {
+export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
   const spa = useSPA();
 
   // Fallbacks if SPAContext is not present
@@ -299,11 +305,29 @@ export default function Hero({ personal }: HeroProps) {
       if (hasInteraction) return null;
 
       // If Circle 0 is not hovered or selected, always display top intro!
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+      const cleanBasePath = basePath.replace(/\/$/, "");
+      const cvPath = personal.contactDetails.cvPath || "/SebastianPorini_English.pdf";
+      const cleanCvPath = cvPath.startsWith("/") ? cvPath : `/${cvPath}`;
+      const activeCvUrl = `${cleanBasePath}${cleanCvPath}`;
+
+      const downloadFilename =
+        lang === "es"
+          ? "Sebastian_Porini_CV_ES.pdf"
+          : lang === "de"
+          ? "Sebastian_Porini_Lebenslauf_DE.pdf"
+          : "Sebastian_Porini_CV_EN.pdf";
+
+      const downloadLabel = dict?.contact?.downloadCv || "Download CV";
+
       return {
         id: "home-intro",
         type: "home" as const,
         name: personal.name,
         tagline: personal.tagline,
+        cvUrl: activeCvUrl,
+        downloadFilename,
+        downloadLabel,
         isActive: true
       };
     }
