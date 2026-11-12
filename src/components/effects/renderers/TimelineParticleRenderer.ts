@@ -101,6 +101,19 @@ const getVisibleDesktopCardZones = (
       bottom: vpTop + node.cardRect.y + node.cardRect.height,
     });
   }
+  if (state.activeBranchId) {
+    const future = layout.futureAnchors[state.activeBranchId];
+    const left = vpLeft + future.cardRect.x - state.scrollLeft;
+    const right = left + future.cardRect.width;
+    if (right + CARD_CLEAR_PAD_X >= vpLeft && left - CARD_CLEAR_PAD_X <= vpRight) {
+      zones.push({
+        left,
+        top: vpTop + future.cardRect.y,
+        right,
+        bottom: vpTop + future.cardRect.y + future.cardRect.height,
+      });
+    }
+  }
   return zones;
 };
 

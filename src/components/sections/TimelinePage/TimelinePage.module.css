@@ -160,50 +160,21 @@
 }
 
 .edgePath,
-.calloutSvgGroup {
+.calloutSvgGroup,
+.todaySvgGroup,
+.futureSvgGroup {
   transition: opacity 0.24s ease, stroke-width 0.24s ease;
 }
 
-/* Present / HEAD Pill Badge */
-.headBadge {
-  position: absolute;
-  top: 6px;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background-color: rgba(249, 249, 247, 0.92);
-  border: 1px solid rgba(45, 91, 227, 0.35);
+.todayMarkerLabel {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-  white-space: nowrap;
-  z-index: 16;
-  pointer-events: none;
-}
-
-.headPulseDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--accent);
-  animation: headPulse 2.4s ease-in-out infinite;
-}
-
-@keyframes headPulse {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--ink);
+  opacity: 0.56;
+  user-select: none;
 }
 
 /* Milestones & Open Architectural Canvas Annotations */
@@ -214,6 +185,17 @@
 
 .milestoneDimmed {
   opacity: 0.32;
+}
+
+/* Depth-of-field softening when inspecting a branch's future horizon */
+.milestoneOutOfFocus {
+  opacity: 0.16;
+  filter: blur(1.85px);
+}
+
+.milestonePastReceded {
+  opacity: 0.56;
+  filter: blur(0.65px);
 }
 
 .nodeMarker {
@@ -227,7 +209,9 @@
   cursor: pointer;
   z-index: 14;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    opacity 0.24s ease,
+    filter 0.24s ease;
 }
 
 .nodeShapeCommit {
@@ -241,21 +225,6 @@
   height: 14px;
   border-radius: 3px;
   transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.nodeShapeHead {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-}
-
-.nodeHeadRing {
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  opacity: 0.45;
-  pointer-events: none;
 }
 
 .nodeInnerCore {
@@ -279,6 +248,32 @@
   transform: translate(-50%, -50%) rotate(45deg) scale(1.22);
 }
 
+.nodeMarkerFuture {
+  border-style: dashed;
+  border-width: 1.75px;
+  background-color: var(--bg);
+  animation: futureNodeBreath 2.8s ease-in-out infinite;
+}
+
+.nodeInnerCoreFuture {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  opacity: 0.48;
+}
+
+@keyframes futureNodeBreath {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 0 0 rgba(26, 26, 24, 0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 0 0 5px rgba(26, 26, 24, 0.045);
+  }
+}
+
 /* Boxless Open Editorial Annotation resting directly on the paper grid */
 .milestoneAnnotation {
   position: absolute;
@@ -293,7 +288,21 @@
   cursor: pointer;
   text-align: left;
   z-index: 12;
-  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.24s ease,
+    filter 0.24s ease;
+}
+
+.futureAnnotation {
+  opacity: 1;
+  filter: none;
+}
+
+.metaParticleCanvas {
+  display: block;
+  flex-shrink: 0;
+  align-self: center;
+  pointer-events: none;
 }
 
 .annotationAbove {
@@ -416,17 +425,6 @@
   white-space: nowrap;
 }
 
-.currentYearTick .tickMark {
-  width: 7px;
-  height: 7px;
-  background-color: var(--accent);
-  opacity: 1;
-}
-
-.currentYearTick .tickYear {
-  color: var(--accent);
-}
-
 /* ─── Bottom Compact Horizontal Strip (Minimap + Quick Jumps) ──────────────── */
 .bottomStrip {
   display: flex;
@@ -492,16 +490,6 @@
   transition: opacity 0.2s ease;
 }
 
-.minimapPresentLine {
-  position: absolute;
-  top: 2px;
-  bottom: 2px;
-  width: 1px;
-  background-color: var(--accent);
-  opacity: 0.45;
-  pointer-events: none;
-}
-
 .minimapLens {
   position: absolute;
   top: 2px;
@@ -535,6 +523,28 @@
 .minimapDot:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.minimapTodayLine {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  border-left: 1px dashed var(--ink);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.minimapFutureDot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px dashed currentColor;
+  background-color: var(--bg);
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* ─── Mobile Layout (< 992px) ───────────────────────────────────────────────── */
@@ -599,6 +609,68 @@
   margin-bottom: 1.45rem;
 }
 
+.mobileItemReceded .mobileAnnotation {
+  opacity: 0.68;
+  filter: blur(0.45px);
+  transition: opacity 0.24s ease, filter 0.24s ease;
+}
+
+.mobileItemReceded:hover .mobileAnnotation {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.mobileNodeDotFuture {
+  border-style: dashed;
+  border-radius: 50%;
+  background-color: var(--bg);
+}
+
+.mobileLeaderTickFuture {
+  background-color: transparent !important;
+  border-top: 1px dashed currentColor;
+  height: 0;
+  opacity: 0.6;
+}
+
+.mobileFutureAnnotation {
+  opacity: 1;
+  filter: none;
+}
+
+.mobilePeriodParticles {
+  margin-left: auto;
+}
+
+.mobileCompanyParticles {
+  margin-top: 0.12rem;
+}
+
+.mobileTodayDivider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: -0.25rem 0 1.25rem;
+}
+
+.mobileTodayLabel {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.56;
+  flex-shrink: 0;
+}
+
+.mobileTodayRule {
+  flex: 1;
+  height: 0;
+  border-top: 1px dashed var(--ink);
+  opacity: 0.28;
+}
+
 .mobileNodeDot {
   position: absolute;
   left: -1.9rem;
@@ -615,8 +687,7 @@
   transform: translate(1px, -50%) rotate(45deg);
 }
 
-.mobileNodeDot.nodeShapeCommit,
-.mobileNodeDot.nodeShapeHead {
+.mobileNodeDot.nodeShapeCommit {
   border-radius: 50%;
 }
 
@@ -663,18 +734,19 @@
 
 /* Respect reduced motion across all CSS transitions/animations */
 @media (prefers-reduced-motion: reduce) {
-  .headPulseDot {
-    animation: none;
-  }
-
   .branchLabel,
   .milestoneAnnotation,
   .milestoneGroup,
   .nodeMarker,
   .edgePath,
   .calloutSvgGroup,
+  .todaySvgGroup,
+  .futureSvgGroup,
   .minimapDot,
-  .jumpBtn {
+  .jumpBtn,
+  .mobileItemReceded .mobileAnnotation,
+  .mobileFutureAnnotation {
     transition: none;
+    animation: none;
   }
 }

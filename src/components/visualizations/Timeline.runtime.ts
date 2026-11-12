@@ -96,6 +96,17 @@ export interface TimelineLayoutOptions {
   cardHeight?: number;
 }
 
+export interface TimelineFutureAnchor {
+  branchId: TimelineBranchId;
+  color: string;
+  inkColor: string;
+  fromX: number;
+  x: number;
+  y: number;
+  cardPlacement: "above" | "below";
+  cardRect: TimelineRect;
+}
+
 export interface TimelineHorizontalLayout {
   width: number;
   height: number;
@@ -111,6 +122,7 @@ export interface TimelineHorizontalLayout {
   nodes: TimelineMilestoneNode[];
   edges: TimelineEdgeGeometry[];
   ticks: TimelineYearTick[];
+  futureAnchors: Record<TimelineBranchId, TimelineFutureAnchor>;
 }
 
 export interface TimelineViewportRect {
@@ -441,7 +453,7 @@ export const createTimelineHorizontalLayout = (
 
   const presentX = toX(options.currentDecimalYear);
   const maxContentX = Math.max(presentX, toX(maxYear));
-  const width = maxContentX + endPadding;
+  const width = Math.max(maxContentX + endPadding, presentX + 340);
 
   const milestoneCommits = repository.commits
     .filter(
@@ -475,15 +487,7 @@ export const createTimelineHorizontalLayout = (
     count: countByBranch[id],
   }));
 
-  // Reserve a small clearance zone around the HEAD pill at top-right of Present
-  const headReservedRect: TimelineRect = {
-    x: presentX - 58,
-    y: 4,
-    width: 116,
-    height: 26,
-  };
-
-  const placedCardRects: TimelineRect[] = [headReservedRect];
+  const placedCardRects: TimelineRect[] = [];
 
   const headTargetId =
     milestoneCommits.find(({ commit }) =>
@@ -648,10 +652,6 @@ export const createTimelineHorizontalLayout = (
       }
     }
 
-    if (presentX >= rect.x - 8 && presentX <= rect.x + rect.width + 8) {
-      penalty += 40;
-    }
-
     return penalty;
   };
 
@@ -766,6 +766,66 @@ export const createTimelineHorizontalLayout = (
     };
   });
 
+  const buildFutureAnchor = (branchId: TimelineBranchId): TimelineFutureAnchor => {
+    const style = TIMELINE_BRANCH_STYLE[branchId];
+    const branchNodes = nodes.filter((n) => n.branchId === branchId);
+    const lastNode = branchNodes[branchNodes.length - 1];
+    const laneY = laneYMap[branchId];
+    const cardPlacement: "above" | "below" =
+      branchId === "work" ? "below" : "above";
+    const cardY =
+      cardPlacement === "above"
+        ? Math.max(8, laneY - CARD_STEM_HEIGHT - cardHeight)
+        : Math.min(axisY - cardHeight - 10, laneY + CARD_STEM_HEIGHT);
+
+    // Clear any existing card occupying this vertical shelf band on the same branch or adjacent space
+    const shelfBlockerMaxRight = nodes
+      .filter((n) => {
+        const yOverlap =
+          n.cardRect.y < cardY + cardHeight + 8 &&
+          n.cardRect.y + n.cardRect.height + 8 > cardY;
+        return yOverlap;
+      })
+      .reduce((acc, n) => Math.max(acc, n.cardRect.x + n.cardRect.width), 0);
+
+    const cardX = Math.max(presentX + 28, shelfBlockerMaxRight + 34);
+    const futureX = Math.max(presentX + 145, Math.round(cardX + cardWidth * 0.45));
+    const cardRect: TimelineRect = {
+      x: cardX,
+      y: cardY,
+      width: cardWidth,
+      height: cardHeight,
+    };
+
+    return {
+      branchId,
+      color: style.color,
+      inkColor: style.inkColor,
+      fromX: lastNode ? lastNode.x : Math.max(startX, presentX - 180),
+      x: futureX,
+      y: laneY,
+      cardPlacement,
+      cardRect,
+    };
+  };
+
+  const futureAnchors: Record<TimelineBranchId, TimelineFutureAnchor> = {
+    education: buildFutureAnchor("education"),
+    work: buildFutureAnchor("work"),
+    experiences: buildFutureAnchor("experiences"),
+  };
+
+  const finalWidth = Math.max(
+    width,
+    ...TIMELINE_BRANCH_ORDER.map(
+      (bId) =>
+        Math.max(
+          futureAnchors[bId].cardRect.x + futureAnchors[bId].cardRect.width + 36,
+          futureAnchors[bId].x + 120
+        )
+    )
+  );
+
   const ticks: TimelineYearTick[] = Array.from(
     { length: maxYear - minYear + 1 },
     (_, idx) => {
@@ -781,7 +841,7 @@ export const createTimelineHorizontalLayout = (
   );
 
   return {
-    width,
+    width: finalWidth,
     height,
     axisY,
     startX,
@@ -795,6 +855,7 @@ export const createTimelineHorizontalLayout = (
     nodes,
     edges,
     ticks,
+    futureAnchors,
   };
 };
 
