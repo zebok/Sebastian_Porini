@@ -655,7 +655,7 @@
 
 .mobileTodayLabel {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -711,21 +711,21 @@
 
 .branchInlineTag {
   font-family: var(--font-mono);
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
 .mobilePeriod {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 0.67rem;
+  font-size: 0.74rem;
   color: var(--ink-muted);
   white-space: nowrap;
 }
 
 .mobileRole {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: 1.14rem;
   font-weight: 700;
   line-height: 1.24;
   color: var(--ink);
