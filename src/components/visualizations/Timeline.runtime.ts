@@ -484,21 +484,30 @@ export const createTimelineHorizontalLayout = (
   };
 
   const placedCardRects: TimelineRect[] = [headReservedRect];
-  const workIndexByCommitId = new Map<string, number>();
-  let workCounter = 0;
-  milestoneCommits.forEach(({ commit, branchId }) => {
-    if (branchId === "work") {
-      workIndexByCommitId.set(commit.id, workCounter);
-      workCounter += 1;
-    }
-  });
 
   const headTargetId =
     milestoneCommits.find(({ commit }) =>
       /present|presente|hoy|today|heute/i.test(commit.period)
     )?.commit.id ?? lastIdByBranch.work ?? null;
 
-  const nodes: TimelineMilestoneNode[] = milestoneCommits.map(
+  interface MilestoneDraft {
+    commit: LocalizedCareerRepository["commits"][number];
+    branchId: TimelineBranchId;
+    decimalYear: number;
+    style: { color: string; inkColor: string; rgb: TimelineRgb };
+    x: number;
+    y: number;
+    spanStartYear: number | null;
+    spanEndYear: number | null;
+    spanStartX: number | null;
+    spanEndX: number | null;
+    isOrigin: boolean;
+    isHead: boolean;
+    isBranchEnd: boolean;
+  }
+
+  // 1. Precompute branch node anchors so cross-branch curves can inform card placement
+  const drafts: MilestoneDraft[] = milestoneCommits.map(
     ({ commit, branchId, decimalYear }, index) => {
       const style = TIMELINE_BRANCH_STYLE[branchId];
       const x = toX(decimalYear);
@@ -516,105 +525,17 @@ export const createTimelineHorizontalLayout = (
           ? toX(clampedEnd)
           : null;
 
-      // Preferred side per lane:
-      // - education: always above
-      // - experiences: always above (well clear of time axis)
-      // - work: alternates above/below so dense 2023-2026 transitions never overlap
-      let preferredSide: "above" | "below" = "above";
-      if (branchId === "work") {
-        const wIdx = workIndexByCommitId.get(commit.id) ?? 0;
-        preferredSide = wIdx % 2 === 0 ? "above" : "below";
-      }
-
-      const buildCardRect = (
-        side: "above" | "below",
-        offsetX: number
-      ): TimelineRect => ({
-        x: Math.max(12, Math.min(width - cardWidth - 16, x + offsetX)),
-        y:
-          side === "above"
-            ? Math.max(8, y - CARD_STEM_HEIGHT - cardHeight)
-            : Math.min(axisY - cardHeight - 10, y + CARD_STEM_HEIGHT),
-        width: cardWidth,
-        height: cardHeight,
-      });
-
-      const candidateSides: ("above" | "below")[] =
-        branchId === "work"
-          ? [preferredSide, preferredSide === "above" ? "below" : "above"]
-          : [preferredSide, "below"];
-      const candidateOffsets = [
-        CARD_ANCHOR_OFFSET,
-        -cardWidth + 32,
-        -cardWidth / 2,
-        20,
-      ];
-
-      let chosenSide = preferredSide;
-      let chosenRect = buildCardRect(preferredSide, CARD_ANCHOR_OFFSET);
-      let placed = false;
-
-      for (const side of candidateSides) {
-        for (const offset of candidateOffsets) {
-          const candidate = buildCardRect(side, offset);
-          const collidesWithCard = placedCardRects.some((r) =>
-            rectsOverlap(candidate, r)
-          );
-          // Also ensure cards do not sit directly on top of another branch's horizontal line
-          const crossesOtherLane = TIMELINE_BRANCH_ORDER.some((otherId) => {
-            if (otherId === branchId) return false;
-            const otherY = laneYMap[otherId];
-            return otherY >= candidate.y - 4 && otherY <= candidate.y + candidate.height + 4;
-          });
-          if (!collidesWithCard && !crossesOtherLane) {
-            chosenSide = side;
-            chosenRect = candidate;
-            placed = true;
-            break;
-          }
-        }
-        if (placed) break;
-      }
-
-      // Final nudge fallback if all candidates collided
-      if (!placed) {
-        let shift = 0;
-        while (
-          placedCardRects.some((r) => rectsOverlap(chosenRect, r)) &&
-          shift < 420
-        ) {
-          shift += 36;
-          chosenRect = buildCardRect(chosenSide, CARD_ANCHOR_OFFSET + shift);
-        }
-      }
-
-      placedCardRects.push(chosenRect);
-
       return {
-        id: commit.id,
-        sha: commit.sha,
-        kind: commit.kind as Exclude<CareerCommitKind, "milestone">,
+        commit,
         branchId,
-        color: style.color,
-        inkColor: style.inkColor,
-        title: commit.title,
-        organization: commit.organization ?? "",
-        period: commit.period,
-        summary: commit.summary,
-        details:
-          commit.details && commit.details.length > 0
-            ? commit.details
-            : [commit.summary],
         decimalYear,
+        style,
+        x,
+        y,
         spanStartYear: clampedStart,
         spanEndYear: clampedEnd,
         spanStartX,
         spanEndX,
-        x,
-        y,
-        cardPlacement: chosenSide,
-        cardRect: chosenRect,
-        stemHeight: CARD_STEM_HEIGHT,
         isOrigin: index === 0,
         isHead: commit.id === headTargetId,
         isBranchEnd: lastIdByBranch[branchId] === commit.id,
@@ -622,7 +543,7 @@ export const createTimelineHorizontalLayout = (
     }
   );
 
-  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const draftById = new Map(drafts.map((d) => [d.commit.id, d]));
   const edges: TimelineEdgeGeometry[] = [];
   const edgeKeys = new Set<string>();
 
@@ -632,8 +553,8 @@ export const createTimelineHorizontalLayout = (
     kind: TimelineEdgeKind,
     overrideP0?: TimelinePoint
   ) => {
-    const source = nodeById.get(sourceId);
-    const target = nodeById.get(targetId);
+    const source = draftById.get(sourceId);
+    const target = draftById.get(targetId);
     if (!source || !target) return;
     const key = `${sourceId}->${targetId}`;
     if (edgeKeys.has(key)) return;
@@ -653,23 +574,22 @@ export const createTimelineHorizontalLayout = (
     );
   };
 
-  // 1. Sequential continuity along each branch
+  // Sequential continuity along each branch
   TIMELINE_BRANCH_ORDER.forEach((branchId) => {
-    const branchNodes = nodes.filter((n) => n.branchId === branchId);
-    for (let i = 0; i < branchNodes.length - 1; i += 1) {
+    const branchDrafts = drafts.filter((d) => d.branchId === branchId);
+    for (let i = 0; i < branchDrafts.length - 1; i += 1) {
       // Education spans 10 years with DevBorn/work happening in between; connect via fork/merge instead of a flat 10-year jump
       if (branchId === "education") continue;
-      pushEdge(branchNodes[i].id, branchNodes[i + 1].id, "continuity");
+      pushEdge(branchDrafts[i].commit.id, branchDrafts[i + 1].commit.id, "continuity");
     }
   });
 
-  // 2. Authentic career fork & merge transitions across the 3 branches
-  // Respect authored cross-branch parent links among visible milestones
+  // Authentic career fork & merge transitions across the 3 branches
   milestoneCommits.forEach(({ commit }) => {
     commit.parents.forEach((parent) => {
-      if (nodeById.has(parent.id)) {
-        const src = nodeById.get(parent.id)!;
-        const dst = nodeById.get(commit.id)!;
+      if (draftById.has(parent.id)) {
+        const src = draftById.get(parent.id)!;
+        const dst = draftById.get(commit.id)!;
         if (src.branchId === dst.branchId) return;
         pushEdge(
           parent.id,
@@ -681,17 +601,17 @@ export const createTimelineHorizontalLayout = (
   });
 
   // Connect DevBorn -> UADE (started 2021 while working) & UADE (2026) -> GEA (2026 Present)
-  const devborn = nodeById.get("devborn-operations-automation");
-  const uade = nodeById.get("it-management-degree");
-  const gea = nodeById.get("gea-backend-api-delivery");
+  const devborn = draftById.get("devborn-operations-automation");
+  const uade = draftById.get("it-management-degree");
+  const gea = draftById.get("gea-backend-api-delivery");
   if (devborn && uade) {
     const uadeStartX = uade.spanStartX ?? toX(2021.2);
     // Fork upward from work lane around 2021 to the start of the UADE education span
     edges.push(
       buildCurveGeometry(
         "edge-devborn-uade-start",
-        devborn.id,
-        uade.id,
+        devborn.commit.id,
+        uade.commit.id,
         "work",
         "education",
         "fork",
@@ -701,8 +621,150 @@ export const createTimelineHorizontalLayout = (
     );
   }
   if (uade && gea) {
-    pushEdge(uade.id, gea.id, "merge");
+    pushEdge(uade.commit.id, gea.commit.id, "merge");
   }
+
+  // Cross-branch curve sample points used to score candidate card positions cleanly
+  const crossBranchEdges = edges.filter((edge) => edge.kind !== "continuity");
+  const scoreCardIntersections = (rect: TimelineRect): number => {
+    const padX = 10;
+    const padY = 8;
+    let penalty = 0;
+
+    for (const edge of crossBranchEdges) {
+      let edgeHits = 0;
+      for (const pt of edge.points) {
+        if (
+          pt.x >= rect.x - padX &&
+          pt.x <= rect.x + rect.width + padX &&
+          pt.y >= rect.y - padY &&
+          pt.y <= rect.y + rect.height + padY
+        ) {
+          edgeHits += 1;
+        }
+      }
+      if (edgeHits > 0) {
+        penalty += 120 + edgeHits * 12;
+      }
+    }
+
+    if (presentX >= rect.x - 8 && presentX <= rect.x + rect.width + 8) {
+      penalty += 40;
+    }
+
+    return penalty;
+  };
+
+  // 2. Collision-free card placement choosing positions clear of cross-branch curves & HEAD line
+  const lastPlacedSideByBranch: Partial<Record<TimelineBranchId, "above" | "below">> = {};
+  const nodes: TimelineMilestoneNode[] = drafts.map((draft) => {
+    const { commit, branchId, x, y } = draft;
+
+    const buildCardRect = (
+      side: "above" | "below",
+      offsetX: number
+    ): TimelineRect => ({
+      x: Math.max(12, Math.min(width - cardWidth - 16, x + offsetX)),
+      y:
+        side === "above"
+          ? Math.max(8, y - CARD_STEM_HEIGHT - cardHeight)
+          : Math.min(axisY - cardHeight - 10, y + CARD_STEM_HEIGHT),
+      width: cardWidth,
+      height: cardHeight,
+    });
+
+    let preferredSide: "above" | "below" = "above";
+    if (branchId === "work") {
+      const prevSide = lastPlacedSideByBranch[branchId];
+      preferredSide = prevSide === "above" ? "below" : "above";
+    }
+
+    const candidateSides: ("above" | "below")[] =
+      branchId === "work"
+        ? [preferredSide, preferredSide === "above" ? "below" : "above"]
+        : [preferredSide, "below"];
+    const candidateOffsets = [
+      CARD_ANCHOR_OFFSET,
+      -cardWidth + 32,
+      -cardWidth / 2,
+      20,
+      -cardWidth + 16,
+    ];
+
+    let chosenSide = preferredSide;
+    let chosenRect = buildCardRect(preferredSide, CARD_ANCHOR_OFFSET);
+    let bestScore = Number.POSITIVE_INFINITY;
+    let placed = false;
+
+    candidateSides.forEach((side, sideRank) => {
+      candidateOffsets.forEach((offset, offsetRank) => {
+        const candidate = buildCardRect(side, offset);
+        const collidesWithCard = placedCardRects.some((r) =>
+          rectsOverlap(candidate, r)
+        );
+        const crossesOtherLane = TIMELINE_BRANCH_ORDER.some((otherId) => {
+          if (otherId === branchId) return false;
+          const otherY = laneYMap[otherId];
+          return otherY >= candidate.y - 4 && otherY <= candidate.y + candidate.height + 4;
+        });
+        if (collidesWithCard || crossesOtherLane) return;
+
+        const score =
+          scoreCardIntersections(candidate) + sideRank * 8 + offsetRank * 2;
+        if (score < bestScore) {
+          bestScore = score;
+          chosenSide = side;
+          chosenRect = candidate;
+          placed = true;
+        }
+      });
+    });
+
+    // Final nudge fallback if all candidates collided
+    if (!placed) {
+      let shift = 0;
+      while (
+        placedCardRects.some((r) => rectsOverlap(chosenRect, r)) &&
+        shift < 420
+      ) {
+        shift += 36;
+        chosenRect = buildCardRect(chosenSide, CARD_ANCHOR_OFFSET + shift);
+      }
+    }
+
+    placedCardRects.push(chosenRect);
+    lastPlacedSideByBranch[branchId] = chosenSide;
+
+    return {
+      id: commit.id,
+      sha: commit.sha,
+      kind: commit.kind as Exclude<CareerCommitKind, "milestone">,
+      branchId,
+      color: draft.style.color,
+      inkColor: draft.style.inkColor,
+      title: commit.title,
+      organization: commit.organization ?? "",
+      period: commit.period,
+      summary: commit.summary,
+      details:
+        commit.details && commit.details.length > 0
+          ? commit.details
+          : [commit.summary],
+      decimalYear: draft.decimalYear,
+      spanStartYear: draft.spanStartYear,
+      spanEndYear: draft.spanEndYear,
+      spanStartX: draft.spanStartX,
+      spanEndX: draft.spanEndX,
+      x,
+      y,
+      cardPlacement: chosenSide,
+      cardRect: chosenRect,
+      stemHeight: CARD_STEM_HEIGHT,
+      isOrigin: draft.isOrigin,
+      isHead: draft.isHead,
+      isBranchEnd: draft.isBranchEnd,
+    };
+  });
 
   const ticks: TimelineYearTick[] = Array.from(
     { length: maxYear - minYear + 1 },

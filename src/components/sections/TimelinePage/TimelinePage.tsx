@@ -766,6 +766,46 @@ export default function TimelinePage({
               viewBox={`0 0 ${layout.width} ${layout.height}`}
               aria-hidden="true"
             >
+              <defs>
+                <filter
+                  id="timeline-edge-mask-blur"
+                  x="-10%"
+                  y="-10%"
+                  width="120%"
+                  height="120%"
+                >
+                  <feGaussianBlur stdDeviation="5" />
+                </filter>
+                <mask
+                  id="timeline-edge-clear-mask"
+                  maskUnits="userSpaceOnUse"
+                  x={0}
+                  y={0}
+                  width={layout.width}
+                  height={layout.height}
+                >
+                  <rect
+                    x={0}
+                    y={0}
+                    width={layout.width}
+                    height={layout.height}
+                    fill="#ffffff"
+                  />
+                  <g filter="url(#timeline-edge-mask-blur)">
+                    {layout.nodes.map((node) => (
+                      <rect
+                        key={`edge-mask-${node.id}`}
+                        x={node.cardRect.x - 10}
+                        y={node.cardRect.y - 6}
+                        width={node.cardRect.width + 20}
+                        height={node.cardRect.height + 12}
+                        rx={12}
+                        fill="#000000"
+                      />
+                    ))}
+                  </g>
+                </mask>
+              </defs>
               {/* Faint lane guide lines */}
               {layout.branches.map((branch) => {
                 const isDimmed =
@@ -831,35 +871,47 @@ export default function TimelinePage({
                 );
               })}
 
-              {/* Continuity & Cross-branch Fork / Merge Curves */}
-              {layout.edges.map((edge) => {
-                const highlighted = isEdgeHighlighted(
-                  edge.sourceId,
-                  edge.targetId,
-                  edge.fromBranchId,
-                  edge.toBranchId
-                );
-                const dimmed = isEdgeDimmed(
-                  edge.sourceId,
-                  edge.targetId,
-                  edge.fromBranchId,
-                  edge.toBranchId
-                );
+              {/* Masked Group: Present vertical marker + Continuity & Cross-branch Curves softly avoid milestone text */}
+              <g mask="url(#timeline-edge-clear-mask)">
+                <line
+                  x1={layout.presentX}
+                  y1={26}
+                  x2={layout.presentX}
+                  y2={layout.axisY}
+                  stroke="var(--accent)"
+                  strokeWidth={1}
+                  strokeDasharray="3 4"
+                  opacity={0.3}
+                />
+                {layout.edges.map((edge) => {
+                  const highlighted = isEdgeHighlighted(
+                    edge.sourceId,
+                    edge.targetId,
+                    edge.fromBranchId,
+                    edge.toBranchId
+                  );
+                  const dimmed = isEdgeDimmed(
+                    edge.sourceId,
+                    edge.targetId,
+                    edge.fromBranchId,
+                    edge.toBranchId
+                  );
 
-                return (
-                  <path
-                    key={edge.id}
-                    d={edge.path}
-                    fill="none"
-                    stroke={edge.color}
-                    strokeWidth={highlighted ? 2.1 : 1.5}
-                    strokeDasharray={edge.kind === "merge" ? "5 4" : undefined}
-                    strokeLinecap="round"
-                    opacity={dimmed ? 0.1 : highlighted ? 0.9 : 0.26}
-                    className={styles.edgePath}
-                  />
-                );
-              })}
+                  return (
+                    <path
+                      key={edge.id}
+                      d={edge.path}
+                      fill="none"
+                      stroke={edge.color}
+                      strokeWidth={highlighted ? 2.1 : 1.5}
+                      strokeDasharray={edge.kind === "merge" ? "5 4" : undefined}
+                      strokeLinecap="round"
+                      opacity={dimmed ? 0.1 : highlighted ? 0.9 : 0.3}
+                      className={styles.edgePath}
+                    />
+                  );
+                })}
+              </g>
 
               {/* Minimal Diagonal Pointer Stems connecting branch nodes to borderless annotations */}
               {layout.nodes.map((node) => {
@@ -894,15 +946,7 @@ export default function TimelinePage({
               })}
             </svg>
 
-            {/* Present / HEAD Vertical Marker */}
-            <div
-              className={styles.presentLine}
-              style={{
-                left: `${layout.presentX}px`,
-                height: `${layout.axisY - 26}px`,
-              }}
-              aria-hidden="true"
-            />
+            {/* Present / HEAD Pill */}
             <div
               className={styles.headBadge}
               style={{ left: `${layout.presentX}px` }}

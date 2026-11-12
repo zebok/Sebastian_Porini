@@ -164,17 +164,7 @@
   transition: opacity 0.24s ease, stroke-width 0.24s ease;
 }
 
-/* Present / HEAD Vertical Marker */
-.presentLine {
-  position: absolute;
-  top: 26px;
-  width: 0;
-  border-left: 1px dashed var(--accent);
-  opacity: 0.26;
-  pointer-events: none;
-  z-index: 3;
-}
-
+/* Present / HEAD Pill Badge */
 .headBadge {
   position: absolute;
   top: 6px;
