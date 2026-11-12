@@ -80,7 +80,7 @@ export const getCareerRepositoryReferenceErrors = (content: unknown): string[] =
   if (!isRecord(headIdentity)) {
     errors.push("content.careerRepository.headIdentity must be a localized object");
   } else {
-    (["en", "es", "de"] as const).forEach((language) => {
+    (["en", "es"] as const).forEach((language) => {
       if (
         typeof headIdentity[language] !== "string" ||
         headIdentity[language].trim().length === 0

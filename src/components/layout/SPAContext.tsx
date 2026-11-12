@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 import type { ConstructionMode } from "../effects/renderers/ConstructionParticleRenderer";
 
-export type SectionType = "how-am-i" | "skills" | "timeline" | "projects";
+export type SectionType = "about" | "skills" | "timeline" | "projects";
 
 interface SPAContextProps {
   activeSection: SectionType;

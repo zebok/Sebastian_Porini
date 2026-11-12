@@ -53,10 +53,6 @@ export interface LocalizedPersonalInfo {
   name: string;
   tagline: string;
   description: string;
-  story: {
-    title: string;
-    paragraphs: string[];
-  };
   focus: {
     circle1: LocalizedFocusCircleItem;
     circle2: LocalizedFocusCircleItem;
@@ -68,11 +64,7 @@ export interface LocalizedPersonalInfo {
   };
   contactDetails: {
     fullName: string;
-    dob: string;
-    nationality: string;
-    workModes: string;
     location: string;
-    status: string;
     email: string;
     github: string;
     linkedin: string;
@@ -83,16 +75,8 @@ export interface LocalizedPersonalInfo {
 export interface LocalizedPortfolioData {
   personal: LocalizedPersonalInfo;
   ui: Dictionary;
-  identity: {
-    radarProfile: { axis: string; value: number }[];
-  };
   brain: BrainViewModel;
   careerRepository: LocalizedCareerRepository;
-  contact: {
-    openTo: string[];
-    superpower: string;
-    passion: string;
-  };
   projects: LocalizedProject[];
 }
 
@@ -112,18 +96,17 @@ export interface LocalizedProject {
 export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => {
   const raw = getPortfolioData();
   const locale = lang.trim().toLowerCase().split(/[-_]/)[0];
-  const languageKey: "en" | "es" | "de" =
-    locale === "es" || locale === "de" ? locale : "en";
+  const languageKey: "en" | "es" = locale === "es" ? "es" : "en";
 
   const get = <T>(
-    obj: { en: T; es: T; de?: T } | undefined | null
+    obj: { en: T; es: T } | undefined | null
   ): T => {
     if (!obj) return undefined as unknown as T;
     return obj[languageKey] ?? obj.en;
   };
 
   const getList = (
-    obj: { en: string[]; es: string[]; de?: string[] } | undefined | null
+    obj: { en: string[]; es: string[] } | undefined | null
   ): string[] => {
     if (!obj) return [];
     return obj[languageKey] ?? obj.en;
@@ -133,12 +116,12 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
     title: get(c.title),
     description: get(c.description),
     items: c.items.map((it: LocalizedString) => get(it)),
-    tags: c.tags ? c.tags.map((it: LocalizedString) => get(it)) : undefined
+    tags: c.tags ? c.tags.map((it: LocalizedString) => get(it)) : undefined,
   });
 
   const mapIntersection = (c: FocusIntersectionItem): LocalizedFocusIntersectionItem => ({
     title: get(c.title),
-    items: c.items.map((it: LocalizedString) => get(it))
+    items: c.items.map((it: LocalizedString) => get(it)),
   });
 
   return {
@@ -146,10 +129,6 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
       name: raw.personal.name,
       tagline: get(raw.personal.tagline),
       description: get(raw.personal.description),
-      story: {
-        title: get(raw.personal.story.title),
-        paragraphs: raw.personal.story.paragraphs.map(p => get(p))
-      },
       focus: {
         circle1: mapCircle(raw.personal.focus.circle1),
         circle2: mapCircle(raw.personal.focus.circle2),
@@ -161,16 +140,12 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
       },
       contactDetails: {
         fullName: raw.personal.contactDetails.fullName,
-        dob: get(raw.personal.contactDetails.dob),
-        nationality: get(raw.personal.contactDetails.nationality),
-        workModes: get(raw.personal.contactDetails.workModes),
         location: raw.personal.contactDetails.location,
-        status: get(raw.personal.contactDetails.status),
         email: raw.personal.contactDetails.email,
         github: raw.personal.contactDetails.github,
         linkedin: raw.personal.contactDetails.linkedin,
         cvPath: get(raw.personal.contactDetails.cvPath),
-      }
+      },
     },
     ui: {
       nav: {
@@ -186,20 +161,10 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
       },
       footer: {
         tagline: get(raw.ui.footer.tagline),
-        rights: get(raw.ui.footer.rights),
-      },
-      radar: {
-        curiosity: get(raw.ui.radar.curiosity),
-        observation: get(raw.ui.radar.observation),
-        structure: get(raw.ui.radar.structure),
-        chaosMgmt: get(raw.ui.radar.chaosMgmt),
-        bureaucracy: get(raw.ui.radar.bureaucracy),
-        formalism: get(raw.ui.radar.formalism),
       },
       whoAmI: {
         title: get(raw.ui.whoAmI.title),
         subtitle: get(raw.ui.whoAmI.subtitle),
-        chartTitle: get(raw.ui.whoAmI.chartTitle),
       },
       skills: {
         title: get(raw.ui.skills.title),
@@ -268,13 +233,7 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
         closeDetails: get(raw.ui.projects.closeDetails),
         keyHighlights: get(raw.ui.projects.keyHighlights),
         noProjects: get(raw.ui.projects.noProjects),
-      }
-    },
-    identity: {
-      radarProfile: raw.identity.radarProfile.map((p) => ({
-        axis: p.axis,
-        value: p.value,
-      })),
+      },
     },
     brain: createBrainViewModel(raw, lang),
     careerRepository: {
@@ -308,22 +267,19 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
       })),
       refs: raw.careerRepository.refs.map((ref) => ({ ...ref })),
     },
-    contact: {
-      openTo: getList(raw.contact.openTo),
-      superpower: get(raw.contact.superpower),
-      passion: get(raw.contact.passion),
-    },
-    projects: raw.projects ? raw.projects.map((p) => ({
-      id: p.id,
-      title: get(p.title),
-      description: get(p.description),
-      category: p.category,
-      projectType: p.projectType,
-      tags: p.tags,
-      highlights: getList(p.highlights),
-      featured: p.featured,
-      demoUrl: p.demoUrl,
-      codeUrl: p.codeUrl,
-    })) : [],
+    projects: raw.projects
+      ? raw.projects.map((p) => ({
+          id: p.id,
+          title: get(p.title),
+          description: get(p.description),
+          category: p.category,
+          projectType: p.projectType,
+          tags: p.tags,
+          highlights: getList(p.highlights),
+          featured: p.featured,
+          demoUrl: p.demoUrl,
+          codeUrl: p.codeUrl,
+        }))
+      : [],
   };
 });

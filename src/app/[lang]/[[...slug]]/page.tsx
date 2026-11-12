@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SPALayout from "@/components/layout/SPALayout";
 import { getDictionary } from "@/lib/i18n";
 import { getLocalizedData } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import { SectionType } from "@/components/layout/SPAContext";
 
 interface PageProps {
@@ -14,14 +15,14 @@ interface PageProps {
 // Generate static routes at build time for optimal performance and SEO
 export async function generateStaticParams() {
   const paths: { lang: string; slug?: string[] }[] = [];
-  const locales = ["en", "es", "de"];
-  const sections = ["how-am-i", "skills", "timeline", "projects"];
+  const locales = ["en", "es"];
+  const sections = ["about", "skills", "timeline", "projects"];
 
   for (const lang of locales) {
-    // Index path (home) /en, /es, /de
+    // Index path (home) /en, /es
     paths.push({ lang, slug: undefined });
-    
-    // Sub-routes /en/skills, /es/projects, /de/timeline etc.
+
+    // Sub-routes /en/about, /es/projects, /en/timeline etc.
     for (const section of sections) {
       paths.push({ lang, slug: [section] });
     }
@@ -32,20 +33,20 @@ export async function generateStaticParams() {
 // Dynamic SEO metadata based on active path
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const lang = resolvedParams?.lang || "en";
+  const lang = resolvedParams?.lang === "es" ? "es" : "en";
   const slug = resolvedParams?.slug;
-  const section = slug && slug.length > 0 ? (slug[0] as SectionType) : "how-am-i";
+  const section = slug && slug.length > 0 ? (slug[0] as SectionType) : "about";
 
   const data = getLocalizedData(lang);
   const dict = getDictionary(lang);
   const name = data.personal.name;
 
-  let title = name;
+  let title = `${name} — ${data.personal.tagline}`;
   let description = data.personal.description;
 
   if (slug && slug.length > 0) {
     switch (section) {
-      case "how-am-i":
+      case "about":
         title = `${dict.whoAmI.title} — ${name}`;
         description = dict.whoAmI.subtitle;
         break;
@@ -65,23 +66,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const sectionPath = slug && slug.length > 0 ? `/${slug[0]}` : "";
-  const localeString = lang === "es" ? "es_AR" : lang === "de" ? "de_DE" : "en_US";
+  const localeString = lang === "es" ? "es_AR" : "en_US";
 
   return {
     title,
     description,
     alternates: {
-      canonical: `https://sebastianporini.com/${lang}${sectionPath}`,
+      canonical: `${SITE_URL}/${lang}${sectionPath}`,
       languages: {
-        en: `https://sebastianporini.com/en${sectionPath}`,
-        es: `https://sebastianporini.com/es${sectionPath}`,
-        de: `https://sebastianporini.com/de${sectionPath}`,
+        en: `${SITE_URL}/en${sectionPath}`,
+        es: `${SITE_URL}/es${sectionPath}`,
       },
     },
     openGraph: {
       title,
       description,
-      url: `https://sebastianporini.com/${lang}${sectionPath}`,
+      url: `${SITE_URL}/${lang}${sectionPath}`,
       locale: localeString,
       type: "website",
     },
@@ -90,11 +90,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CatchAllEntry({ params }: PageProps) {
   const resolvedParams = await params;
-  const lang = resolvedParams?.lang || "en";
+  const lang = resolvedParams?.lang === "es" ? "es" : "en";
   const slug = resolvedParams?.slug;
-  
-  // Set initialSection based on slug parameter (how-am-i is fallback)
-  const initialSection = slug && slug.length > 0 ? (slug[0] as SectionType) : "how-am-i";
+
+  const initialSection: SectionType =
+    slug && slug.length > 0 && ["about", "skills", "timeline", "projects"].includes(slug[0])
+      ? (slug[0] as SectionType)
+      : "about";
 
   const dict = getDictionary(lang);
   const data = getLocalizedData(lang);

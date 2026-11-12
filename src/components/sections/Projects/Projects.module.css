@@ -222,6 +222,7 @@
 
 /* Card layout styles */
 .card {
+  position: relative;
   background-color: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--border-radius);
@@ -349,6 +350,12 @@
   align-items: center;
   gap: 0.25rem;
   transition: color 0.2s ease;
+}
+
+.moreInfoBtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 .moreInfoBtn:hover {

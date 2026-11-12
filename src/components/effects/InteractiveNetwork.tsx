@@ -499,7 +499,7 @@ export default function InteractiveNetwork({
 
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const nodesRef = useRef<NetworkNode[]>([]);
-  const sectionRef = useRef<SectionType>("how-am-i");
+  const sectionRef = useRef<SectionType>("about");
   const firingsRef = useRef<BrainFiring[]>([]);
   const brainSignalsRef = useRef<BrainConnectionSignal[]>([]);
 
@@ -734,7 +734,7 @@ export default function InteractiveNetwork({
 
       const vennCenters = vennCentersRef.current;
 
-      if (section === "how-am-i") {
+      if (section === "about") {
         const c0 = document.getElementById("venn-circle-0");
         const c1 = document.getElementById("venn-circle-1");
         const c2 = document.getElementById("venn-circle-2");
@@ -749,7 +749,7 @@ export default function InteractiveNetwork({
       }
 
       switch (section) {
-        case "how-am-i": {
+        case "about": {
           const currentSpa = spaRef.current;
           setVennTargets(
             nodes,
@@ -874,10 +874,10 @@ export default function InteractiveNetwork({
         const circleGroup = node.group;
         const startIdx = circleGroup === 0 ? 0 : circleGroup === 1 ? 66 : 132;
         const groupLocal = i - startIdx;
-        const isAnchorNode = section === "how-am-i" && selectedCircleIdx !== null && circleGroup === selectedCircleIdx && groupLocal >= 40 && groupLocal < 47;
+        const isAnchorNode = section === "about" && selectedCircleIdx !== null && circleGroup === selectedCircleIdx && groupLocal >= 40 && groupLocal < 47;
 
         let isStructural = false;
-        if (section === "how-am-i") {
+        if (section === "about") {
           isStructural = groupLocal < 40;
         } else if (section === "skills") {
           isStructural =
@@ -959,7 +959,7 @@ export default function InteractiveNetwork({
             });
           }
 
-          if (section === "how-am-i" && selectedCircleIdx === null) {
+          if (section === "about" && selectedCircleIdx === null) {
             const circle = vennCenters[node.group];
             const dx = node.x - circle.x;
             const dy = node.y - circle.y;
@@ -970,7 +970,7 @@ export default function InteractiveNetwork({
             }
           }
 
-          const isTitleAnchor = section === "how-am-i" && selectedCircleIdx !== null && node.group === selectedCircleIdx && groupLocal >= 44 && groupLocal < 47;
+          const isTitleAnchor = section === "about" && selectedCircleIdx !== null && node.group === selectedCircleIdx && groupLocal >= 44 && groupLocal < 47;
 
           if (mouse.active && !isTitleAnchor && section !== "skills") {
             const dx = mouse.x - node.x;
@@ -992,7 +992,7 @@ export default function InteractiveNetwork({
         ctx.globalAlpha = 0.62 + brainIntroIntensity * 0.38;
       }
 
-      if (section === "how-am-i") {
+      if (section === "about") {
         drawVennStructure(ctx, nodes, vennCenters, selectedCircleIdx, frameCount, globalDriftX, globalDriftY, animRef.current);
       } else if (section === "skills") {
         drawBrainStructure(
@@ -1037,7 +1037,7 @@ export default function InteractiveNetwork({
       // ─── GENERAL CONNECTIONS ──────────────────────────────────────────────
 
       const selectedSet = currentSpa?.selectedVennCircle ?? null;
-      const connectionDist = (section === "how-am-i" && selectedSet !== null) ? (w < 768 ? 130 : 170) : (w < 768 ? 85 : 120);
+      const connectionDist = (section === "about" && selectedSet !== null) ? (w < 768 ? 130 : 170) : (w < 768 ? 85 : 120);
       const connectionNodeCount =
         section === "skills" || section === "timeline"
           ? 0
@@ -1050,7 +1050,7 @@ export default function InteractiveNetwork({
           const n2 = nodes[j];
 
           // Skip drawing connection lines between boundary nodes ONLY when in idle 3-circle Venn state
-          if (section === "how-am-i" && selectedSet === null && i < 200 && j < 200 && n1.group === n2.group) {
+          if (section === "about" && selectedSet === null && i < 200 && j < 200 && n1.group === n2.group) {
             const groupIndex = n1.group;
             const startIdx = groupIndex === 0 ? 0 : groupIndex === 1 ? 66 : 132;
             const groupLocal1 = i - startIdx;
@@ -1059,7 +1059,7 @@ export default function InteractiveNetwork({
           }
 
           // FIX: Skip cross-group connection lines in selected mode to avoid visual clutter
-          if (section === "how-am-i" && selectedSet !== null && n1.group !== n2.group) {
+          if (section === "about" && selectedSet !== null && n1.group !== n2.group) {
             continue;
           }
 
@@ -1083,10 +1083,10 @@ export default function InteractiveNetwork({
             }
 
             let baseColor = THEME_COLORS.accent;
-            if ((section === "how-am-i" || section === "projects") && n1.group === n2.group) {
+            if ((section === "about" || section === "projects") && n1.group === n2.group) {
               baseColor = getGroupColor(n1.group, section);
             }
-            if (section === "how-am-i" && selectedSet !== null) {
+            if (section === "about" && selectedSet !== null) {
               if (n1.group !== selectedSet || n2.group !== selectedSet) {
                 alpha *= 0.35;
               }
@@ -1202,7 +1202,7 @@ export default function InteractiveNetwork({
           let alphaMultiplier = 1;
 
           let isStructural = false;
-          if (section === "how-am-i") {
+          if (section === "about") {
             const circleGroup = node.group;
             const startIdx =
               circleGroup === 0 ? 0 : circleGroup === 1 ? 66 : 132;
@@ -1213,7 +1213,7 @@ export default function InteractiveNetwork({
           const selectedVenn = currentSpa?.selectedVennCircle ?? null;
           const hoveredVenn = currentSpa?.hoveredVennCircle ?? null;
 
-          if (section === "how-am-i") {
+          if (section === "about") {
             if (selectedVenn !== null) {
               if (node.group === selectedVenn) {
                 const startIdx =
@@ -1323,7 +1323,7 @@ export default function InteractiveNetwork({
       mouseRef.current.active = true;
       if (
         renderPolicy.animateContinuously ||
-        sectionRef.current === "how-am-i"
+        sectionRef.current === "about"
       ) {
         requestRender();
       }
@@ -1333,7 +1333,7 @@ export default function InteractiveNetwork({
       mouseRef.current.active = false;
       if (
         renderPolicy.animateContinuously ||
-        sectionRef.current === "how-am-i"
+        sectionRef.current === "about"
       ) {
         requestRender();
       }

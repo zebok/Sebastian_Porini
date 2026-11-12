@@ -20,7 +20,6 @@ import {
   formatPeriodDuration,
   getCurrentDecimalYear,
   type TimelineBranchId,
-  type TimelineFutureAnchor,
   type TimelineMilestoneNode,
   type TimelineRuntime,
 } from "@/components/visualizations/Timeline.runtime";
@@ -35,10 +34,10 @@ interface TimelinePageProps {
   lang?: string;
 }
 
-type SupportedLocale = "es" | "en" | "de";
+type SupportedLocale = "es" | "en";
 
 const resolveLocale = (lang: string): SupportedLocale =>
-  lang === "es" || lang === "de" ? lang : "en";
+  lang === "es" ? "es" : "en";
 
 const formatCompactYears = (period: string, todayLabel: string): string => {
   const parts = period.split(/[-–—]/).map((p) => p.trim());
@@ -81,113 +80,6 @@ const getAnnotationGeometry = (node: AnnotationAnchorInput) => {
 
 const formatMilestoneTitle = (title: string): string =>
   title.replace(/\s*->\s*/g, " → ");
-
-interface FutureMetaParticlesProps {
-  color: string;
-  width: number;
-  height?: number;
-  count?: number;
-  seed?: number;
-  reducedMotion?: boolean;
-  className?: string;
-}
-
-/**
- * Renders a living swarm of floating micro-particles in place of undesignated
- * future company and time-horizon metadata.
- */
-function FutureMetaParticles({
-  color,
-  width,
-  height = 13,
-  count = 20,
-  seed = 1,
-  reducedMotion = false,
-  className,
-}: FutureMetaParticlesProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
-
-    // Deterministic seeded sequence so particles distribute naturally
-    let state = (seed * 9301 + 49297) % 233280;
-    const nextRand = () => {
-      state = (state * 9301 + 49297) % 233280;
-      return state / 233280;
-    };
-
-    const particles = Array.from({ length: count }, (_, idx) => {
-      const bandT = (idx + 0.5) / count;
-      const baseX = 4 + bandT * (width - 8) + (nextRand() - 0.5) * 5;
-      const baseY = height * (0.24 + nextRand() * 0.52);
-      return {
-        baseX: Math.max(3, Math.min(width - 3, baseX)),
-        baseY,
-        r: 1.0 + nextRand() * 1.25,
-        phase: nextRand() * Math.PI * 2,
-        speed: 0.0014 + nextRand() * 0.0014,
-        ampX: 1.4 + nextRand() * 2.0,
-        ampY: 1.0 + nextRand() * 1.6,
-        alpha: 0.56 + nextRand() * 0.4,
-      };
-    });
-
-    const drawFrame = (timeMs: number) => {
-      ctx.save();
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = color;
-
-      for (const p of particles) {
-        const t = reducedMotion ? 0 : timeMs * p.speed + p.phase;
-        const x = p.baseX + Math.sin(t) * p.ampX;
-        const y = p.baseY + Math.cos(t * 1.35) * p.ampY;
-        const edgeFade =
-          0.42 + 0.58 * Math.sin(Math.max(0.05, Math.min(0.95, x / width)) * Math.PI);
-        const pulse = reducedMotion ? 1 : 0.78 + 0.22 * Math.sin(t * 1.7 + p.phase);
-
-        ctx.globalAlpha = p.alpha * edgeFade * pulse;
-        ctx.beginPath();
-        ctx.arc(x, y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-    };
-
-    if (reducedMotion) {
-      drawFrame(0);
-      return;
-    }
-
-    let rafId = 0;
-    const tick = (now: number) => {
-      drawFrame(now);
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-
-    return () => cancelAnimationFrame(rafId);
-  }, [color, width, height, count, seed, reducedMotion]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      className={`${styles.metaParticleCanvas} ${className ?? ""}`}
-      style={{ width: `${width}px`, height: `${height}px` }}
-      aria-hidden="true"
-    />
-  );
-}
 
 export default function TimelinePage({
   dict,
@@ -455,30 +347,27 @@ export default function TimelinePage({
   }, [hoveredMilestoneId, layout.edges]);
 
   const focusBranch = hoveredBranchId ?? activeBranchId;
-  const activeFuture: TimelineFutureAnchor | null = activeBranchId
-    ? layout.futureAnchors[activeBranchId]
-    : null;
-  const activeFutureCopy = activeBranchId
-    ? copy.futureNodes[activeBranchId]
-    : null;
 
   const toggleBranch = useCallback(
     (branchId: TimelineBranchId) => {
       const next = activeBranchId === branchId ? null : branchId;
       setActiveBranchId(next);
       if (next !== null && !isMobile) {
-        const futureAnchor = layout.futureAnchors[next];
+        const lastBranchNode = layout.nodes
+          .filter((n) => n.branchId === next)
+          .at(-1);
         scrollToTrackX(
-          futureAnchor.x,
+          lastBranchNode?.x ?? layout.presentX,
           prefersReducedMotion ? "auto" : "smooth",
-          0.78
+          0.65
         );
       }
     },
     [
       activeBranchId,
       isMobile,
-      layout.futureAnchors,
+      layout.nodes,
+      layout.presentX,
       prefersReducedMotion,
       scrollToTrackX,
     ]
@@ -695,69 +584,6 @@ export default function TimelinePage({
 
           <div ref={mobileTimelineRef} className={styles.mobileTimeline}>
             <div className={styles.mobileLine} aria-hidden="true" />
-            {activeFuture && activeFutureCopy && (
-              <>
-                <article
-                  key={`mobile-future-${activeFuture.branchId}`}
-                  data-future-milestone="true"
-                  className={`${styles.mobileItem} ${styles.mobileItemFuture}`}
-                >
-                  <span
-                    className={`${styles.mobileNodeDot} ${styles.mobileNodeDotFuture}`}
-                    style={{
-                      borderColor: activeFuture.color,
-                      color: activeFuture.color,
-                    }}
-                    aria-hidden="true"
-                  />
-                  <span
-                    className={`${styles.mobileLeaderTick} ${styles.mobileLeaderTickFuture}`}
-                    style={{ backgroundColor: activeFuture.color }}
-                    aria-hidden="true"
-                  />
-                  <div
-                    className={`${styles.mobileAnnotation} ${styles.mobileFutureAnnotation}`}
-                  >
-                    <div className={styles.cardMetaRow}>
-                      <span
-                        className={styles.branchInlineTag}
-                        style={{ color: activeFuture.inkColor }}
-                      >
-                        {copy.branches[activeFuture.branchId]}
-                      </span>
-                      <FutureMetaParticles
-                        color="#64645d"
-                        width={46}
-                        height={13}
-                        count={12}
-                        seed={19}
-                        reducedMotion={prefersReducedMotion}
-                        className={styles.mobilePeriodParticles}
-                      />
-                    </div>
-                    <h3 className={styles.mobileRole}>
-                      {activeFutureCopy.title}
-                    </h3>
-                    <FutureMetaParticles
-                      color={activeFuture.inkColor}
-                      width={92}
-                      height={13}
-                      count={22}
-                      seed={7}
-                      reducedMotion={prefersReducedMotion}
-                      className={styles.mobileCompanyParticles}
-                    />
-                  </div>
-                </article>
-                <div
-                  className={styles.mobileTodayDivider}
-                  data-today-divider="true"
-                >
-                  <span className={styles.mobileTodayLabel}>{copy.today}</span>
-                  <span className={styles.mobileTodayRule} aria-hidden="true" />
-                </div>
-              </>
-            )}
             {mobileNodes.map((node) => {
               const duration = formatPeriodDuration(
                 node.period,
@@ -959,17 +785,6 @@ export default function TimelinePage({
                         fill="#000000"
                       />
                     ))}
-                    {activeFuture && (
-                      <rect
-                        key={`edge-mask-future-${activeFuture.branchId}`}
-                        x={activeFuture.cardRect.x - 10}
-                        y={activeFuture.cardRect.y - 6}
-                        width={activeFuture.cardRect.width + 20}
-                        height={activeFuture.cardRect.height + 12}
-                        rx={12}
-                        fill="#000000"
-                      />
-                    )}
                   </g>
                 </mask>
               </defs>
@@ -977,18 +792,12 @@ export default function TimelinePage({
               {layout.branches.map((branch) => {
                 const isDimmed =
                   focusBranch !== null && focusBranch !== branch.id;
-                const isExtendedFuture =
-                  activeFuture !== null && activeFuture.branchId === branch.id;
                 return (
                   <line
                     key={`lane-guide-${branch.id}`}
                     x1={24}
                     y1={branch.y}
-                    x2={
-                      isExtendedFuture
-                        ? layout.width - 36
-                        : layout.presentX + 18
-                    }
+                    x2={layout.presentX + 18}
                     y2={branch.y}
                     stroke={branch.color}
                     strokeWidth={1}
@@ -997,34 +806,6 @@ export default function TimelinePage({
                   />
                 );
               })}
-
-              {/* Conditional Today temporal divider (only when a branch is actively highlighted) */}
-              {activeFuture && (
-                <g
-                  className={styles.todaySvgGroup}
-                  data-today-divider="true"
-                >
-                  <line
-                    x1={layout.presentX}
-                    y1={24}
-                    x2={layout.presentX}
-                    y2={layout.axisY}
-                    stroke="var(--ink)"
-                    strokeWidth={1.15}
-                    strokeDasharray="4 5"
-                    strokeOpacity={0.34}
-                    mask="url(#timeline-edge-clear-mask)"
-                  />
-                  <text
-                    x={layout.presentX}
-                    y={15}
-                    textAnchor="middle"
-                    className={styles.todayMarkerLabel}
-                  >
-                    {copy.today}
-                  </text>
-                </g>
-              )}
 
               {/* Proportional duration span ribbons + start ticks along the branch */}
               {layout.nodes.map((node) => {
@@ -1140,47 +921,6 @@ export default function TimelinePage({
                   </g>
                 );
               })}
-
-              {/* Future Horizon Speculative Projection + Pointer Stem */}
-              {activeFuture &&
-                (() => {
-                  const { anchorX, anchorY } = getAnnotationGeometry(activeFuture);
-                  return (
-                    <g className={styles.futureSvgGroup}>
-                      <line
-                        x1={activeFuture.fromX}
-                        y1={activeFuture.y}
-                        x2={activeFuture.x}
-                        y2={activeFuture.y}
-                        stroke={activeFuture.color}
-                        strokeWidth={1.65}
-                        strokeDasharray="5 5"
-                        strokeOpacity={0.62}
-                        strokeLinecap="round"
-                        mask="url(#timeline-edge-clear-mask)"
-                      />
-                      <line
-                        x1={activeFuture.x}
-                        y1={activeFuture.y}
-                        x2={anchorX}
-                        y2={anchorY}
-                        stroke={activeFuture.color}
-                        strokeWidth={1.1}
-                        strokeDasharray="3 3"
-                        strokeOpacity={0.58}
-                      />
-                      <circle
-                        cx={anchorX}
-                        cy={anchorY}
-                        r={2}
-                        fill="var(--bg)"
-                        stroke={activeFuture.color}
-                        strokeWidth={1.15}
-                        strokeOpacity={0.72}
-                      />
-                    </g>
-                  );
-                })()}
             </svg>
 
             {/* Milestones & Open Architectural Canvas Annotations */}
@@ -1288,89 +1028,6 @@ export default function TimelinePage({
               );
             })}
 
-            {/* Speculative Future Milestone (visible only when a branch is actively highlighted) */}
-            {activeFuture && activeFutureCopy && (
-              <div
-                key={`future-${activeFuture.branchId}`}
-                className={`${styles.milestoneGroup} ${styles.futureMilestoneGroup}`}
-                style={{ zIndex: 20 }}
-              >
-                <span
-                  className={`${styles.nodeMarker} ${styles.nodeShapeCommit} ${styles.nodeMarkerFuture}`}
-                  style={{
-                    left: `${activeFuture.x}px`,
-                    top: `${activeFuture.y}px`,
-                    borderColor: activeFuture.color,
-                    color: activeFuture.color,
-                  }}
-                  onClick={() =>
-                    scrollToTrackX(
-                      activeFuture.x,
-                      prefersReducedMotion ? "auto" : "smooth",
-                      0.65
-                    )
-                  }
-                  aria-hidden="true"
-                >
-                  <span
-                    className={styles.nodeInnerCoreFuture}
-                    style={{ backgroundColor: activeFuture.color }}
-                  />
-                </span>
-
-                <button
-                  type="button"
-                  data-future-milestone="true"
-                  className={`${styles.milestoneAnnotation} ${
-                    styles.futureAnnotation
-                  } ${
-                    activeFuture.cardPlacement === "above"
-                      ? styles.annotationAbove
-                      : styles.annotationBelow
-                  }`}
-                  style={{
-                    left: `${activeFuture.cardRect.x}px`,
-                    top: `${activeFuture.cardRect.y}px`,
-                    width: `${activeFuture.cardRect.width}px`,
-                    height: `${activeFuture.cardRect.height}px`,
-                  }}
-                  onClick={() =>
-                    scrollToTrackX(
-                      activeFuture.x,
-                      prefersReducedMotion ? "auto" : "smooth",
-                      0.65
-                    )
-                  }
-                  aria-label={`${copy.branches[activeFuture.branchId]} — ${activeFutureCopy.title}`}
-                >
-                  <div className={styles.cardMetaRow}>
-                    <FutureMetaParticles
-                      color={activeFuture.inkColor}
-                      width={86}
-                      height={13}
-                      count={22}
-                      seed={11}
-                      reducedMotion={prefersReducedMotion}
-                    />
-                    <span className={styles.metaSep} aria-hidden="true">
-                      ·
-                    </span>
-                    <FutureMetaParticles
-                      color="#64645d"
-                      width={42}
-                      height={13}
-                      count={11}
-                      seed={23}
-                      reducedMotion={prefersReducedMotion}
-                    />
-                  </div>
-                  <h3 className={styles.cardTitle}>
-                    {activeFutureCopy.title}
-                  </h3>
-                </button>
-              </div>
-            )}
-
             {/* Time Axis at Stage Bottom */}
             <div
               className={styles.axisLine}
@@ -1449,29 +1106,6 @@ export default function TimelinePage({
             }}
             aria-hidden="true"
           />
-
-          {activeFuture && (
-            <>
-              <span
-                className={styles.minimapTodayLine}
-                style={{
-                  left: `${(layout.presentX / layout.width) * 100}%`,
-                }}
-                aria-hidden="true"
-              />
-              <span
-                className={styles.minimapFutureDot}
-                style={{
-                  left: `${(activeFuture.x / layout.width) * 100}%`,
-                  top: `${
-                    24 + TIMELINE_BRANCH_ORDER.indexOf(activeFuture.branchId) * 26
-                  }%`,
-                  borderColor: activeFuture.color,
-                }}
-                aria-hidden="true"
-              />
-            </>
-          )}
 
           {/* Milestone dots on the minimap */}
           {layout.nodes.map((node) => {

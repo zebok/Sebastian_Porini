@@ -1,8 +1,8 @@
 import { getLocalizedData } from "@/lib/data";
 import { Dictionary } from "@/types/content";
 
-export type SupportedLang = "en" | "es" | "de";
-export const SUPPORTED_LANGS: SupportedLang[] = ["en", "es", "de"];
+export type SupportedLang = "en" | "es";
+export const SUPPORTED_LANGS: SupportedLang[] = ["en", "es"];
 
 export const isSupportedLang = (lang: string): lang is SupportedLang => {
   return SUPPORTED_LANGS.includes(lang as SupportedLang);

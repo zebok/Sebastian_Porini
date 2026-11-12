@@ -27,14 +27,6 @@ export default function UnderConstruction({
       );
     }
 
-    if (lang === "de") {
-      return (
-        <>
-          Ich überlege noch, wie ich diesen Bereich <em>ausdrücken</em> soll.
-        </>
-      );
-    }
-
     // Default: Spanish
     return (
       <>
@@ -44,7 +36,10 @@ export default function UnderConstruction({
   };
 
   return (
-    <section className={styles.container} aria-label="Sección en preparación">
+    <section
+      className={styles.container}
+      aria-label={lang === "en" ? "Section under construction" : "Sección en preparación"}
+    >
       <div className={styles.contentWrapper}>
         <h1 className={styles.headline}>
           {renderMessage()}

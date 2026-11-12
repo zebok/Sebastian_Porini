@@ -298,11 +298,10 @@ export default function Projects({ dict, projects }: ProjectsProps) {
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
             >
               {filteredProjects.map((project) => (
-                <motion.div
+                <motion.article
                   key={project.id}
                   className={styles.card}
                   variants={cardVariants}
-                  onClick={() => setSelectedProject(project)}
                   layout
                 >
                   <div className={styles.cardVisual}>
@@ -325,12 +324,16 @@ export default function Projects({ dict, projects }: ProjectsProps) {
                       <span className={styles.tagPreview}>
                         {project.tags.slice(0, 3).join(" • ")}
                       </span>
-                      <button className={styles.moreInfoBtn}>
+                      <button
+                        type="button"
+                        className={styles.moreInfoBtn}
+                        onClick={() => setSelectedProject(project)}
+                      >
                         {dict.projects.moreDetails} <ArrowRight size={13} />
                       </button>
                     </div>
                   </div>
-                </motion.div>
+                </motion.article>
               ))}
             </motion.div>
           ) : (

@@ -28,13 +28,11 @@ export interface RadarAxis {
 
 export interface HardSubSkill {
   name: LocalizedString;
-  level: number;
 }
 
 export interface HardSkill {
   id: SkillId;
   name: LocalizedString;
-  level: number;
   subSkills?: HardSubSkill[];
 }
 
@@ -177,45 +175,10 @@ export interface CareerRepository<
 
 export type LocalizedCareerRepository = CareerRepository<string, string[]>;
 
-export interface ContactInfo {
-  openTo: LocalizedList;
-  superpower: LocalizedString;
-  passion: LocalizedString;
-}
-
-export interface ProjectItem {
-  id: string;
-  title: LocalizedString;
-  description: LocalizedString;
-  category: string;
-  projectType: "work" | "personal";
-  tags: string[];
-  highlights: LocalizedList;
-  featured: boolean;
-  demoUrl?: string;
-  codeUrl?: string;
-}
-
-export interface FocusCircleItem {
-  title: LocalizedString;
-  description?: LocalizedString;
-  items: LocalizedString[];
-  tags?: LocalizedString[];
-}
-
-export interface FocusIntersectionItem {
-  title: LocalizedString;
-  items: LocalizedString[];
-}
-
 export interface PersonalInfo {
   name: string;
   tagline: LocalizedString;
   description: LocalizedString;
-  story: {
-    title: LocalizedString;
-    paragraphs: LocalizedString[];
-  };
   focus: {
     circle1: FocusCircleItem;
     circle2: FocusCircleItem;
@@ -227,11 +190,7 @@ export interface PersonalInfo {
   };
   contactDetails: {
     fullName: string;
-    dob: LocalizedString;
-    nationality: LocalizedString;
-    workModes: LocalizedString;
     location: string;
-    status: LocalizedString;
     email: string;
     github: string;
     linkedin: string;
@@ -253,20 +212,10 @@ export interface Dictionary {
   };
   footer: {
     tagline: string;
-    rights: string;
-  };
-  radar: {
-    curiosity: string;
-    observation: string;
-    structure: string;
-    chaosMgmt: string;
-    bureaucracy: string;
-    formalism: string;
   };
   whoAmI: {
     title: string;
     subtitle: string;
-    chartTitle: string;
   };
   skills: {
     title: string;
@@ -338,6 +287,31 @@ export interface Dictionary {
   };
 }
 
+export interface ProjectItem {
+  id: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  category: string;
+  projectType: "work" | "personal";
+  tags: string[];
+  highlights: LocalizedList;
+  featured: boolean;
+  demoUrl?: string;
+  codeUrl?: string;
+}
+
+export interface FocusCircleItem {
+  title: LocalizedString;
+  description?: LocalizedString;
+  items: LocalizedString[];
+  tags?: LocalizedString[];
+}
+
+export interface FocusIntersectionItem {
+  title: LocalizedString;
+  items: LocalizedString[];
+}
+
 export interface RawDictionary {
   nav: {
     whoAmI: LocalizedString;
@@ -352,20 +326,10 @@ export interface RawDictionary {
   };
   footer: {
     tagline: LocalizedString;
-    rights: LocalizedString;
-  };
-  radar: {
-    curiosity: LocalizedString;
-    observation: LocalizedString;
-    structure: LocalizedString;
-    chaosMgmt: LocalizedString;
-    bureaucracy: LocalizedString;
-    formalism: LocalizedString;
   };
   whoAmI: {
     title: LocalizedString;
     subtitle: LocalizedString;
-    chartTitle: LocalizedString;
   };
   skills: {
     title: LocalizedString;
@@ -440,9 +404,6 @@ export interface RawDictionary {
 export interface PortfolioContent {
   personal: PersonalInfo;
   ui: RawDictionary;
-  identity: {
-    radarProfile: RadarAxis[];
-  };
   skills: {
     hard: HardSkill[];
     soft: SoftSkill[];
@@ -450,6 +411,5 @@ export interface PortfolioContent {
   };
   brain: BrainContent;
   careerRepository: CareerRepository;
-  contact: ContactInfo;
   projects: ProjectItem[];
 }

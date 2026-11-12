@@ -27,10 +27,8 @@ const createSkillViewModels = (
     id: skill.id,
     kind: "hard" as const,
     name: localize(skill.name, locale),
-    detail: `${skill.level}%`,
     subSkills: (skill.subSkills ?? []).map((subSkill) => ({
       name: localize(subSkill.name, locale),
-      detail: `${subSkill.level}%`,
     })),
   })),
   ...skills.soft.map((skill) => ({

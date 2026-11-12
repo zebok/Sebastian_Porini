@@ -3,4 +3,4 @@ Allow: /
 Disallow: /_next/
 Disallow: /api/
 
-Sitemap: https://sebastianporini.com/sitemap.xml
+Sitemap: https://zebok.github.io/Sebastian_Porini/sitemap.xml

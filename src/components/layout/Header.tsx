@@ -6,6 +6,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { Menu, X, FileDown } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Dictionary } from "@/lib/i18n";
+import { getCvDownloadInfo } from "@/lib/cv";
 import { useSPA, SectionType } from "./SPAContext";
 import styles from "./Header.module.css";
 
@@ -19,21 +20,12 @@ export default function Header({ dict, cvPath }: HeaderProps) {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
-  const lang = (params?.lang as string) || "en";
+  const lang = params?.lang === "es" ? "es" : "en";
 
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  const cleanBasePath = basePath.replace(/\/$/, "");
-  const cleanCvPath = (cvPath || "/SebastianPorini_English.pdf").startsWith("/")
-    ? (cvPath || "/SebastianPorini_English.pdf")
-    : `/${cvPath}`;
-  const activeCvUrl = `${cleanBasePath}${cleanCvPath}`;
-
-  const downloadFilename =
-    lang === "es"
-      ? "Sebastian_Porini_CV_ES.pdf"
-      : lang === "de"
-      ? "Sebastian_Porini_Lebenslauf_DE.pdf"
-      : "Sebastian_Porini_CV_EN.pdf";
+  const { url: activeCvUrl, filename: downloadFilename } = getCvDownloadInfo(
+    cvPath,
+    lang
+  );
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
@@ -41,7 +33,7 @@ export default function Header({ dict, cvPath }: HeaderProps) {
   const spa = useSPA();
 
   const navItems: { label: string; href: string; section: SectionType; suffix?: string }[] = [
-    { label: dict.nav.whoAmI, href: `/${lang}/how-am-i`, section: "how-am-i" },
+    { label: dict.nav.whoAmI, href: `/${lang}/about`, section: "about" },
     { label: dict.nav.skills, href: `/${lang}/skills`, section: "skills" },
     { label: dict.nav.timeline, href: `/${lang}/timeline`, section: "timeline" },
     { label: dict.nav.projects, href: `/${lang}/projects`, section: "projects" },
@@ -67,26 +59,35 @@ export default function Header({ dict, cvPath }: HeaderProps) {
     return pathname === href;
   };
 
+  const toggleMenuLabel =
+    lang === "es"
+      ? isOpen
+        ? "Cerrar menú"
+        : "Abrir menú"
+      : isOpen
+      ? "Close menu"
+      : "Open menu";
+
   return (
     <header className={styles.header}>
       <div className={`${styles.navContainer} container`}>
-        <Link 
-          href={`/${lang}`} 
-          className={styles.logo} 
-          onClick={(e) => handleNavClick(e, `/${lang}`, "how-am-i")}
+        <Link
+          href={`/${lang}`}
+          className={styles.logo}
+          onClick={(e) => handleNavClick(e, `/${lang}`, "about")}
         >
           SP<span className={styles.logoDot}>.</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className={styles.navMenu}>
+        <nav className={styles.navMenu} aria-label={lang === "es" ? "Navegación principal" : "Main navigation"}>
           <ul className={styles.navList}>
             {navItems.map((item) => {
               const isActive = isItemActive(item.href, item.section);
               return (
                 <li key={item.href} className={styles.navItem}>
-                  <Link 
-                    href={item.href} 
+                  <Link
+                    href={item.href}
                     className={`${isActive ? styles.active : ""}`}
                     onClick={(e) => handleNavClick(e, item.href, item.section)}
                     aria-current={isActive ? "page" : undefined}
@@ -116,9 +117,11 @@ export default function Header({ dict, cvPath }: HeaderProps) {
           <LanguageSwitcher />
 
           <button
+            type="button"
             className={styles.mobileToggle}
             onClick={toggleMenu}
-            aria-label="Toggle menu"
+            aria-label={toggleMenuLabel}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -128,7 +131,7 @@ export default function Header({ dict, cvPath }: HeaderProps) {
       {/* Mobile Drawer */}
       {isOpen && (
         <div className={styles.mobileDrawer}>
-          <nav className={styles.mobileNav}>
+          <nav className={styles.mobileNav} aria-label={lang === "es" ? "Navegación móvil" : "Mobile navigation"}>
             {navItems.map((item) => {
               const isActive = isItemActive(item.href, item.section);
               return (

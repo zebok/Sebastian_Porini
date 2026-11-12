@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import { Dictionary } from "@/lib/i18n";
@@ -12,6 +13,21 @@ interface ProjectDetailsModalProps {
 }
 
 export const ProjectDetailsModal = ({ project, onClose, dict }: ProjectDetailsModalProps) => {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <motion.div
       className={styles.modalOverlay}
@@ -21,6 +37,9 @@ export const ProjectDetailsModal = ({ project, onClose, dict }: ProjectDetailsMo
       onClick={onClose}
     >
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
         className={styles.modalContent}
         initial={{ scale: 0.92, opacity: 0, y: 15 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -29,9 +48,11 @@ export const ProjectDetailsModal = ({ project, onClose, dict }: ProjectDetailsMo
         onClick={(e) => e.stopPropagation()}
       >
         <button
+          type="button"
           className={styles.modalCloseBtn}
           onClick={onClose}
           aria-label={dict.projects.closeDetails}
+          autoFocus
         >
           <X size={18} />
         </button>
@@ -50,7 +71,9 @@ export const ProjectDetailsModal = ({ project, onClose, dict }: ProjectDetailsMo
                 {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
               </span>
             </div>
-            <h2 className={styles.modalTitle}>{project.title}</h2>
+            <h2 id="project-modal-title" className={styles.modalTitle}>
+              {project.title}
+            </h2>
           </div>
 
           <p className={styles.modalDesc}>{project.description}</p>

@@ -43,7 +43,7 @@ export default function NotFound() {
 
         {/* Subtle sitemap hint */}
         <nav style={styles.sitemapHint} aria-label="Quick navigation">
-          <Link href="/en/how-am-i" style={styles.hintLink}>How Am I</Link>
+          <Link href="/en/about" style={styles.hintLink}>About</Link>
           <span style={styles.separator}>·</span>
           <Link href="/en/skills" style={styles.hintLink}>Skills</Link>
           <span style={styles.separator}>·</span>

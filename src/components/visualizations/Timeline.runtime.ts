@@ -289,20 +289,17 @@ export const formatPeriodDuration = (
   if (diff < 0.95) {
     const months = Math.max(1, Math.round(diff * 12));
     if (lang === "es") return `${months} ${months === 1 ? "mes" : "meses"}`;
-    if (lang === "de") return `${months} Mon.`;
     return `${months} ${months === 1 ? "mo" : "mos"}`;
   }
 
   const rounded = Math.round(diff);
   if (Math.abs(diff - rounded) < 0.08) {
     if (lang === "es") return `${rounded} ${rounded === 1 ? "año" : "años"}`;
-    if (lang === "de") return `${rounded} ${rounded === 1 ? "Jahr" : "Jahre"}`;
     return `${rounded} ${rounded === 1 ? "yr" : "yrs"}`;
   }
 
   const fixed = diff.toFixed(1);
   if (lang === "es") return `${fixed} años`;
-  if (lang === "de") return `${fixed} Jahre`;
   return `${fixed} yrs`;
 };
 

@@ -1,5 +1,6 @@
 import { Dictionary } from "@/lib/i18n";
 import type { LocalizedPortfolioData } from "@/lib/data";
+import { getCvDownloadInfo } from "@/lib/cv";
 import styles from "./Footer.module.css";
 
 interface FooterProps {
@@ -11,19 +12,10 @@ interface FooterProps {
 export default function Footer({ dict, personal, lang = "en" }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const { contactDetails, name } = personal;
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  const cleanBasePath = basePath.replace(/\/$/, "");
-  const cleanCvPath = (contactDetails.cvPath || "/SebastianPorini_English.pdf").startsWith("/")
-    ? (contactDetails.cvPath || "/SebastianPorini_English.pdf")
-    : `/${contactDetails.cvPath}`;
-  const cvUrl = `${cleanBasePath}${cleanCvPath}`;
-
-  const downloadFilename =
-    lang === "es"
-      ? "Sebastian_Porini_CV_ES.pdf"
-      : lang === "de"
-      ? "Sebastian_Porini_Lebenslauf_DE.pdf"
-      : "Sebastian_Porini_CV_EN.pdf";
+  const { url: cvUrl, filename: downloadFilename } = getCvDownloadInfo(
+    contactDetails.cvPath,
+    lang
+  );
 
   return (
     <footer className={styles.footer}>

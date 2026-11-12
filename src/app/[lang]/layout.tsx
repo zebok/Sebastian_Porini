@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, JetBrains_Mono, Inter } from "next/font/google";
 import GridOverlay from "@/components/effects/GridOverlay";
 import { getLocalizedData } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const playfair = Playfair_Display({
@@ -31,39 +32,37 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
-  const lang = resolvedParams?.lang || "en";
+  const lang = resolvedParams?.lang === "es" ? "es" : "en";
   const data = getLocalizedData(lang);
   const name = data.personal.name;
   const description = data.personal.description;
-
-  const localeString = lang === "es" ? "es_AR" : lang === "de" ? "de_DE" : "en_US";
+  const localeString = lang === "es" ? "es_AR" : "en_US";
 
   return {
     title: {
-      default: `${name}`,
+      default: `${name} — ${data.personal.tagline}`,
       template: `%s — ${name}`,
     },
     description: description,
-    metadataBase: new URL("https://sebastianporini.com"),
+    metadataBase: new URL(`${SITE_URL}/`),
     alternates: {
-      canonical: `https://sebastianporini.com/${lang}`,
+      canonical: `${SITE_URL}/${lang}`,
       languages: {
-        en: "https://sebastianporini.com/en",
-        es: "https://sebastianporini.com/es",
-        de: "https://sebastianporini.com/de",
+        en: `${SITE_URL}/en`,
+        es: `${SITE_URL}/es`,
       },
     },
     openGraph: {
-      title: `${name}`,
+      title: `${name} — ${data.personal.tagline}`,
       description: description,
-      url: `https://sebastianporini.com/${lang}`,
+      url: `${SITE_URL}/${lang}`,
       siteName: name,
       images: [
         {
-          url: "/og-image.png",
+          url: `${SITE_URL}/og-image.png`,
           width: 1200,
           height: 630,
-          alt: `${name}`,
+          alt: `${name} — ${data.personal.tagline}`,
         },
       ],
       locale: localeString,
@@ -71,10 +70,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name}`,
+      title: `${name} — ${data.personal.tagline}`,
       description: description,
-      images: ["/og-image.png"],
-      creator: "@sebiporini",
+      images: [`${SITE_URL}/og-image.png`],
     },
     robots: {
       index: true,
@@ -84,7 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return [{ lang: "en" }, { lang: "es" }, { lang: "de" }];
+  return [{ lang: "en" }, { lang: "es" }];
 }
 
 export default async function RootLayout({
@@ -95,14 +93,14 @@ export default async function RootLayout({
   params: Promise<{ lang: string }>;
 }>) {
   const resolvedParams = await params;
-  const lang = resolvedParams?.lang || "en";
+  const lang = resolvedParams?.lang === "es" ? "es" : "en";
   const data = getLocalizedData(lang);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": data.personal.name,
-    "url": "https://sebastianporini.com",
+    "url": SITE_URL,
     "jobTitle": data.personal.tagline,
     "description": data.personal.description,
     "sameAs": [
@@ -110,6 +108,9 @@ export default async function RootLayout({
       data.personal.contactDetails.linkedin,
     ],
   };
+
+  const skipLabel =
+    lang === "es" ? "Saltar al contenido principal" : "Skip to main content";
 
   return (
     <html lang={lang}>
@@ -119,7 +120,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <a href="#main-content" className="skip-link">
-          Skip to main content
+          {skipLabel}
         </a>
         <GridOverlay />
         {children}
@@ -127,4 +128,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

@@ -7,20 +7,13 @@ import styles from "./LanguageSwitcher.module.css";
 export default function LanguageSwitcher() {
   const pathname = usePathname();
 
-  // Parse path to find current language prefix
   const segments = pathname.split("/");
-  const currentLang = segments[1] === "es" ? "es" : segments[1] === "de" ? "de" : "en";
-  
-  // Reconstruct path for all supported languages
-  const restOfPath = segments.length > 2 ? `/${segments.slice(2).join("/")}` : "";
-  const pathToEn = `/en${restOfPath}`;
-  const pathToEs = `/es${restOfPath}`;
-  const pathToDe = `/de${restOfPath}`;
+  const currentLang = segments[1] === "es" ? "es" : "en";
 
+  const restOfPath = segments.length > 2 ? `/${segments.slice(2).join("/")}` : "";
   const langs = [
-    { code: "en", label: "EN", href: pathToEn },
-    { code: "es", label: "ES", href: pathToEs },
-    { code: "de", label: "DE", href: pathToDe },
+    { code: "en", label: "EN", href: `/en${restOfPath}` },
+    { code: "es", label: "ES", href: `/es${restOfPath}` },
   ];
 
   return (
@@ -40,4 +33,3 @@ export default function LanguageSwitcher() {
     </div>
   );
 }
-
