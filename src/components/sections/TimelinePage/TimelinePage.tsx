@@ -37,97 +37,6 @@ interface TimelinePageProps {
 
 type SupportedLocale = "es" | "en" | "de";
 
-interface LocalizedTimelineCopy {
-  branches: Record<TimelineBranchId, string>;
-  allBranches: string;
-  today: string;
-  ageUnit: string;
-  jumpStart: string;
-  minimapLabel: string;
-  branchFilterGroupLabel: string;
-  futureNodes: Record<
-    TimelineBranchId,
-    {
-      title: string;
-    }
-  >;
-}
-
-const TIMELINE_COPY: Record<SupportedLocale, LocalizedTimelineCopy> = {
-  es: {
-    branches: {
-      education: "Estudio",
-      work: "Trabajo",
-      experiences: "Experiencias",
-    },
-    allBranches: "Todas",
-    today: "Hoy",
-    ageUnit: "años",
-    jumpStart: "2016",
-    minimapLabel: "Mapa de recorrido temporal",
-    branchFilterGroupLabel: "Filtrar por rama",
-    futureNodes: {
-      education: {
-        title: "Especialización y posgrado en datos e IA",
-      },
-      work: {
-        title: "Data & Analytics Architecture a escala",
-      },
-      experiences: {
-        title: "Nuevos destinos e intercambios globales",
-      },
-    },
-  },
-  en: {
-    branches: {
-      education: "Education",
-      work: "Work",
-      experiences: "Experiences",
-    },
-    allBranches: "All",
-    today: "Today",
-    ageUnit: "yo",
-    jumpStart: "2016",
-    minimapLabel: "Timeline overview scrubber",
-    branchFilterGroupLabel: "Filter by branch",
-    futureNodes: {
-      education: {
-        title: "Postgraduate & deep AI/data specialization",
-      },
-      work: {
-        title: "Data & Analytics Architecture at scale",
-      },
-      experiences: {
-        title: "New global chapters & cultural exchanges",
-      },
-    },
-  },
-  de: {
-    branches: {
-      education: "Bildung",
-      work: "Beruf",
-      experiences: "Erfahrungen",
-    },
-    allBranches: "Alle",
-    today: "Heute",
-    ageUnit: "J.",
-    jumpStart: "2016",
-    minimapLabel: "Zeitstrahl-Übersicht",
-    branchFilterGroupLabel: "Nach Zweig filtern",
-    futureNodes: {
-      education: {
-        title: "Weiterbildung in Datenarchitektur & KI",
-      },
-      work: {
-        title: "Data- & Analytics-Architektur im großen Stil",
-      },
-      experiences: {
-        title: "Neue globale Stationen & Austausch",
-      },
-    },
-  },
-};
-
 const resolveLocale = (lang: string): SupportedLocale =>
   lang === "es" || lang === "de" ? lang : "en";
 
@@ -304,7 +213,7 @@ export default function TimelinePage({
 
   const prefersReducedMotion = useReducedMotionPreference();
   const locale = resolveLocale(lang);
-  const copy = TIMELINE_COPY[locale];
+  const copy = dict.timeline;
 
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -318,8 +227,12 @@ export default function TimelinePage({
   const [hoveredMilestoneId, setHoveredMilestoneId] = useState<string | null>(
     null
   );
-  const [currentDecimalYear, setCurrentDecimalYear] = useState(2026.85);
-  const [currentYear, setCurrentYear] = useState(2026);
+  const [currentDecimalYear, setCurrentDecimalYear] = useState(() =>
+    getCurrentDecimalYear()
+  );
+  const [currentYear, setCurrentYear] = useState(() =>
+    new Date().getFullYear()
+  );
 
   const isTimelineVisible = isActive || isTransitioningIn;
 
@@ -849,7 +762,7 @@ export default function TimelinePage({
               const duration = formatPeriodDuration(
                 node.period,
                 currentDecimalYear,
-                lang
+                locale
               );
               const yearSpan = formatCompactYears(node.period, copy.today);
 
@@ -1286,7 +1199,7 @@ export default function TimelinePage({
               const isAbove = node.cardPlacement === "above";
 
               const duration =
-                formatPeriodDuration(node.period, currentDecimalYear, lang) ??
+                formatPeriodDuration(node.period, currentDecimalYear, locale) ??
                 node.period;
 
               const depthClass = isOutOfFocus
@@ -1496,7 +1409,7 @@ export default function TimelinePage({
           }
           disabled={scrollLeft <= 12}
         >
-          ← {copy.jumpStart}
+          ← {layout.minYear}
         </button>
 
         <div
@@ -1582,11 +1495,11 @@ export default function TimelinePage({
                   opacity: dimmed ? 0.22 : 1,
                 }}
                 title={`${node.title} (${
-                  formatPeriodDuration(node.period, currentDecimalYear, lang) ??
+                  formatPeriodDuration(node.period, currentDecimalYear, locale) ??
                   node.period
                 })`}
                 aria-label={`${node.title} (${
-                  formatPeriodDuration(node.period, currentDecimalYear, lang) ??
+                  formatPeriodDuration(node.period, currentDecimalYear, locale) ??
                   node.period
                 })`}
                 onClick={(e) => {

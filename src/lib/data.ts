@@ -218,6 +218,21 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
         historyLabel: get(raw.ui.timeline.historyLabel),
         stagingLabel: get(raw.ui.timeline.stagingLabel),
         scrollHint: get(raw.ui.timeline.scrollHint),
+        branches: {
+          education: get(raw.ui.timeline.branches.education),
+          work: get(raw.ui.timeline.branches.work),
+          experiences: get(raw.ui.timeline.branches.experiences),
+        },
+        allBranches: get(raw.ui.timeline.allBranches),
+        today: get(raw.ui.timeline.today),
+        ageUnit: get(raw.ui.timeline.ageUnit),
+        minimapLabel: get(raw.ui.timeline.minimapLabel),
+        branchFilterGroupLabel: get(raw.ui.timeline.branchFilterGroupLabel),
+        futureNodes: {
+          education: { title: get(raw.ui.timeline.futureNodes.education.title) },
+          work: { title: get(raw.ui.timeline.futureNodes.work.title) },
+          experiences: { title: get(raw.ui.timeline.futureNodes.experiences.title) },
+        },
       },
       contact: {
         downloadCv: get(raw.ui.contact.downloadCv),
@@ -275,6 +290,12 @@ export const getLocalizedData = cache((lang: string): LocalizedPortfolioData => 
         time: { ...commit.time },
         period: get(commit.period),
         title: get(commit.title),
+        organization:
+          typeof commit.organization === "string"
+            ? commit.organization
+            : commit.organization
+              ? get(commit.organization)
+              : undefined,
         summary: get(commit.summary),
         details: getList(commit.details),
       })),

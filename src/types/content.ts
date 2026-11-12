@@ -140,7 +140,7 @@ export interface CareerCommit<
   time: CareerTime;
   period: TText;
   title: TText;
-  organization?: string;
+  organization?: string | TText;
   summary: TText;
   details: TList;
 }
@@ -285,6 +285,21 @@ export interface Dictionary {
     historyLabel: string;
     stagingLabel: string;
     scrollHint: string;
+    branches: {
+      education: string;
+      work: string;
+      experiences: string;
+    };
+    allBranches: string;
+    today: string;
+    ageUnit: string;
+    minimapLabel: string;
+    branchFilterGroupLabel: string;
+    futureNodes: {
+      education: { title: string };
+      work: { title: string };
+      experiences: { title: string };
+    };
   };
   contact: {
     downloadCv: string;
@@ -369,6 +384,21 @@ export interface RawDictionary {
     historyLabel: LocalizedString;
     stagingLabel: LocalizedString;
     scrollHint: LocalizedString;
+    branches: {
+      education: LocalizedString;
+      work: LocalizedString;
+      experiences: LocalizedString;
+    };
+    allBranches: LocalizedString;
+    today: LocalizedString;
+    ageUnit: LocalizedString;
+    minimapLabel: LocalizedString;
+    branchFilterGroupLabel: LocalizedString;
+    futureNodes: {
+      education: { title: LocalizedString };
+      work: { title: LocalizedString };
+      experiences: { title: LocalizedString };
+    };
   };
   contact: {
     downloadCv: LocalizedString;

@@ -178,7 +178,7 @@ export const TIMELINE_BRANCH_STYLE: Record<
 };
 
 const BIRTH_YEAR = 1998;
-const DEFAULT_MIN_YEAR = 2016;
+const DEFAULT_MIN_YEAR = 2015;
 const DEFAULT_YEAR_WIDTH = 276;
 const DEFAULT_START_X = 128;
 const DEFAULT_END_PADDING = 200;
@@ -196,7 +196,6 @@ const EMPTY_VIEWPORT: TimelineViewportRect = {
 };
 
 export const getCurrentDecimalYear = (): number => {
-  if (typeof window === "undefined") return 2026.85;
   const now = new Date();
   const year = now.getFullYear();
   const start = new Date(year, 0, 0);
@@ -604,13 +603,13 @@ export const createTimelineHorizontalLayout = (
     });
   });
 
-  // Connect DevBorn -> UADE (started 2021 while working) & UADE (2026) -> GEA (2026 Present)
+  // Connect DevBorn -> UADE (started Jun 2022 while working) & UADE (2026) -> GEA (2026 Present)
   const devborn = draftById.get("devborn-operations-automation");
   const uade = draftById.get("it-management-degree");
   const gea = draftById.get("gea-backend-api-delivery");
   if (devborn && uade) {
-    const uadeStartX = uade.spanStartX ?? toX(2021.2);
-    // Fork upward from work lane around 2021 to the start of the UADE education span
+    const uadeStartX = uade.spanStartX ?? toX(2022.42);
+    // Fork upward from work lane around 2022 to the start of the UADE education span
     edges.push(
       buildCurveGeometry(
         "edge-devborn-uade-start",

@@ -259,9 +259,9 @@
     "contactDetails": {
       "fullName": "Sebastián Porini",
       "dob": {
-        "en": "October 20, 1998 (28 yo)",
-        "es": "20 de Octubre de 1998 (28 años)",
-        "de": "20. Oktober 1998 (28 J.)"
+        "en": "April 1998",
+        "es": "Abril de 1998",
+        "de": "April 1998"
       },
       "nationality": {
         "en": "Argentine",
@@ -409,9 +409,9 @@
         "de": "Die Entwicklung meiner Änderungen"
       },
       "subtitle": {
-        "en": "A Git history of the decisions, roles, and learning that shaped how I build products and systems.",
-        "es": "Una historia Git de las decisiones, los roles y el aprendizaje que dieron forma a cómo construyo productos y sistemas.",
-        "de": "Eine Git-Historie der Entscheidungen, Rollen und Lernschritte, die meine Arbeit an Produkten und Systemen geprägt haben."
+        "en": "A visual timeline of the education, roles, and experiences that shaped how I build data systems and products.",
+        "es": "Una línea temporal de la formación, los roles y las experiencias que dieron forma a cómo construyo sistemas de datos y productos.",
+        "de": "Eine Zeitleiste der Stationen, Rollen und Erfahrungen, die meine Arbeit an Datensystemen und Produkten geprägt haben."
       },
       "repositoryLabel": {
         "en": "career-repository",
@@ -449,9 +449,9 @@
         "de": "Prognose"
       },
       "historyLabel": {
-        "en": "Commit history",
-        "es": "Historial de commits",
-        "de": "Historie"
+        "en": "Timeline history",
+        "es": "Recorrido temporal",
+        "de": "Zeitstrahl-Verlauf"
       },
       "stagingLabel": {
         "en": "Staging area",
@@ -459,9 +459,74 @@
         "de": "Staging-Bereich"
       },
       "scrollHint": {
-        "en": "Scroll through the graph · select a commit to inspect it",
-        "es": "Recorré el grafo · seleccioná un commit para inspeccionarlo",
-        "de": "Scrollen, um die Entwicklung zu erkunden"
+        "en": "Scroll or drag the timeline · filter by branch to explore each path",
+        "es": "Recorré o arrastrá la línea temporal · filtrá por rama para explorar cada recorrido",
+        "de": "Scrollen oder ziehen, um den Zeitstrahl zu erkunden · nach Zweigen filtern"
+      },
+      "branches": {
+        "education": {
+          "en": "Education",
+          "es": "Estudio",
+          "de": "Bildung"
+        },
+        "work": {
+          "en": "Work",
+          "es": "Trabajo",
+          "de": "Beruf"
+        },
+        "experiences": {
+          "en": "Experiences",
+          "es": "Experiencias",
+          "de": "Erfahrungen"
+        }
+      },
+      "allBranches": {
+        "en": "All",
+        "es": "Todas",
+        "de": "Alle"
+      },
+      "today": {
+        "en": "Today",
+        "es": "Hoy",
+        "de": "Heute"
+      },
+      "ageUnit": {
+        "en": "yo",
+        "es": "años",
+        "de": "J."
+      },
+      "minimapLabel": {
+        "en": "Timeline overview scrubber",
+        "es": "Mapa de recorrido temporal",
+        "de": "Zeitstrahl-Übersicht"
+      },
+      "branchFilterGroupLabel": {
+        "en": "Filter by branch",
+        "es": "Filtrar por rama",
+        "de": "Nach Zweig filtern"
+      },
+      "futureNodes": {
+        "education": {
+          "title": {
+            "en": "Postgraduate & deep AI/data specialization",
+            "es": "Especialización y posgrado en datos e IA",
+            "de": "Postgraduale Spezialisierung in Daten & KI"
+          }
+        },
+        "work": {
+          "title": {
+            "en": "Data & Analytics Architecture at scale",
+            "es": "Data & Analytics Architecture a escala",
+            "de": "Skalierbare Data- & Analytics-Architektur"
+          }
+        },
+        "experiences": {
+          "title": {
+            "en": "New global chapters & cultural exchanges",
+            "es": "Nuevos destinos e intercambios globales",
+            "de": "Neue globale Stationen & Austausch"
+          }
+        }
       }
     },
     "contact": {
@@ -1251,18 +1316,18 @@
         "status": "committed",
         "kind": "foundation",
         "time": {
-          "value": "2016",
-          "precision": "year"
+          "value": "2015-12",
+          "precision": "month"
         },
         "period": {
-          "en": "2011–2016",
-          "es": "2011–2016",
-          "de": "2011–2016"
+          "en": "Jan 2010–Dec 2015",
+          "es": "Ene 2010–Dic 2015",
+          "de": "Jan. 2010–Dez. 2015"
         },
         "title": {
-          "en": "Technical Foundations in Chemistry",
-          "es": "Fundamentos Técnicos en Química",
-          "de": "Technische Grundlagen in Chemie"
+          "en": "Chemical Technician",
+          "es": "Técnico Químico",
+          "de": "Staatlich geprüfter Chemietechniker"
         },
         "organization": "ORT",
         "summary": {
@@ -1309,7 +1374,11 @@
           "es": "Work & Travel en Alemania",
           "de": "Work & Travel in Deutschland"
         },
-        "organization": "Germany",
+        "organization": {
+          "en": "Germany",
+          "es": "Alemania",
+          "de": "Deutschland"
+        },
         "summary": {
           "en": "1.5 years living and working abroad in Germany, learning the language and developing personal autonomy.",
           "es": "1.5 años viviendo y trabajando en Alemania, aprendiendo el idioma y desarrollando autonomía personal.",
@@ -1360,7 +1429,11 @@
           "es": "Work & Travel en Dinamarca",
           "de": "Work & Travel in Dänemark"
         },
-        "organization": "Denmark",
+        "organization": {
+          "en": "Denmark",
+          "es": "Dinamarca",
+          "de": "Dänemark"
+        },
         "summary": {
           "en": "1 year living and working in Denmark, expanding international perspectives and professional English fluency.",
           "es": "1 año viviendo y trabajando en Dinamarca, consolidando el dominio del inglés y adaptabilidad nórdica.",
@@ -1450,81 +1523,39 @@
           "precision": "month"
         },
         "period": {
-          "en": "Jul 2023–Sep 2024",
-          "es": "Jul 2023–Sep 2024",
-          "de": "Juli 2023–Sept. 2024"
+          "en": "Jul 2023–Apr 2025",
+          "es": "Jul 2023–Abr 2025",
+          "de": "Jul. 2023–Apr. 2025"
         },
         "title": {
-          "en": "Data Integration & BI Analyst -> Product Data Lead",
-          "es": "Data Integration & BI Analyst -> Product Data Lead",
-          "de": "Data Integration & BI Analyst -> Product Data Lead"
+          "en": "Data Integration & Technical Product Owner",
+          "es": "Data Integration & Technical Product Owner",
+          "de": "Data Integration & Technical Product Owner"
         },
         "organization": "Flexways",
         "summary": {
-          "en": "B2B API ingestion and normalization (Booking, Despegar), fleet & dynamic pricing analytics, and interactive Metabase BI dashboards.",
-          "es": "Ingesta y normalización de APIs B2B (Booking, Despegar), analítica de flota y pricing dinámico, y tableros interactivos en Metabase.",
-          "de": "B2B-API-Ingestion und Normalisierung (Booking, Despegar), Flotten- & Dynamic-Pricing-Analytik und Metabase-Dashboards."
+          "en": "B2B API ingestion, fleet & pricing analytics, and Metabase BI; promoted to Technical Product Owner in Apr 2024 to lead delivery roadmaps.",
+          "es": "Ingesta de APIs B2B, analítica de flota y BI en Metabase; en abril 2024 asumí como Technical Product Owner liderando roadmaps de entrega.",
+          "de": "B2B-API-Ingestion, Flottenanalytik und Metabase-BI; ab April 2024 als Technical Product Owner verantwortlich für Delivery-Roadmaps."
         },
         "details": {
           "es": [
             "Ingesta & Normalización B2B: Integración y parseo de brokers globales (Booking, Despegar, etc.) con contratos heterogéneos (JSON, XML, SOAP, REST) hacia esquemas relacionales unificados.",
             "Analítica de Flota & Pricing: Modelado operativo de flota (disponibilidad en tiempo real, tarifas dinámicas, mantenimiento) y scripts de conciliación en Python.",
-            "Business Intelligence en Metabase: Tableros interactivos y consultas SQL para monitorear embudos de conversión por canal, tasa de utilización y rendimiento comercial."
+            "Business Intelligence en Metabase: Tableros interactivos y consultas SQL para monitorear embudos de conversión por canal, tasa de utilización y rendimiento comercial.",
+            "Technical Product Owner (desde Abr 2024): Priorización de backlogs y roadmaps técnicos orientados a resultados para transformación digital e integración de IA."
           ],
           "en": [
             "B2B Ingestion & Normalization: Integrated and parsed global brokers (Booking, Despegar, etc.) with heterogeneous contracts (JSON, XML, SOAP, REST) into unified relational schemas.",
             "Fleet & Pricing Analytics: Operational fleet modeling (real-time availability, dynamic pricing, maintenance) and Python reconciliation scripts.",
-            "Business Intelligence in Metabase: Interactive Metabase dashboards and SQL queries monitoring conversion funnels, utilization rates, and commercial performance."
+            "Business Intelligence in Metabase: Interactive Metabase dashboards and SQL queries monitoring conversion funnels, utilization rates, and commercial performance.",
+            "Technical Product Owner (from Apr 2024): Prioritized backlogs and outcome-driven delivery roadmaps for digital transformation and AI integration."
           ],
           "de": [
             "B2B-Ingestion & Normalisierung: Integration globaler Broker (Booking, Despegar etc.) mit heterogenen Verträgen (JSON, XML, SOAP, REST) in einheitliche relationale Schemata.",
             "Flotten- & Pricing-Analytik: Operative Flottenmodellierung (Echtzeitverfügbarkeit, dynamische Tarife, Wartung) und Python-Abgleichsskripte.",
-            "Business Intelligence in Metabase: Interaktive Dashboards und SQL-Abfragen zur Überwachung von Funnels, Auslastungsraten und Vertriebsleistung."
-          ]
-        }
-      },
-      {
-        "id": "flexways-technical-product-owner",
-        "sha": "6a4d01b",
-        "branchId": "feature/product-delivery",
-        "parents": [
-          {
-            "id": "devborn-operations-automation",
-            "target": "commit",
-            "kind": "first-parent"
-          }
-        ],
-        "status": "committed",
-        "kind": "role",
-        "time": {
-          "value": "2024-04",
-          "precision": "month"
-        },
-        "period": {
-          "en": "Apr 2024–Apr 2025",
-          "es": "Abr 2024–Abr 2025",
-          "de": "Apr. 2024–Apr. 2025"
-        },
-        "title": {
-          "en": "Technical Product Owner (Data & Channels)",
-          "es": "Technical Product Owner (Datos & Canales)",
-          "de": "Technischer Product Owner (Daten & Kanäle)"
-        },
-        "organization": "Flexways",
-        "summary": {
-          "en": "Connected operational data signals and product requirements into delivery roadmaps focused on outcomes.",
-          "es": "Conecté métricas operativas y requisitos de producto en roadmaps técnicos de entrega orientados a resultados.",
-          "de": "Verbindung operativer Datensignale mit Produktanforderungen in ergebnisorientierten Roadmaps."
-        },
-        "details": {
-          "en": [
-            "Prioritized backlogs for digital transformation and AI integration."
-          ],
-          "es": [
-            "Prioricé backlogs para transformación digital e integración de IA."
-          ],
-          "de": [
-            "Ich priorisierte Backlogs für digitale Transformation und KI-Integration."
+            "Business Intelligence in Metabase: Interaktive Dashboards und SQL-Abfragen zur Überwachung von Funnels, Auslastungsraten und Vertriebsleistung.",
+            "Technical Product Owner (ab Apr. 2024): Priorisierung von Backlogs und ergebnisorientierten Roadmaps für digitale Transformation und KI-Integration."
           ]
         }
       },
@@ -1534,14 +1565,9 @@
         "branchId": "main",
         "parents": [
           {
-            "id": "flexways-technical-product-owner",
-            "target": "commit",
-            "kind": "first-parent"
-          },
-          {
             "id": "flexways-channel-analyst",
             "target": "commit",
-            "kind": "merge-parent"
+            "kind": "first-parent"
           }
         ],
         "status": "committed",
@@ -1690,18 +1716,18 @@
         "status": "committed",
         "kind": "education",
         "time": {
-          "value": "2026",
-          "precision": "year"
+          "value": "2026-06",
+          "precision": "month"
         },
         "period": {
-          "en": "2021–2026",
-          "es": "2021–2026",
-          "de": "2021–2026"
+          "en": "Jun 2022–Jun 2026",
+          "es": "Jun 2022–Jun 2026",
+          "de": "Juni 2022–Juni 2026"
         },
         "title": {
-          "en": "B.S. in IT Management completed",
-          "es": "Lic. en Gestión de Tecnología de la Información completada",
-          "de": "Bachelor in IT-Management abgeschlossen"
+          "en": "B.S. in IT Management",
+          "es": "Lic. en Gestión de Tecnología de la Información",
+          "de": "Bachelor in IT-Management"
         },
         "organization": "UADE",
         "summary": {
@@ -1941,7 +1967,7 @@
         "id": "ref-product-delivery",
         "kind": "branch",
         "name": "feature/product-delivery",
-        "targetId": "flexways-technical-product-owner"
+        "targetId": "devborn-operations-automation"
       },
       {
         "id": "ref-education",
@@ -1966,12 +1992,6 @@
         "kind": "tag",
         "name": "v1.4",
         "targetId": "flexways-channel-analyst"
-      },
-      {
-        "id": "tag-v2-0",
-        "kind": "tag",
-        "name": "v2.0",
-        "targetId": "flexways-technical-product-owner"
       },
       {
         "id": "tag-v2-1",

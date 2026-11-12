@@ -62,7 +62,7 @@
   border: 1px solid transparent;
   background-color: transparent;
   font-family: var(--font-mono);
-  font-size: 0.71rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;
@@ -168,7 +168,7 @@
 
 .todayMarkerLabel {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -339,7 +339,7 @@
 
 .metaSep {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   color: var(--ink-muted);
   opacity: 0.55;
   flex-shrink: 0;
@@ -347,7 +347,7 @@
 
 .periodBadge {
   font-family: var(--font-mono);
-  font-size: 0.63rem;
+  font-size: 0.71rem;
   font-weight: 500;
   color: var(--ink-muted);
   letter-spacing: 0.01em;
@@ -357,9 +357,9 @@
 
 .cardTitle {
   font-family: var(--font-serif);
-  font-size: 0.96rem;
+  font-size: 1.04rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.22;
   color: var(--ink);
   margin: 0.04rem 0 0;
   display: -webkit-box;
@@ -370,7 +370,7 @@
 
 .cardCompany {
   font-family: var(--font-mono);
-  font-size: 0.63rem;
+  font-size: 0.71rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -411,16 +411,16 @@
   position: absolute;
   top: 8px;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--ink);
 }
 
 .tickAge {
   position: absolute;
-  top: 22px;
+  top: 24px;
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   color: var(--ink-muted);
   white-space: nowrap;
 }
@@ -445,7 +445,7 @@
   border: 1px solid var(--border);
   background-color: #ffffff;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink);
   cursor: pointer;
@@ -573,7 +573,7 @@
   border: 1px solid var(--border);
   background-color: rgba(249, 249, 247, 0.85);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--ink-muted);
   cursor: pointer;
