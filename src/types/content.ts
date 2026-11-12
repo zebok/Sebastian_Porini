@@ -85,7 +85,8 @@ export type CareerBranchId =
   | "feature/backend-api"
   | "feature/data-ai"
   | "feature/product-delivery"
-  | "learn/education";
+  | "learn/education"
+  | "experiences";
 
 export type CareerCommitStatus = "committed" | "wip" | "forecast";
 

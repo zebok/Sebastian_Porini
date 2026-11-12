@@ -42,9 +42,14 @@ export const ProjectDetailsModal = ({ project, onClose, dict }: ProjectDetailsMo
 
         <div className={styles.modalBody}>
           <div className={styles.modalHeader}>
-            <span className={styles.modalCategory}>
-              {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
-            </span>
+            <div className={styles.cardMeta} style={{ marginBottom: "0.4rem" }}>
+              <span className={styles.typeBadge}>
+                {project.projectType === "work" ? dict.projects.types.work : dict.projects.types.personal}
+              </span>
+              <span className={styles.modalCategory}>
+                {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
+              </span>
+            </div>
             <h2 className={styles.modalTitle}>{project.title}</h2>
           </div>
 

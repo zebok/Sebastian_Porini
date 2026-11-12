@@ -21,7 +21,8 @@ import {
 // Import Section Components
 import Hero from "../sections/Hero/Hero";
 import Skills from "../sections/Skills/Skills";
-import UnderConstruction from "../sections/UnderConstruction/UnderConstruction";
+import TimelinePage from "../sections/TimelinePage/TimelinePage";
+import Projects from "../sections/Projects/Projects";
 import type { ConstructionMode } from "../effects/renderers/ConstructionParticleRenderer";
 
 import layoutStyles from "./SPALayout.module.css";
@@ -228,23 +229,29 @@ export default function SPALayout({
               />
             </div>
 
-            {/* Timeline / Under Construction Section */}
+            {/* Timeline Section */}
             <div
               id="section-timeline"
               className={layoutStyles.sectionLayer}
               style={getSectionStyle("timeline")}
             >
-              <UnderConstruction dict={dict} lang={lang} />
+              <TimelinePage
+                dict={dict}
+                repository={data.careerRepository}
+                timelineRuntime={timelineRuntime}
+                isActive={activeSection === "timeline" && !showLoader}
+                isTransitioningIn={nextSection === "timeline" && !showLoader}
+                lang={lang}
+              />
             </div>
 
-
-            {/* Projects / Under Construction Section */}
+            {/* Projects Section */}
             <div
               id="section-projects"
               className={layoutStyles.sectionLayer}
               style={getSectionStyle("projects")}
             >
-              <UnderConstruction dict={dict} lang={lang} />
+              <Projects dict={dict} projects={data.projects} />
             </div>
 
           </div>

@@ -31,14 +31,18 @@ import {
 } from "./InteractiveNetwork.config";
 import type { TimelineRuntime } from "../visualizations/Timeline.runtime";
 import {
-  renderConstructionParticles,
-  setConstructionTargets,
-} from "./renderers/ConstructionParticleRenderer";
+  drawTimelineParticles,
+  getTimelineGroupColor,
+  setTimelineParticleTargets,
+} from "./renderers/TimelineParticleRenderer";
 
 interface NetworkNode extends BrainRendererNode {
   vx: number;
   vy: number;
   group: number; // Venn group (0, 1, 2)
+  r: number;
+  g: number;
+  b: number;
   color: string;
   radiusMultiplier: number;
 }
@@ -58,10 +62,13 @@ const THEME_COLORS = {
 };
 
 const getRGBA = (color: { r: number; g: number; b: number }, alpha: number) => {
-  return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+  return `rgba(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)}, ${alpha})`;
 };
 
-const getGroupColor = (group: number) => {
+const getGroupColor = (group: number, section?: SectionType) => {
+  if (section === "timeline") {
+    return getTimelineGroupColor(group);
+  }
   if (group === 0) return THEME_COLORS.accent;
   if (group === 1) return THEME_COLORS.accent2;
   return THEME_COLORS.accent3;
@@ -167,6 +174,23 @@ const setVennTargets = (
         node.ty = circle.y + Math.sin(orbitAngle) * (coreR + vibration);
       }
     }
+  });
+};
+
+const setProjectsTargets = (
+  nodes: NetworkNode[],
+  w: number,
+  h: number,
+  frameCount: number
+) => {
+  nodes.forEach((node, i) => {
+    const seed = i * 223.7;
+    const baseX = ((seed * 71) % (w - 120)) + 60;
+    const baseY = ((seed * 37) % (h - 120)) + 60;
+    const driftX = Math.sin(frameCount * 0.003 + seed) * 30;
+    const driftY = Math.cos(frameCount * 0.003 + seed * 1.3) * 30;
+    node.tx = baseX + driftX;
+    node.ty = baseY + driftY;
   });
 };
 
@@ -670,6 +694,7 @@ export default function InteractiveNetwork({
         else if (i >= 200) group = (i - 200) % 3;
 
         const brainPoint = brainBlueprint[i];
+        const initColor = getGroupColor(group, sectionRef.current);
 
         nodes.push({
           id: i,
@@ -681,7 +706,10 @@ export default function InteractiveNetwork({
           ty: height / 2,
           baseRadius: i < 200 ? Math.random() * 2 + 1.2 : Math.random() * 1.35 + 0.72,
           group,
-          color: getRGBA(getGroupColor(group), 0.4),
+          r: initColor.r,
+          g: initColor.g,
+          b: initColor.b,
+          color: getRGBA(initColor, 0.4),
           angleOffset: Math.random() * Math.PI * 2,
           radiusMultiplier: 0.15 + 0.72 * Math.sqrt(Math.random()),
           brainX: brainPoint.x,
@@ -748,11 +776,12 @@ export default function InteractiveNetwork({
             );
           }
           break;
-        case "timeline":
+        case "timeline": {
+          setTimelineParticleTargets(nodes, w, h, frameCount, timelineRuntime);
+          break;
+        }
         case "projects": {
-          const currentSpa = spaRef.current;
-          const mode = currentSpa?.constructionMode ?? "lemniscate";
-          setConstructionTargets(nodes, w, h, cx, cy, mode, frameCount, mouseRef.current);
+          setProjectsTargets(nodes, w, h, frameCount);
           break;
         }
         default:
@@ -784,25 +813,6 @@ export default function InteractiveNetwork({
           : [];
 
       ctx.clearRect(0, 0, w, h);
-
-      if (section === "timeline" || section === "projects") {
-        updateTargets(w, h, frameCount);
-        nodes.forEach((node) => {
-          if (!renderPolicy.animateContinuously) {
-            node.x = node.tx;
-            node.y = node.ty;
-            return;
-          }
-          node.x += (node.tx - node.x) * 0.045;
-          node.y += (node.ty - node.y) * 0.045;
-        });
-        const currentSpa = spaRef.current;
-        const mode = currentSpa?.constructionMode ?? "lemniscate";
-        renderConstructionParticles(ctx, nodes, w, h, mode, frameCount);
-        return;
-      }
-
-
 
       // Recalculate targets on EVERY frame for perfect fluid morphs
       updateTargets(w, h, frameCount);
@@ -845,13 +855,21 @@ export default function InteractiveNetwork({
           ? 0
           : Math.cos(frameCount * driftSpeed * 0.8) * 4;
 
-      // Update positions
+      // Update positions and smooth RGB transitions
       nodes.forEach((node, i) => {
+        const targetColor = getGroupColor(node.group, section);
         if (!renderPolicy.animateContinuously) {
           node.x = node.tx;
           node.y = node.ty;
+          node.r = targetColor.r;
+          node.g = targetColor.g;
+          node.b = targetColor.b;
           return;
         }
+
+        node.r += (targetColor.r - node.r) * 0.06;
+        node.g += (targetColor.g - node.g) * 0.06;
+        node.b += (targetColor.b - node.b) * 0.06;
 
         const circleGroup = node.group;
         const startIdx = circleGroup === 0 ? 0 : circleGroup === 1 ? 66 : 132;
@@ -876,6 +894,30 @@ export default function InteractiveNetwork({
         } else if (isStructural) {
           node.x += (node.tx - node.x) * 0.035;
           node.y += (node.ty - node.y) * 0.035;
+        } else if (section === "timeline") {
+          const time = frameCount * 0.008 + node.id;
+          const targetX = node.tx + Math.sin(time) * 1.4;
+          const targetY = node.ty + Math.cos(time * 0.8) * 1.4;
+
+          // Prevent horizontal wrap-around streaks when stream particles loop edge-to-edge
+          if (Math.abs(targetX - node.x) > w * 0.6 && Math.abs(targetY - node.y) < 48) {
+            node.x = targetX;
+          } else {
+            node.x += (targetX - node.x) * 0.085;
+          }
+          node.y += (targetY - node.y) * 0.085;
+
+          if (mouse.active) {
+            const dx = mouse.x - node.x;
+            const dy = mouse.y - node.y;
+            const dist = Math.hypot(dx, dy);
+            const limitDist = 64;
+            if (dist > 0.001 && dist < limitDist) {
+              const force = (limitDist - dist) / limitDist;
+              node.x -= dx * force * 0.04;
+              node.y -= dy * force * 0.04;
+            }
+          }
         } else {
           const time = frameCount * 0.008 + node.id;
           const driftAmount = section === "skills" ? 0.34 : 2;
@@ -997,7 +1039,9 @@ export default function InteractiveNetwork({
       const selectedSet = currentSpa?.selectedVennCircle ?? null;
       const connectionDist = (section === "how-am-i" && selectedSet !== null) ? (w < 768 ? 130 : 170) : (w < 768 ? 85 : 120);
       const connectionNodeCount =
-        section === "skills" ? 0 : Math.min(nodes.length, 200);
+        section === "skills" || section === "timeline"
+          ? 0
+          : Math.min(nodes.length, 200);
       ctx.lineWidth = selectedSet !== null ? 0.75 : 0.5;
 
       for (let i = 0; i < connectionNodeCount; i++) {
@@ -1039,8 +1083,8 @@ export default function InteractiveNetwork({
             }
 
             let baseColor = THEME_COLORS.accent;
-            if (section === "how-am-i" && n1.group === n2.group) {
-              baseColor = getGroupColor(n1.group);
+            if ((section === "how-am-i" || section === "projects") && n1.group === n2.group) {
+              baseColor = getGroupColor(n1.group, section);
             }
             if (section === "how-am-i" && selectedSet !== null) {
               if (n1.group !== selectedSet || n2.group !== selectedSet) {
@@ -1059,7 +1103,16 @@ export default function InteractiveNetwork({
 
       // ─── DRAW NODES ───────────────────────────────────────────────────────
 
-      if (section === "skills") {
+      if (section === "timeline") {
+        drawTimelineParticles(
+          ctx,
+          nodes,
+          timelineRuntime,
+          mouse,
+          globalDriftX,
+          globalDriftY
+        );
+      } else if (section === "skills") {
         if (
           brainIntroIntensity >= 1 &&
           brainIntroCoreSkillIds.size === 0 &&
@@ -1205,7 +1258,7 @@ export default function InteractiveNetwork({
             }
           }
 
-          const baseColor = getGroupColor(node.group);
+          const baseColor = { r: node.r, g: node.g, b: node.b };
 
           ctx.fillStyle = getRGBA(baseColor, 0.24 * alphaMultiplier);
           ctx.beginPath();

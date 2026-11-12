@@ -40,13 +40,14 @@ export default function Projects({ dict, projects }: ProjectsProps) {
 
   // Technologies List (Prominent tags from content)
   const filterTechs = [
-    "TypeScript",
-    "JavaScript",
     "Python",
     "SQL",
+    "PostgreSQL",
     "AWS SAM",
-    "D3.js",
-    "Google Apps Script"
+    "AWS Lambda",
+    "TypeScript",
+    "Next.js",
+    "CI/CD"
   ];
 
   // Close dropdowns on clicking outside
@@ -309,9 +310,14 @@ export default function Projects({ dict, projects }: ProjectsProps) {
                   </div>
 
                   <div className={styles.cardBody}>
-                    <span className={styles.cardCategory}>
-                      {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
-                    </span>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.typeBadge}>
+                        {project.projectType === "work" ? dict.projects.types.work : dict.projects.types.personal}
+                      </span>
+                      <span className={styles.cardCategory}>
+                        {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
+                      </span>
+                    </div>
                     <h3 className={styles.cardTitle}>{project.title}</h3>
                     <p className={styles.cardDesc}>{project.description}</p>
 

@@ -2,14 +2,14 @@
   "personal": {
     "name": "Sebastián Porini",
     "tagline": {
-      "en": "Product Strategist | Solution Architect",
-      "es": "Estratega de Producto | Arquitecto de Soluciones",
-      "de": "Produktstratege | Lösungsarchitekt"
+      "en": "Data & Analytics Engineer | BI & Data Modeling",
+      "es": "Data & Analytics Engineer | BI & Data Modeling",
+      "de": "Data & Analytics Engineer | BI & Datenmodellierung"
     },
     "description": {
-      "en": "A professional, mathematical, and creative approach to data-driven problem solving and product development.",
-      "es": "Un enfoque profesional, matemático y creativo para la resolución de problemas basada en datos y el desarrollo de productos.",
-      "de": "Ein professioneller, mathematischer und kreativer Ansatz zur datengesteuerten Problemlösung und Produktentwicklung."
+      "es": "Lic. en Gestión de TI y Técnico Químico enfocado en Data & Analytics. Especializado en transformar datos transaccionales en modelos dimensionales, pipelines ELT cloud y tableros de BI para fundamentar la toma de decisiones y comprender la realidad del negocio.",
+      "en": "B.S. in IT Management & Chemical Technician focused on Data & Analytics. Specialized in transforming transactional data into dimensional models, cloud ELT pipelines, and BI dashboards to ground decision-making and understand business reality.",
+      "de": "B.Sc. in IT-Management & Chemotechniker mit Fokus auf Data & Analytics. Spezialisiert auf die Transformation von Transaktionsdaten in dimensionale Modelle, Cloud-ELT-Pipelines und BI-Dashboards zur Fundierung von Entscheidungen und zum Verständnis der geschäftlichen Realität."
     },
     "story": {
       "title": {
@@ -33,226 +33,206 @@
     "focus": {
       "circle1": {
         "title": {
-          "en": "What I do well",
-          "es": "Lo que hago bien",
-          "de": "Was ich gut kann"
+          "en": "Product Vision",
+          "es": "Visión de Producto",
+          "de": "Produktvision"
         },
         "description": {
-          "en": "My capabilities and strengths",
-          "es": "Mis capacidades y fortalezas",
-          "de": "Meine Fähigkeiten und Stärken"
+          "en": "Focus on real needs and impact",
+          "es": "Foco en necesidades reales e impacto",
+          "de": "Fokus auf echte Bedürfnisse und Wirkung"
         },
         "items": [
           {
-            "en": "Connecting systemic ideas",
-            "es": "Conectar ideas sistémicas",
-            "de": "Systemische Ideen verbinden"
+            "en": "Focus on real needs",
+            "es": "Foco en necesidades reales",
+            "de": "Fokus auf reale Bedürfnisse"
           },
           {
-            "en": "First-principles thinking",
-            "es": "Desarmar problemas desde la raíz",
-            "de": "Probleme von Grund auf analysieren"
+            "en": "Simplicity over complexity",
+            "es": "Simplicidad sobre complejidad innecesaria",
+            "de": "Einfachheit statt unnötiger Komplexität"
           },
           {
-            "en": "Synthesizing cross-domain knowledge",
-            "es": "Sintetizar conocimiento cruzado",
-            "de": "Domänenübergreifendes Wissen synthetisieren"
+            "en": "Technical and business viability",
+            "es": "Viabilidad técnica y negocio",
+            "de": "Technische und geschäftliche Machbarkeit"
           }
         ],
         "tags": [
           {
-            "en": "Architecture",
-            "es": "Arquitectura",
-            "de": "Architektur"
+            "en": "Common Sense",
+            "es": "Sentido común",
+            "de": "Gesunder Menschenverstand"
           },
           {
-            "en": "Clean Code",
-            "es": "Código Limpio",
-            "de": "Sauberer Code"
+            "en": "Pragmatism",
+            "es": "Pragmatismo",
+            "de": "Pragmatismus"
           },
           {
-            "en": "Systems",
-            "es": "Sistemas",
-            "de": "Systeme"
-          },
-          {
-            "en": "Scalability",
-            "es": "Escalabilidad",
-            "de": "Skalierbarkeit"
+            "en": "Real Impact",
+            "es": "Impacto real",
+            "de": "Echte Wirkung"
           }
         ]
       },
       "circle2": {
         "title": {
-          "en": "What motivates me",
-          "es": "Qué me motiva",
-          "de": "Was mich motiviert"
+          "en": "Data Rigor",
+          "es": "Rigor de Datos",
+          "de": "Datenstrenge"
         },
         "description": {
-          "en": "What drives my curiosity and commitment",
-          "es": "Lo que impulsa mi curiosidad y compromiso",
-          "de": "Was meine Neugier und mein Engagement antreibt"
+          "en": "Structure, pipelines and security",
+          "es": "Estructura, pipelines y seguridad",
+          "de": "Struktur, Pipelines und Sicherheit"
         },
         "items": [
           {
-            "en": "Uncovering data-driven insights",
-            "es": "Descubrir patrones ocultos en los datos",
-            "de": "Datengestützte Erkenntnisse aufdecken"
+            "en": "Structure against chaos",
+            "es": "Estructura frente al caos",
+            "de": "Struktur gegen das Chaos"
           },
           {
-            "en": "Understanding the core 'why'",
-            "es": "Entender el 'porqué' profundo",
-            "de": "Das tiefe 'Warum' verstehen"
+            "en": "Consistent relational modeling",
+            "es": "Modelado relacional consistente",
+            "de": "Konsistente relationale Modellierung"
           },
           {
-            "en": "Dissecting complex systems",
-            "es": "Desarmar sistemas complejos",
-            "de": "Komplexe Systeme zerlegen"
+            "en": "Serverless pipelines and automation",
+            "es": "Pipelines y automatización serverless",
+            "de": "Serverlose Pipelines und Automatisierung"
+          },
+          {
+            "en": "Security by design",
+            "es": "Seguridad IT por diseño",
+            "de": "Sicherheit durch Design"
           }
         ],
         "tags": [
           {
-            "en": "Interactivity",
-            "es": "Interactividad",
-            "de": "Interaktivität"
+            "en": "Traceability",
+            "es": "Trazabilidad",
+            "de": "Rückverfolgbarkeit"
           },
           {
-            "en": "Animation",
-            "es": "Animación",
-            "de": "Animationen"
+            "en": "Reliability",
+            "es": "Confiabilidad",
+            "de": "Zuverlässigkeit"
           },
           {
-            "en": "Components",
-            "es": "Componentes",
-            "de": "Komponenten"
-          },
-          {
-            "en": "Experience",
-            "es": "Experiencia",
-            "de": "Nutzererfahrung"
+            "en": "Zero-Trust",
+            "es": "Zero-Trust",
+            "de": "Zero-Trust"
           }
         ]
       },
       "circle3": {
         "title": {
-          "en": "How I work",
-          "es": "Cómo trabajo",
-          "de": "Wie ich arbeite"
+          "en": "Scientific Curiosity",
+          "es": "Curiosidad Científica",
+          "de": "Wissenschaftliche Neugier"
         },
         "description": {
-          "en": "My approach to delivering results:",
-          "es": "Mi enfoque para entregar resultados:",
-          "de": "Mein Ansatz zur Erzielung von Ergebnissen:"
+          "en": "Analytical roots and continuous learning",
+          "es": "Raíces analíticas y aprendizaje continuo",
+          "de": "Analytische Wurzeln und ständiges Lernen"
         },
         "items": [
           {
-            "en": "Flexible structure",
-            "es": "Estructura flexible",
-            "de": "Flexible Struktur"
+            "en": "Exact sciences foundations",
+            "es": "Raíces en ciencias exactas",
+            "de": "Grundlagen exakter Wissenschaften"
           },
           {
-            "en": "Transparent communication",
-            "es": "Comunicación transparente",
-            "de": "Transparente Kommunikation"
+            "en": "Analytical method and mindset",
+            "es": "Método y pensamiento analítico",
+            "de": "Analytische Methode und Denkweise"
           },
           {
-            "en": "Radical candor",
-            "es": "Franqueza radical",
-            "de": "Radikale Offenheit"
+            "en": "Systematic pattern detection",
+            "es": "Detección de patrones sistemáticos",
+            "de": "Systematische Mustererkennung"
+          },
+          {
+            "en": "Path to applied statistics",
+            "es": "Rumbo a estadística aplicada",
+            "de": "Weg zur angewandten Statistik"
           }
         ],
         "tags": [
           {
-            "en": "Neural Networks",
-            "es": "Redes Neuronales",
-            "de": "Neuronale Netze"
+            "en": "Experimentation",
+            "es": "Experimentación",
+            "de": "Experimentation"
           },
           {
-            "en": "Embeddings",
-            "es": "Embeddings",
-            "de": "Vektoreinbettungen"
+            "en": "Logical Rigor",
+            "es": "Rigor lógico",
+            "de": "Logische Strenge"
           },
           {
-            "en": "Models",
-            "es": "Modelos",
-            "de": "Modelle"
-          },
-          {
-            "en": "Algorithms",
-            "es": "Algoritmos",
-            "de": "Algorithmen"
+            "en": "Exact Sciences",
+            "es": "Exactas",
+            "de": "Exakte Wissenschaften"
           }
         ]
       },
       "intersection01": {
         "title": {
-          "en": "Innovative Logic",
-          "es": "Lógica Innovadora",
-          "de": "Innovative Logik"
+          "en": "Evidence-Based Decisions",
+          "es": "Decisiones con Evidencia",
+          "de": "Evidenzbasierte Entscheidungen"
         },
         "items": [
           {
-            "en": "Unconventional problem solving",
-            "es": "Resolución no convencional",
-            "de": "Unkonventionelle Problemlösung"
+            "en": "Data-driven prioritization",
+            "es": "Priorización guiada por datos",
+            "de": "Datengetriebene Priorisierung"
           },
           {
-            "en": "Analytical Creativity",
-            "es": "Creatividad Analítica",
-            "de": "Analytische Kreativität"
-          },
-          {
-            "en": "Strategic Thinking",
-            "es": "Pensamiento Estratégico",
-            "de": "Strategisches Denken"
+            "en": "Metrics with concrete returns",
+            "es": "Métricas con retorno concreto",
+            "de": "Metriken mit konkretem Ertrag"
           }
         ]
       },
       "intersection02": {
         "title": {
-          "en": "Creative Results",
-          "es": "Resultados Creativos",
-          "de": "Kreative Ergebnisse"
+          "en": "Pragmatic Innovation",
+          "es": "Innovación Pragmática",
+          "de": "Pragmatische Innovation"
         },
         "items": [
           {
-            "en": "Visual Data Storytelling",
-            "es": "Visual Data Storytelling",
-            "de": "Visuelles Data Storytelling"
+            "en": "Curiosity applied to business",
+            "es": "Curiosidad aplicada al negocio",
+            "de": "Neugier im Geschäftsbereich"
           },
           {
-            "en": "Functional Design",
-            "es": "Diseño Funcional",
-            "de": "Funktionales Design"
-          },
-          {
-            "en": "User-centric logic",
-            "es": "Lógica centrada en el usuario",
-            "de": "Nutzerzentrierte Logik"
+            "en": "First-principles reasoning",
+            "es": "Razonamiento por primeros principios",
+            "de": "Denken nach Grundprinzipien"
           }
         ]
       },
       "intersection12": {
         "title": {
-          "en": "Structured Passion",
-          "es": "Pasión Estructurada",
-          "de": "Strukturierte Leidenschaft"
+          "en": "Rigorous Modeling",
+          "es": "Modelado Riguroso",
+          "de": "Rigorose Modellierung"
         },
         "items": [
           {
-            "en": "Reliable Innovation",
-            "es": "Innovación Confiable",
-            "de": "Zuverlässige Innovation"
+            "en": "Clean and unbiased data",
+            "es": "Información limpia sin sesgos",
+            "de": "Saubere, unvoreingenommene Daten"
           },
           {
-            "en": "Disciplined Curiosity",
-            "es": "Curiosidad Disciplinada",
-            "de": "Disziplinierte Neugier"
-          },
-          {
-            "en": "Consistent Excellence",
-            "es": "Excelencia Constante",
-            "de": "Konsistente Exzellenz"
+            "en": "Solid analytical foundations",
+            "es": "Fundamentos analíticos sólidos",
+            "de": "Solide analytische Grundlagen"
           }
         ]
       },
@@ -260,13 +240,18 @@
         "title": {
           "en": "The Point of Impact",
           "es": "El Punto de Impacto",
-          "de": "Der Schnittpunkt des Impacts"
+          "de": "Der Wirkungspunkt"
         },
         "items": [
           {
-            "en": "The core of my professional value: where logic, creativity, and results converge.",
-            "es": "El núcleo de mi valor profesional: donde la lógica, la creatividad y los resultados convergen.",
-            "de": "Der Kern meines beruflichen Mehrwerts: wo Logik, Kreativität und Ergebnisse zusammenlaufen."
+            "en": "Science, data and product",
+            "es": "Ciencia, datos y producto",
+            "de": "Wissenschaft, Daten und Produkt"
+          },
+          {
+            "en": "Tangible real-world solutions",
+            "es": "Soluciones con impacto tangible",
+            "de": "Lösungen mit spürbarer Wirkung"
           }
         ]
       }
@@ -1181,9 +1166,9 @@
   "careerRepository": {
     "name": "career-repository",
     "headIdentity": {
-      "en": "Product Strategist / Solution Architect",
-      "es": "Estratega de Producto / Arquitecto de Soluciones",
-      "de": "Produktstratege / Lösungsarchitekt"
+      "en": "Data & Analytics Engineer | BI & Data Modeling",
+      "es": "Data & Analytics Engineer | BI & Data Modeling",
+      "de": "Data & Analytics Engineer | BI & Datenmodellierung"
     },
     "branches": [
       {
@@ -1245,6 +1230,16 @@
           "de": "Formale Ausbildung und nachhaltige technische Grundlagen."
         },
         "color": "#ffd166"
+      },
+      {
+        "id": "experiences",
+        "label": "experiences",
+        "description": {
+          "en": "Work & Travel abroad: cultural immersion, living independently, and global perspectives.",
+          "es": "Work & Travel en el exterior: inmersión cultural, autonomía y perspectiva global.",
+          "de": "Work & Travel im Ausland: kulturelles Eintauchen, Selbstständigkeit und globale Perspektiven."
+        },
+        "color": "#10b981"
       }
     ],
     "commits": [
@@ -1265,15 +1260,15 @@
           "de": "2011–2016"
         },
         "title": {
-          "en": "ORT technical foundations",
-          "es": "Fundamentos técnicos en ORT",
-          "de": "Technische Grundlagen an der ORT"
+          "en": "Technical Foundations in Chemistry",
+          "es": "Fundamentos Técnicos en Química",
+          "de": "Technische Grundlagen in Chemie"
         },
         "organization": "ORT",
         "summary": {
-          "en": "Chemical Technician training established a rigorous base in laboratory work, exact sciences, and structured problem solving.",
-          "es": "La formación como Técnico Químico construyó una base rigurosa en laboratorio, ciencias exactas y resolución estructurada de problemas.",
-          "de": "Die Ausbildung zum Chemietechniker schuf eine fundierte Basis in Laborarbeit, exakten Wissenschaften und strukturierter Problemlösung."
+          "en": "Laboratory training, experimental method, and structured analytical problem-solving.",
+          "es": "Formación en laboratorio, análisis experimental y resolución estructurada de problemas analíticos.",
+          "de": "Laborausbildung, experimentelle Methoden und strukturierte Problemlösung."
         },
         "details": {
           "en": [
@@ -1288,12 +1283,114 @@
         }
       },
       {
+        "id": "work-travel-germany",
+        "sha": "a491e01",
+        "branchId": "experiences",
+        "parents": [
+          {
+            "id": "ort-technical-foundations",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "foundation",
+        "time": {
+          "value": "2017-11",
+          "precision": "month"
+        },
+        "period": {
+          "en": "Nov 2017–Apr 2019",
+          "es": "Nov 2017–Abr 2019",
+          "de": "Nov. 2017–Apr. 2019"
+        },
+        "title": {
+          "en": "Work & Travel in Germany",
+          "es": "Work & Travel en Alemania",
+          "de": "Work & Travel in Deutschland"
+        },
+        "organization": "Germany",
+        "summary": {
+          "en": "1.5 years living and working abroad in Germany, learning the language and developing personal autonomy.",
+          "es": "1.5 años viviendo y trabajando en Alemania, aprendiendo el idioma y desarrollando autonomía personal.",
+          "de": "1,5 Jahre Leben und Arbeiten in Deutschland, Spracherwerb und persönliche Weiterentwicklung."
+        },
+        "details": {
+          "en": [
+            "1.5 years of cultural immersion living and working in Germany.",
+            "Learned German from scratch to working proficiency in daily life and work environments.",
+            "Developed high independence, intercultural communication, and adaptability to unfamiliar systems."
+          ],
+          "es": [
+            "1.5 años de inmersión cultural viviendo y trabajando en Alemania.",
+            "Aprendizaje del idioma alemán y adaptación a entornos laborales y sociales locales.",
+            "Desarrollo de autonomía, comunicación intercultural y resolución práctica de problemas en el exterior."
+          ],
+          "de": [
+            "1,5 Jahre kulturelles Eintauchen durch Leben und Arbeiten in Deutschland.",
+            "Erlernen der deutschen Sprache und Anpassung an lokale Lebens- und Arbeitswelten.",
+            "Entwicklung hoher Selbstständigkeit, interkultureller Kommunikation und Anpassungsfähigkeit."
+          ]
+        }
+      },
+      {
+        "id": "work-travel-denmark",
+        "sha": "d184a22",
+        "branchId": "experiences",
+        "parents": [
+          {
+            "id": "work-travel-germany",
+            "target": "commit",
+            "kind": "first-parent"
+          }
+        ],
+        "status": "committed",
+        "kind": "foundation",
+        "time": {
+          "value": "2019-05",
+          "precision": "month"
+        },
+        "period": {
+          "en": "May 2019–May 2020",
+          "es": "May 2019–May 2020",
+          "de": "Mai 2019–Mai 2020"
+        },
+        "title": {
+          "en": "Work & Travel in Denmark",
+          "es": "Work & Travel en Dinamarca",
+          "de": "Work & Travel in Dänemark"
+        },
+        "organization": "Denmark",
+        "summary": {
+          "en": "1 year living and working in Denmark, expanding international perspectives and professional English fluency.",
+          "es": "1 año viviendo y trabajando en Dinamarca, consolidando el dominio del inglés y adaptabilidad nórdica.",
+          "de": "1 Jahr Leben und Arbeiten in Dänemark, Festigung verhandlungssicherer Englischkenntnisse."
+        },
+        "details": {
+          "en": [
+            "1 year of independent living and working in Denmark within Nordic work culture.",
+            "Strengthened professional English fluency across daily international team interactions.",
+            "Solidified adaptability, horizontal communication, and problem-solving in dynamic multicultural settings."
+          ],
+          "es": [
+            "1 año de vida y trabajo independiente en Dinamarca, inmerso en la cultura laboral nórdica.",
+            "Consolidación del inglés como idioma de comunicación diario y profesional.",
+            "Fortalecimiento de la adaptabilidad, pensamiento horizontal y resolución de problemas en contextos multiculturales."
+          ],
+          "de": [
+            "1 Jahr selbstständiges Leben und Arbeiten in Dänemark in nordischer Arbeitskultur.",
+            "Festigung fließender englischer Sprachkenntnisse in täglicher internationaler Interaktion.",
+            "Stärkung von Anpassungsfähigkeit, flachen Hierarchien und lösungsorientiertem Denken."
+          ]
+        }
+      },
+      {
         "id": "devborn-operations-automation",
         "sha": "abc7015",
         "branchId": "feature/product-delivery",
         "parents": [
           {
-            "id": "ort-technical-foundations",
+            "id": "work-travel-denmark",
             "target": "commit",
             "kind": "first-parent"
           }
@@ -1310,25 +1407,28 @@
           "de": "Jul 2020–Mai 2023"
         },
         "title": {
-          "en": "Operations and automation",
-          "es": "Operaciones y automatización",
-          "de": "Betrieb und Automatisierung"
+          "en": "Operations & Data Automation Analyst",
+          "es": "Operations & Data Automation Analyst",
+          "de": "Operations & Data Automation Analyst"
         },
         "organization": "Devborn",
         "summary": {
-          "en": "Moved from IT recruiting into operations by automating the workflows behind the work.",
-          "es": "Pasé de recruiting IT a operaciones automatizando los flujos detrás del trabajo.",
-          "de": "Durch die Automatisierung der zugrunde liegenden Abläufe entwickelte ich mich vom IT-Recruiting in Richtung Operations."
+          "en": "Operational pipelines and lightweight ETL with Apps Script and Python (HubSpot, Google Workspace), saving +15 hrs/week, and funnel modeling.",
+          "es": "Pipelines operativos y ETL ligero con Apps Script y Python (HubSpot, Google Workspace), ahorrando +15 h/semana, y modelado de funnels.",
+          "de": "Operative Pipelines und leichtes ETL mit Apps Script und Python (HubSpot, Google Workspace) mit +15 Std./Woche Ersparnis und Funnel-Modellierung."
         },
         "details": {
-          "en": [
-            "Connected Google Apps Script, Zapier, HubSpot, Google Workspace, and Microsoft 365."
-          ],
           "es": [
-            "Conecté Google Apps Script, Zapier, HubSpot, Google Workspace y Microsoft 365."
+            "Pipelines Operativos & ETL Ligero: Automatización de extracción y sincronización entre HubSpot CRM, Google Workspace y Zapier (Apps Script/Python), ahorrando +15 h/semana manuales.",
+            "Modelado de Funnel & Reporting: Bases de datos estructuradas y tableros para métricas de conversión, tiempos de ciclo y cuellos de botella operativos."
+          ],
+          "en": [
+            "Operational Pipelines & Lightweight ETL: Automated extraction and synchronization across HubSpot CRM, Google Workspace, and Zapier (Apps Script/Python), saving +15 hrs/week.",
+            "Funnel Modeling & Reporting: Structured databases and tracking dashboards measuring conversion metrics, cycle times, and operational bottlenecks."
           ],
           "de": [
-            "Ich verband Google Apps Script, Zapier, HubSpot, Google Workspace und Microsoft 365."
+            "Operative Pipelines & Leichtes ETL: Automatisierte Extraktion und Synchronisation über HubSpot CRM, Google Workspace und Zapier (Apps Script/Python) mit +15 Std./Woche Ersparnis.",
+            "Funnel-Modellierung & Reporting: Strukturierte Datenbanken und Dashboards zur Messung von Konversionsraten, Durchlaufzeiten und betrieblichen Engpässen."
           ]
         }
       },
@@ -1355,25 +1455,31 @@
           "de": "Juli 2023–Sept. 2024"
         },
         "title": {
-          "en": "Channel Analyst",
-          "es": "Analista de Canales",
-          "de": "Kanal- & Datenanalyst"
+          "en": "Data Integration & BI Analyst -> Product Data Lead",
+          "es": "Data Integration & BI Analyst -> Product Data Lead",
+          "de": "Data Integration & BI Analyst -> Product Data Lead"
         },
         "organization": "Flexways",
         "summary": {
-          "en": "Made operations observable by translating workflows into API behavior, SQL analysis, and decision-ready dashboards.",
-          "es": "Hice observables las operaciones traduciendo flujos en comportamiento de APIs, análisis SQL y dashboards para decidir.",
-          "de": "Ich machte Abläufe sichtbar, indem ich Workflows in API-Verhalten, SQL-Analysen und entscheidungsreife Dashboards übersetzte."
+          "en": "B2B API ingestion and normalization (Booking, Despegar), fleet & dynamic pricing analytics, and interactive Metabase BI dashboards.",
+          "es": "Ingesta y normalización de APIs B2B (Booking, Despegar), analítica de flota y pricing dinámico, y tableros interactivos en Metabase.",
+          "de": "B2B-API-Ingestion und Normalisierung (Booking, Despegar), Flotten- & Dynamic-Pricing-Analytik und Metabase-Dashboards."
         },
         "details": {
-          "en": [
-            "Built Metabase dashboards and automated daily operations with Apps Script and Zapier."
-          ],
           "es": [
-            "Construí dashboards en Metabase y automaticé operaciones diarias con Apps Script y Zapier."
+            "Ingesta & Normalización B2B: Integración y parseo de brokers globales (Booking, Despegar, etc.) con contratos heterogéneos (JSON, XML, SOAP, REST) hacia esquemas relacionales unificados.",
+            "Analítica de Flota & Pricing: Modelado operativo de flota (disponibilidad en tiempo real, tarifas dinámicas, mantenimiento) y scripts de conciliación en Python.",
+            "Business Intelligence en Metabase: Tableros interactivos y consultas SQL para monitorear embudos de conversión por canal, tasa de utilización y rendimiento comercial."
+          ],
+          "en": [
+            "B2B Ingestion & Normalization: Integrated and parsed global brokers (Booking, Despegar, etc.) with heterogeneous contracts (JSON, XML, SOAP, REST) into unified relational schemas.",
+            "Fleet & Pricing Analytics: Operational fleet modeling (real-time availability, dynamic pricing, maintenance) and Python reconciliation scripts.",
+            "Business Intelligence in Metabase: Interactive Metabase dashboards and SQL queries monitoring conversion funnels, utilization rates, and commercial performance."
           ],
           "de": [
-            "Ich erstellte Metabase-Dashboards und automatisierte den Tagesbetrieb mit Apps Script und Zapier."
+            "B2B-Ingestion & Normalisierung: Integration globaler Broker (Booking, Despegar etc.) mit heterogenen Verträgen (JSON, XML, SOAP, REST) in einheitliche relationale Schemata.",
+            "Flotten- & Pricing-Analytik: Operative Flottenmodellierung (Echtzeitverfügbarkeit, dynamische Tarife, Wartung) und Python-Abgleichsskripte.",
+            "Business Intelligence in Metabase: Interaktive Dashboards und SQL-Abfragen zur Überwachung von Funnels, Auslastungsraten und Vertriebsleistung."
           ]
         }
       },
@@ -1400,15 +1506,15 @@
           "de": "Apr. 2024–Apr. 2025"
         },
         "title": {
-          "en": "Technical Product Owner",
-          "es": "Technical Product Owner",
-          "de": "Technischer Product Owner"
+          "en": "Technical Product Owner (Data & Channels)",
+          "es": "Technical Product Owner (Datos & Canales)",
+          "de": "Technischer Product Owner (Daten & Kanäle)"
         },
         "organization": "Flexways",
         "summary": {
-          "en": "Connected stakeholders and delivery teams through roadmaps, clear requirements, and measurable product outcomes.",
-          "es": "Conecté stakeholders y equipos de entrega mediante roadmaps, requisitos claros y resultados de producto medibles.",
-          "de": "Ich verband Stakeholder und Umsetzungsteams durch Roadmaps, klare Anforderungen und messbare Produktergebnisse."
+          "en": "Connected operational data signals and product requirements into delivery roadmaps focused on outcomes.",
+          "es": "Conecté métricas operativas y requisitos de producto en roadmaps técnicos de entrega orientados a resultados.",
+          "de": "Verbindung operativer Datensignale mit Produktanforderungen in ergebnisorientierten Roadmaps."
         },
         "details": {
           "en": [
@@ -1494,25 +1600,28 @@
           "de": "Mai 2025–Mai 2026"
         },
         "title": {
-          "en": "Cloud infrastructure & Software Architecture",
-          "es": "Infraestructura cloud & Arquitectura de Software",
-          "de": "Cloud-Infrastruktur & Software-Architektur"
+          "en": "Data & BI Engineer | Internal Systems",
+          "es": "Data & BI Engineer | Internal Systems",
+          "de": "Data & BI Engineer | Interne Systeme"
         },
         "organization": "SRK Consulting",
         "summary": {
-          "en": "Designed scalable cloud-native and on-premises infrastructure, turning complex deployments into repeatable delivery.",
-          "es": "Diseñé infraestructura cloud-native y on-premise escalable, convirtiendo despliegues complejos en entregas repetibles.",
-          "de": "Ich konzipierte skalierbare Cloud-native- und On-Premises-Infrastruktur und machte komplexe Deployments wiederholbar."
+          "en": "Relational PostgreSQL modeling for consultant hours and budgets, advanced analytical SQL views, and automated extraction services.",
+          "es": "Modelado relacional en PostgreSQL para horas y presupuestos, vistas analíticas SQL avanzadas y servicios de extracción.",
+          "de": "Relationale PostgreSQL-Modellierung für Stunden und Budgets, fortgeschrittene analytische SQL-Views und Extraktionsdienste."
         },
         "details": {
-          "en": [
-            "Standardized operational workflows and telemetry architectures with structured technical documentation in dbDiagram and UML."
-          ],
           "es": [
-            "Estandaricé flujos operativos y arquitecturas de telemetría con documentación técnica estructurada en dbDiagram y UML."
+            "Bases de Datos & Pipelines: Modelado relacional en PostgreSQL (dbDiagram/UML) centralizando carga horaria de consultores, presupuestos, tarifarios y proyectos de ingeniería.",
+            "Vistas Analíticas & SSOT: Consultas SQL avanzadas (CTEs, Window Functions) para utilización y desvíos presupuestarios, y servicios en Python/Node.js como Single Source of Truth."
+          ],
+          "en": [
+            "Databases & Pipelines: Modeled relational schemas in PostgreSQL (dbDiagram/UML) to centralize consultant timesheets, budgets, rate cards, and engineering projects.",
+            "Analytical Views & SSOT: Advanced SQL queries (CTEs, Window Functions) for utilization and budget variances, plus Python/Node.js services as Single Source of Truth."
           ],
           "de": [
-            "Ich standardisierte Betriebsabläufe und Telemetrie-Architekturen mit strukturierter technischer Dokumentation in dbDiagram und UML."
+            "Datenbanken & Pipelines: Relationale PostgreSQL-Modellierung (dbDiagram/UML) zur Zentralisierung von Zeiterfassung, Budgets, Tarifen und Ingenieurprojekten.",
+            "Analytische Views & SSOT: Fortgeschrittene SQL-Abfragen (CTEs, Window Functions) für Auslastungs- und Budgetabweichungen sowie Python/Node.js-Dienste als Single Source of Truth."
           ]
         }
       },
@@ -1539,25 +1648,31 @@
           "de": "Mai 2026–Heute"
         },
         "title": {
-          "en": "Cloud & Software Application Development",
-          "es": "Desarrollo de Aplicaciones & Cloud",
-          "de": "Cloud- & Software-Entwicklung"
+          "en": "Data & Analytics Engineer | Cloud Data Architecture",
+          "es": "Data & Analytics Engineer | Cloud Data Architecture",
+          "de": "Data & Analytics Engineer | Cloud-Datenarchitektur"
         },
         "organization": "Geólogos Asociados",
         "summary": {
-          "en": "Architected serverless cloud infrastructure on AWS (SAM, CloudFormation) and cut operating costs by over 70% ($85 to $23/mo).",
-          "es": "Diseñé arquitectura serverless en AWS (SAM, CloudFormation) y optimicé costos operativos en más del 70% ($85 a $23 USD/mes).",
-          "de": "Architektur serverloser Cloud-Infrastruktur in AWS (SAM, CloudFormation) und Senkung der Betriebskosten um über 70 % ($85 auf $23/Monat)."
+          "en": "Dimensional modeling on AWS RDS & S3/Glue, modular SQL ELT pipelines with automated data quality, and 73% FinOps cost reduction.",
+          "es": "Modelado dimensional en AWS RDS y S3/Glue, pipelines ELT modulares en SQL con Data Quality automatizado y 73% de ahorro FinOps.",
+          "de": "Dimensionale Modellierung auf AWS RDS und S3/Glue, modulare SQL-ELT-Pipelines mit Data Quality und 73 % FinOps-Kostensenkung."
         },
         "details": {
-          "en": [
-            "Built serverless APIs on AWS Lambda (Node.js), automated GitHub Actions CI/CD with staged DB migrations, and managed zero-trust Cognito security."
-          ],
           "es": [
-            "Desarrollé APIs serverless en AWS Lambda (Node.js), CI/CD automatizado en GitHub Actions con migraciones de BD y seguridad Zero-Trust con Cognito."
+            "Modelado Dimensional & Arquitectura: Diseño del modelo en AWS RDS (PostgreSQL) y capa analítica en S3/Glue, estructurando Star Schema (Fact & Dim) para control de horas, gastos y rentabilidad.",
+            "Transformación & Data Quality: Capas de transformación modular en SQL (arquitectura Medallion / enfoque dbt) con validaciones automatizadas de integridad, control de nulos y deduplicación.",
+            "Optimización Cloud (FinOps) & BI: Reingeniería serverless en AWS (Lambda, VPC, Secrets Manager) y reportes BI, reduciendo el costo operativo en un 73% ($85 a $23 USD/mes)."
+          ],
+          "en": [
+            "Dimensional Modeling & Architecture: Designed data models on AWS RDS (PostgreSQL) and analytical layer on S3/Glue, structuring Star Schema (Fact & Dim) for timesheets, expenses, and profitability.",
+            "Transformation & Data Quality: Modular SQL transformation layers (Medallion architecture / dbt approach) with automated integrity checks, null handling, and deduplication.",
+            "Cloud Optimization (FinOps) & BI: Serverless AWS re-engineering (Lambda, VPC, Secrets Manager) and BI reporting, slashing cloud operating costs by 73% ($85 to $23 USD/mo)."
           ],
           "de": [
-            "Entwicklung serverloser APIs mit AWS Lambda (Node.js), automatisiertes CI/CD in GitHub Actions mit Datenbankschemata-Migrationen und Cognito Zero-Trust."
+            "Dimensionale Modellierung & Architektur: Datenmodellierung auf AWS RDS (PostgreSQL) und Analyseschicht auf S3/Glue mit Star-Schema (Fact & Dim) für Stundenerfassung, Ausgaben und Rentabilität.",
+            "Transformation & Datenqualität: Modulare SQL-Transformationsschichten (Medallion-Architektur / dbt-Ansatz) mit automatisierten Prüfungen auf Integrität, Nullwerte und Deduplizierung.",
+            "Cloud-Optimierung (FinOps) & BI: Serverloses AWS-Reengineering (Lambda, VPC, Secrets Manager) und BI-Reporting mit Senkung der Betriebskosten um 73 % ($85 auf $23 USD/Monat)."
           ]
         }
       },
@@ -1921,221 +2036,169 @@
   },
   "projects": [
     {
-      "id": "proj-1",
+      "id": "geological-data-platform",
       "title": {
-        "en": "Serverless IaC Data Pipeline",
-        "es": "Pipeline de Datos Serverless IaC",
-        "de": "Serverlose IaC-Datenpipeline"
+        "en": "Geological Data & Serverless Platform",
+        "es": "Plataforma de Datos Geológicos & Backend Serverless",
+        "de": "Plattform für geologische Daten & Serverless"
       },
       "description": {
-        "en": "Cloud native infrastructure automation using AWS SAM, deploying secure serverless APIs with role-based access control.",
-        "es": "Automatización de infraestructura cloud nativa con AWS SAM, desplegando APIs serverless seguras con control de acceso por roles.",
-        "de": "Cloud-native Infrastrukturautomatisierung mit AWS SAM zur Bereitstellung sicherer serverloser APIs mit rollenbasierter Zugriffskontrolle."
-      },
-      "category": "software",
-      "projectType": "work",
-      "tags": [
-        "AWS SAM",
-        "AWS Lambda",
-        "API Gateway",
-        "RDS",
-        "IaC",
-        "CI/CD",
-        "TypeScript"
-      ],
-      "highlights": {
-        "en": [
-          "Reduced infrastructure deployment overhead by 70% using SAM & CloudFormation templates.",
-          "Implemented Cognito user pools with custom authorization claims for fine-grained client routing.",
-          "Externalized configuration secrets via AWS Secrets Manager for enterprise security compliance."
-        ],
-        "es": [
-          "Reduje el tiempo de despliegue de infraestructura en un 70% mediante plantillas SAM y CloudFormation.",
-          "Implementé grupos de usuarios de Cognito con claims de autorización personalizados para el enrutamiento de clientes.",
-          "Externalicé secretos de configuración mediante AWS Secrets Manager para el cumplimiento de seguridad empresarial."
-        ],
-        "de": [
-          "Reduzierung des Bereitstellungsaufwands um 70 % durch SAM- und CloudFormation-Vorlagen.",
-          "Implementierung von Cognito-Benutzerpools mit benutzerdefinierten Autorisierungsansprüchen für granulare Client-Routen.",
-          "Auslagerung von Konfigurationsgeheimnissen über AWS Secrets Manager zur Einhaltung von Sicherheitsstandards."
-        ]
-      },
-      "featured": true,
-      "demoUrl": "#",
-      "codeUrl": "https://github.com/sebiporini"
-    },
-    {
-      "id": "proj-2",
-      "title": {
-        "en": "Enterprise AI Agent Integration",
-        "es": "Integración de Agente de IA Empresarial",
-        "de": "Unternehmens-KI-Agentenintegration"
-      },
-      "description": {
-        "en": "Advanced AI agents connecting large language models (LLMs) with SQL databases to automate geological document summaries and intelligence reports.",
-        "es": "Agentes de IA avanzados que conectan modelos de lenguaje (LLMs) con bases de datos SQL para automatizar resúmenes de documentos geológicos e informes.",
-        "de": "Fortschrittliche KI-Agenten, die Large Language Models (LLMs) mit SQL-Datenbanken verknüpfen, um geologische Berichte und Analysen automatisiert zusammenzufassen."
-      },
-      "category": "ai",
-      "projectType": "work",
-      "tags": [
-        "LLMs",
-        "LangChain",
-        "OpenAI",
-        "Python",
-        "Vector DBs",
-        "API Gateway"
-      ],
-      "highlights": {
-        "en": [
-          "Designed semantic retrieval QA over 10,000+ internal geological and mineralogical reports.",
-          "Leveraged LangChain to orchestrate structured, JSON-validated workflows, cutting manual review time by 50%.",
-          "Engineered intelligent caching layers to optimize API latency and reduce LLM token usage costs by 30%."
-        ],
-        "es": [
-          "Diseñé búsqueda semántica tipo QA sobre más de 10,000 informes geológicos y mineralógicos internos.",
-          "Utilicé LangChain para orquestar flujos de trabajo estructurados y validados por JSON, reduciendo a la mitad el tiempo de revisión manual.",
-          "Desarrollé capas de almacenamiento en caché inteligente para optimizar latencias y reducir costos de tokens de LLM en un 30%."
-        ],
-        "de": [
-          "Entwicklung einer semantischen Retrieval-QA über 10.000+ interne Berichte.",
-          "Einsatz von LangChain zur Orchestrierung strukturierter, JSON-validierter Workflows mit 50 % Zeitersparnis bei der manuellen Prüfung.",
-          "Konzeption intelligenter Caching-Schichten zur Optimierung der API-Latenz und Senkung der LLM-Token-Kosten um 30 %."
-        ]
-      },
-      "featured": true,
-      "demoUrl": "#",
-      "codeUrl": "https://github.com/sebiporini"
-    },
-    {
-      "id": "proj-3",
-      "title": {
-        "en": "Geological Data Analytics Platform",
-        "es": "Plataforma Analítica de Datos Geológicos",
-        "de": "Plattform für geologische Datenanalytik"
-      },
-      "description": {
-        "en": "Robust SQL analytics engine and custom Metabase dashboards visualizing structural drilling operations and geological anomalies.",
-        "es": "Motor analítico robusto de SQL y tableros interactivos en Metabase para la visualización de operaciones de perforación y anomalías geológicas.",
-        "de": "Robuste SQL-Analytik-Engine und maßgeschneiderte Metabase-Dashboards zur Visualisierung struktureller Bohrvorgänge und geologischer Anomalien."
+        "en": "Relational schema in PostgreSQL (AWS RDS) with decoupled AWS Lambda ingestion and least-privilege IAM isolation within a private VPC.",
+        "es": "Diseño de un esquema relacional en PostgreSQL (AWS RDS) con ingesta desacoplada vía AWS Lambda y aislamiento estricto de accesos vía IAM en VPC privada.",
+        "de": "Design eines relationalen Schemas in PostgreSQL (AWS RDS) mit serverloser Ingestion über AWS Lambda und strengen IAM-Zugriffsgrenzen in einer privaten VPC."
       },
       "category": "data",
       "projectType": "work",
       "tags": [
         "PostgreSQL",
-        "Metabase",
-        "SQL",
-        "Python",
-        "Pandas",
-        "AWS RDS"
+        "AWS RDS",
+        "AWS Lambda",
+        "Zero-Trust",
+        "IAM",
+        "SQL"
       ],
       "highlights": {
         "en": [
-          "Architected PostgreSQL relational schema in AWS RDS optimized to store millions of sensor telemetry readings.",
-          "Wrote complex analytical window functions and spatial queries to detect structural anomalies dynamically.",
-          "Deployed and configured Metabase dashboard suite, delivering real-time operations visibility to stakeholders."
+          "Centralized geological drilling data into a unified PostgreSQL single source of truth.",
+          "Architected decoupled serverless ingestion pipelines on AWS Lambda.",
+          "Enforced least-privilege IAM policies and private VPC database isolation."
         ],
         "es": [
-          "Diseñé la arquitectura relacional de PostgreSQL en AWS RDS optimizada para almacenar millones de lecturas de telemetría.",
-          "Construí funciones de ventana analíticas complejas y consultas espaciales para detectar anomalías estructurales dinámicamente.",
-          "Desplegué y configuré la suite de tableros de Metabase, brindando visibilidad en tiempo real de operaciones a los directivos."
+          "Centralización de datos geológicos de campo como única fuente de verdad en PostgreSQL.",
+          "Diseño de arquitectura de ingesta desacoplada y serverless sobre AWS Lambda.",
+          "Aislamiento estricto de base de datos en VPC privada y políticas IAM de menor privilegio."
         ],
         "de": [
-          "Architektur eines PostgreSQL-Schemas in AWS RDS zur Speicherung von Millionen Telemetriedatenpunkten.",
-          "Entwicklung komplexer analytischer Fensterfunktionen und räumlicher Abfragen zur dynamischen Erkennung struktureller Anomalien.",
-          "Bereitstellung und Konfiguration einer Metabase-Dashboard-Suite mit Echtzeit-Transparenz für Stakeholder."
+          "Zentralisierung geologischer Felddaten als Single Source of Truth in PostgreSQL.",
+          "Entwicklung entkoppelter, serverloser Ingestions-Pipelines auf AWS Lambda.",
+          "Strikte Datenbankisolation in privater VPC und Least-Privilege-IAM-Richtlinien."
         ]
       },
-      "featured": true,
-      "demoUrl": "#",
-      "codeUrl": "https://github.com/sebiporini"
+      "featured": true
     },
     {
-      "id": "proj-4",
+      "id": "attorney-scrapper",
       "title": {
-        "en": "Product Discovery & Ops Automations",
-        "es": "Descubrimiento de Producto y Ops Automatizadas",
-        "de": "Produktentdeckung & Betriebsautomatisierung"
+        "en": "Ingestion Pipeline & Entity Resolution",
+        "es": "Pipeline de Ingesta & Resolución de Identidades",
+        "de": "Ingestion-Pipeline & Identitätsauflösung"
       },
       "description": {
-        "en": "Seamless automation workflows connecting CRM systems to project management spaces, optimizing product delivery cycles.",
-        "es": "Flujos de automatización integrados que conectan sistemas CRM con espacios de gestión de proyectos, optimizando los ciclos de entrega de productos.",
-        "de": "Nahtlose Automatisierungs-Workflows zur Verbindung von CRM-Systemen mit Projektmanagement-Tools zur Optimierung von Produktbereitstellungszyklen."
+        "en": "Modular Python pipeline for ingesting, normalizing, and deduplicating public legal professional records, with human-in-the-loop review for ambiguous matches.",
+        "es": "Pipeline modular en Python para ingesta, normalización y deduplicación de registros legales públicos, con interfaz de revisión para casos con margen de ambigüedad.",
+        "de": "Modulare Python-Pipeline zur Ingestion, Normalisierung und Deduplizierung juristischer Berufsdaten mit Human-in-the-Loop-Prüfung für mehrdeutige Treffer."
       },
-      "category": "product",
-      "projectType": "work",
-      "tags": [
-        "Google Apps Script",
-        "Zapier",
-        "HubSpot",
-        "Agile",
-        "Scrum",
-        "API Integrations",
-        "JavaScript"
-      ],
-      "highlights": {
-        "en": [
-          "Built custom Google Apps Script extensions synchronizing candidate databases and operational workflows.",
-          "Integrated multi-step Zapier automation plans, saving operations and HR teams 15+ manual hours weekly.",
-          "Mapped customer feedback loops directly from HubSpot CRM to Jira/GitHub projects to guide sprint priorities."
-        ],
-        "es": [
-          "Desarrollé extensiones en Google Apps Script que sincronizan de manera autónoma bases de datos de candidatos.",
-          "Integré automatizaciones complejas en Zapier que ahorraron al equipo operativo más de 15 horas manuales semanales.",
-          "Diseñé el mapeo de feedback de clientes directamente desde HubSpot CRM hacia proyectos de desarrollo para priorizar sprints."
-        ],
-        "de": [
-          "Entwicklung benutzerdefinierter Google Apps Script-Erweiterungen zur Synchronisierung von Datenbanken und operativen Workflows.",
-          "Integration mehrstufiger Zapier-Automatisierungen mit über 15 eingesparten Arbeitsstunden pro Woche.",
-          "Direkte Verknüpfung von Kundenfeedback aus HubSpot CRM mit Entwicklungs-Tickets zur Priorisierung von Sprints."
-        ]
-      },
-      "featured": false,
-      "demoUrl": "#",
-      "codeUrl": "https://github.com/sebiporini"
-    },
-    {
-      "id": "proj-5",
-      "title": {
-        "en": "Interactive Brain Graph Visualizer",
-        "es": "Visualizador Interactivo de Grafo Cerebral",
-        "de": "Interaktiver Gehirn-Graph-Visualisierer"
-      },
-      "description": {
-        "en": "High-fidelity interactive D3 force-directed network showing skills, technologies, and language proficiency with dynamic spring physics.",
-        "es": "Red interactiva D3 con simulación de fuerzas físicas de alta fidelidad que muestra habilidades, tecnologías y nivel de idiomas con física de resortes.",
-        "de": "Hochpräzises interaktives D3-Kräftesimulationsnetzwerk zur Darstellung von Fähigkeiten, Technologien und Sprachkenntnissen mit dynamischer Federphysik."
-      },
-      "category": "software",
+      "category": "data",
       "projectType": "personal",
       "tags": [
-        "D3.js",
-        "React",
-        "TypeScript",
-        "Framer Motion",
-        "SVG Canvas",
-        "Mathematical Physics"
+        "Python",
+        "Data Cleaning",
+        "Entity Resolution",
+        "Human-in-the-Loop",
+        "ETL"
       ],
       "highlights": {
         "en": [
-          "Configured responsive multi-force simulation including custom collision, link distance, and center bounding forces.",
-          "Designed clean vector graphics rendering engine using pure SVG elements and react-ref hooks.",
-          "Implemented complex hover physics, changing particle states and expanding node paths smoothly."
+          "Ingested and normalized thousands of public professional records across disjoint sources.",
+          "Built rule-based similarity deduplication logic to resolve ambiguous identity matches.",
+          "Integrated human-in-the-loop review interface to inspect edge cases and maximize precision."
         ],
         "es": [
-          "Configuré una simulación de fuerzas múltiples responsiva con colisiones personalizadas, distancia de enlaces y límites.",
-          "Diseñé un motor de renderizado vectorial limpio usando elementos puros SVG y hooks reactivos.",
-          "Implementé física compleja al pasar el cursor, alterando estados de partículas y expandiendo nodos fluidamente."
+          "Ingesta y normalización de miles de registros profesionales de fuentes públicas dispersas.",
+          "Lógica de resolución de identidades y reglas de similitud para conciliar duplicados.",
+          "Instancia de revisión humana (human-in-the-loop) para casos ambiguos, maximizando precisión."
         ],
         "de": [
-          "Konfiguration einer responsiven Mehrkraftsimulation mit benutzerdefinierten Kollisionen, Verbindungslängen und Begrenzungen.",
-          "Entwicklung einer sauberen Vektorgrafik-Rendering-Engine mit reinen SVG-Elementen und React-Hooks.",
-          "Implementierung flüssiger Hover-Physik zur dynamischen Veränderung von Partikelzuständen und sanfter Knotenausdehnung."
+          "Ingestion und Normalisierung tausender Berufsdatensätze aus verteilten Quellen.",
+          "Regelbasierte Ähnlichkeits-Deduplizierung zur Auflösung mehrdeutiger Identitäten.",
+          "Human-in-the-Loop-Prüfungsinstanz für Grenzfälle zur Maximierung der Datenpräzision."
         ]
       },
       "featured": true,
-      "demoUrl": "#",
-      "codeUrl": "https://github.com/sebiporini"
+      "codeUrl": "https://github.com/zebok/attorney-scrapper"
+    },
+    {
+      "id": "cloud-iac-hardening",
+      "title": {
+        "en": "Cloud Infrastructure as Code & Hardening",
+        "es": "Infraestructura como Código (IaC) & Hardening Cloud",
+        "de": "Cloud-Infrastruktur als Code & Härtung"
+      },
+      "description": {
+        "en": "100% automated AWS provisioning using SAM and CloudFormation, subnet segregation, and auditable CI/CD pipelines with semantic versioning.",
+        "es": "Aprovisionamiento 100% automatizado en AWS con SAM y CloudFormation, segmentación de subredes públicas/privadas y pipelines de CI/CD con migraciones auditables.",
+        "de": "100% automatisierte AWS-Bereitstellung mit SAM und CloudFormation, Subnetz-Segmentierung und auditierbare CI/CD-Pipelines mit semantischer Versionierung."
+      },
+      "category": "software",
+      "projectType": "work",
+      "tags": [
+        "AWS SAM",
+        "CloudFormation",
+        "VPC Hardening",
+        "CI/CD",
+        "GitHub Actions",
+        "FinOps"
+      ],
+      "highlights": {
+        "en": [
+          "Automated zero-touch, fully reproducible cloud deployments with AWS SAM & CloudFormation.",
+          "Hardened VPC network topology, segregating public and private subnets with a secure NAT instance.",
+          "Automated database schema migrations and semantic release versioning in GitHub Actions."
+        ],
+        "es": [
+          "Aprovisionamiento 100% automatizado y reproducible de infraestructura cloud con AWS SAM.",
+          "Hardening de topología de red VPC, aislando subredes y optimizando salida segura con NAT instance.",
+          "Migraciones de base de datos auditables y versionado semántico automatizado en CI/CD."
+        ],
+        "de": [
+          "Vollständig reproduzierbare Cloud-Deployments mit AWS SAM und CloudFormation.",
+          "Härtung von VPC-Netzwerktopologien mit isolierten Subnetzen und sicherer NAT-Instanz.",
+          "Auditierbare Datenbankschemata-Migrationen und semantische Versionierung in CI/CD."
+        ]
+      },
+      "featured": true
+    },
+    {
+      "id": "portfolio-cv-engine",
+      "title": {
+        "en": "Portfolio Web & Multi-Profile Engine",
+        "es": "Portfolio Web & Multi-Profile Engine",
+        "de": "Web-Portfolio & Multi-Profil-Engine"
+      },
+      "description": {
+        "en": "Interactive Single Page Application with decoupled single-source-of-truth data architecture, generating dynamic visual interfaces and 40+ customized CV PDFs.",
+        "es": "Aplicación web interactiva con arquitectura Single Source of Truth, que alimenta tanto la experiencia visual interactiva como un motor que compila más de 40 variantes de CV.",
+        "de": "Interaktive Webanwendung mit Single-Source-of-Truth-Datenarchitektur, die visuelle Benutzeroberflächen sowie über 40 PDF-Lebensläufe kompiliert."
+      },
+      "category": "product",
+      "projectType": "personal",
+      "tags": [
+        "Next.js",
+        "TypeScript",
+        "UI/UX",
+        "Data Modeling",
+        "Puppeteer",
+        "GSAP"
+      ],
+      "highlights": {
+        "en": [
+          "Ideation, UX design, and development of responsive interactive data visualizations with GSAP & Framer Motion.",
+          "Decoupled JSON data model driving trilingual presentation (ES, EN, DE) across all sections.",
+          "Automated build-time compilation pipeline producing 40+ specialized CV PDFs without redundancy."
+        ],
+        "es": [
+          "Ideación, diseño UX y desarrollo de visualizaciones interactivas con GSAP y Framer Motion.",
+          "Modelo de datos JSON desacoplado que gobierna contenidos en tres idiomas (ES, EN, DE).",
+          "Pipeline automatizado en Node.js que compila más de 40 variantes de CV en segundos sin redundancia."
+        ],
+        "de": [
+          "Ideenfindung, UX-Design und Entwicklung responsiver Datenvisualisierungen mit GSAP und Framer Motion.",
+          "Entkoppeltes JSON-Datenmodell für dreisprachige Präsentation (ES, EN, DE) in allen Bereichen.",
+          "Automatisierte Build-Pipeline zur Generierung von über 40 spezialisierten Lebenslauf-PDFs."
+        ]
+      },
+      "featured": true,
+      "codeUrl": "https://github.com/zebok/Sebastian_Porini"
     }
   ]
 }

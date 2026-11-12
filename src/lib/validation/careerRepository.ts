@@ -14,6 +14,7 @@ const REQUIRED_BRANCH_IDS = [
   "feature/data-ai",
   "feature/product-delivery",
   "learn/education",
+  "experiences",
 ] as const;
 const requiredBranchIds = new Set<string>(REQUIRED_BRANCH_IDS);
 

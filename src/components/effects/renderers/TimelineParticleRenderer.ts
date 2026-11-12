@@ -1,7 +1,9 @@
 import {
+  TIMELINE_BRANCH_ORDER,
+  TIMELINE_BRANCH_STYLE,
   getTimelineScreenPoint,
-  type TimelineEdgeGeometry,
-  type TimelineNodeGeometry,
+  type TimelineBranchId,
+  type TimelineMilestoneNode,
   type TimelineRuntime,
   type TimelineRuntimeState,
 } from "../../visualizations/Timeline.runtime";
@@ -12,391 +14,439 @@ export interface TimelineRendererParticle {
   y: number;
   tx: number;
   ty: number;
+  r: number;
+  g: number;
+  b: number;
+  group: number;
+  baseRadius: number;
+  angleOffset: number;
+  radiusMultiplier: number;
 }
 
-interface TimelineRendererOptions {
-  animateContinuously: boolean;
+export interface TimelineMouseState {
+  x: number;
+  y: number;
+  active: boolean;
 }
 
-const EDGE_SLOT_COUNT = 15;
-const EDGE_PARTICLES_PER_SLOT = 16;
-const CLUSTER_SLOT_COUNT = 13;
-const CLUSTER_PARTICLES_PER_SLOT = 18;
-const EDGE_PARTICLE_BUDGET = EDGE_SLOT_COUNT * EDGE_PARTICLES_PER_SLOT;
-
-export const TIMELINE_PARTICLE_BUDGET =
-  EDGE_PARTICLE_BUDGET +
-  CLUSTER_SLOT_COUNT * CLUSTER_PARTICLES_PER_SLOT;
-
-const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const BRANCH_BY_GROUP: readonly TimelineBranchId[] = TIMELINE_BRANCH_ORDER;
 const TAU = Math.PI * 2;
 
-const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
-
-const colorWithAlpha = (color: string, alpha: number): string => {
-  const normalizedAlpha = clamp01(alpha);
-  const shortHex = /^#([\da-f])([\da-f])([\da-f])$/i.exec(color);
-  const longHex = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(color);
-
-  if (shortHex) {
-    const [, red, green, blue] = shortHex;
-    return `rgba(${parseInt(red + red, 16)}, ${parseInt(
-      green + green,
-      16
-    )}, ${parseInt(blue + blue, 16)}, ${normalizedAlpha})`;
-  }
-
-  if (longHex) {
-    const [, red, green, blue] = longHex;
-    return `rgba(${parseInt(red, 16)}, ${parseInt(
-      green,
-      16
-    )}, ${parseInt(blue, 16)}, ${normalizedAlpha})`;
-  }
-
-  return color;
+const pseudoRandom = (seed: number): number => {
+  const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
 };
 
-const getRevealThreshold = (state: TimelineRuntimeState): number => {
-  const layout = state.layout;
-  if (!layout) return 0;
-  const span = Math.max(1, layout.bounds.bottom - layout.bounds.top);
-  return layout.bounds.top + span * clamp01(state.revealProgress);
+export const getTimelineGroupColor = (group: number) => {
+  const branchId = BRANCH_BY_GROUP[group % BRANCH_BY_GROUP.length] ?? "work";
+  return TIMELINE_BRANCH_STYLE[branchId].rgb;
 };
 
-const getBranchColor = (
-  branchId: TimelineEdgeGeometry["branchId"],
-  state: TimelineRuntimeState
-): string =>
-  state.layout?.lanes.find((lane) => lane.id === branchId)?.color ??
-  "#69a7ff";
-
-const getEdgeAlpha = (
-  edge: TimelineEdgeGeometry,
+const getBranchHighlightFactor = (
+  branchId: TimelineBranchId,
   state: TimelineRuntimeState
 ): number => {
-  const selectedBranch = state.activeBranchId;
-  const branchFactor =
-    selectedBranch === null || edge.branchId === selectedBranch ? 1 : 0.16;
-  const statusFactor =
-    edge.status === "committed" ? 1 : edge.status === "wip" ? 0.68 : 0.4;
-  const mergeFactor = edge.kind === "merge-parent" ? 1.18 : 1;
-  return Math.min(1, branchFactor * statusFactor * mergeFactor);
+  const focusBranch = state.hoveredBranchId ?? state.activeBranchId;
+  if (focusBranch === null) return 1;
+  return focusBranch === branchId ? 1.25 : 0.24;
 };
 
-const getEdgeParticleStride = (edge: TimelineEdgeGeometry): number => {
-  if (edge.status === "forecast") return 3;
-  if (edge.status === "wip") return 2;
-  return 1;
-};
-
-const applyEdgeDash = (
-  ctx: CanvasRenderingContext2D,
-  edge: TimelineEdgeGeometry
-) => {
-  if (edge.status === "forecast") {
-    ctx.setLineDash([2, 9]);
-  } else if (edge.status === "wip") {
-    ctx.setLineDash([5, 7]);
-  } else if (edge.kind === "merge-parent") {
-    ctx.setLineDash([3, 5]);
-  } else {
-    ctx.setLineDash([]);
+const getGroupSlot = (particleId: number, group: number): number => {
+  if (particleId < 200) {
+    const startIdx = group === 0 ? 0 : group === 1 ? 66 : 132;
+    return particleId - startIdx;
   }
+  return 66 + Math.floor((particleId - 200) / 3);
 };
 
-const getRevealedEdgePoints = (
-  edge: TimelineEdgeGeometry,
-  revealThreshold: number
-) => edge.points.filter((point) => point.y <= revealThreshold);
+interface ScreenCardZone {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
 
-const drawEdges = (
-  ctx: CanvasRenderingContext2D,
-  edges: TimelineEdgeGeometry[],
-  state: TimelineRuntimeState,
-  revealThreshold: number
-) => {
-  edges.slice(0, EDGE_SLOT_COUNT).forEach((edge) => {
-    const points = getRevealedEdgePoints(edge, revealThreshold);
-    if (points.length < 2) return;
+const CARD_CLEAR_PAD_X = 24;
+const CARD_CLEAR_PAD_Y = 20;
+const CARD_FADE_MARGIN = 18;
 
-    const color = getBranchColor(edge.branchId, state);
-    const alpha = getEdgeAlpha(edge, state);
-    const first = getTimelineScreenPoint(points[0], state);
+const getVisibleDesktopCardZones = (
+  state: TimelineRuntimeState
+): ScreenCardZone[] => {
+  const layout = state.layout;
+  if (
+    !state.enabled ||
+    state.layoutMode !== "desktop" ||
+    !layout ||
+    state.viewport.width <= 0
+  ) {
+    return [];
+  }
 
-    ctx.save();
-    applyEdgeDash(ctx, edge);
-    ctx.beginPath();
-    ctx.moveTo(first.x, first.y);
-    points.slice(1).forEach((point) => {
-      const screenPoint = getTimelineScreenPoint(point, state);
-      ctx.lineTo(screenPoint.x, screenPoint.y);
+  const vpLeft = state.viewport.left;
+  const vpTop = state.viewport.top;
+  const vpRight = vpLeft + state.viewport.width;
+
+  const zones: ScreenCardZone[] = [];
+  for (const node of layout.nodes) {
+    const left = vpLeft + node.cardRect.x - state.scrollLeft;
+    const right = left + node.cardRect.width;
+    if (right + CARD_CLEAR_PAD_X < vpLeft || left - CARD_CLEAR_PAD_X > vpRight) {
+      continue;
+    }
+    zones.push({
+      left,
+      top: vpTop + node.cardRect.y,
+      right,
+      bottom: vpTop + node.cardRect.y + node.cardRect.height,
     });
-    ctx.strokeStyle = colorWithAlpha(color, 0.16 * alpha);
-    ctx.lineWidth = edge.kind === "merge-parent" ? 4 : 3;
-    ctx.shadowColor = colorWithAlpha(color, 0.34 * alpha);
-    ctx.shadowBlur = edge.kind === "merge-parent" ? 10 : 7;
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = colorWithAlpha(color, 0.72 * alpha);
-    ctx.lineWidth = edge.kind === "merge-parent" ? 1.35 : 0.9;
-    ctx.stroke();
-    ctx.restore();
-  });
+  }
+  return zones;
 };
 
-const positionParticle = (
-  particle: TimelineRendererParticle,
-  targetX: number,
-  targetY: number,
-  animateContinuously: boolean
-) => {
-  particle.tx = targetX;
-  particle.ty = targetY;
+/**
+ * Computes smoothly attenuated alpha (0..1) near milestone cards or mobile copy
+ * so particles and connecting filaments stay cleanly out of readable text.
+ */
+const getParticleReadabilityMask = (
+  x: number,
+  y: number,
+  state: TimelineRuntimeState,
+  cardZones: ScreenCardZone[]
+): number => {
+  if (!state.enabled) return 1;
 
-  if (!animateContinuously) {
-    particle.x = targetX;
-    particle.y = targetY;
+  if (state.layoutMode === "mobile") {
+    const textStartX = Math.max(24, state.viewport.left + 8) + 18;
+    if (x <= textStartX) return 1;
+    const over = x - textStartX;
+    return over >= CARD_FADE_MARGIN ? 0 : 1 - over / CARD_FADE_MARGIN;
+  }
+
+  let mask = 1;
+  for (const z of cardZones) {
+    const dx = Math.max(z.left - CARD_CLEAR_PAD_X - x, 0, x - (z.right + CARD_CLEAR_PAD_X));
+    const dy = Math.max(z.top - CARD_CLEAR_PAD_Y - y, 0, y - (z.bottom + CARD_CLEAR_PAD_Y));
+    const dist = Math.hypot(dx, dy);
+    if (dist <= 0.01) return 0;
+    if (dist < CARD_FADE_MARGIN) {
+      mask = Math.min(mask, dist / CARD_FADE_MARGIN);
+    }
+  }
+  return mask;
+};
+
+const clampTargetOutsideCards = (
+  tx: number,
+  ty: number,
+  laneY: number,
+  cardZones: ScreenCardZone[]
+): { x: number; y: number } => {
+  let y = ty;
+  for (const z of cardZones) {
+    if (
+      tx >= z.left - CARD_CLEAR_PAD_X &&
+      tx <= z.right + CARD_CLEAR_PAD_X &&
+      y >= z.top - CARD_CLEAR_PAD_Y &&
+      y <= z.bottom + CARD_CLEAR_PAD_Y
+    ) {
+      // Deflect cleanly onto the branch lane side of the card
+      y = laneY <= (z.top + z.bottom) * 0.5
+        ? Math.min(laneY, z.top - CARD_CLEAR_PAD_Y - 2)
+        : Math.max(laneY, z.bottom + CARD_CLEAR_PAD_Y + 2);
+    }
+  }
+  return { x: tx, y };
+};
+
+/**
+ * Computes deterministic target coordinates for all shared InteractiveNetwork
+ * particles while the Timeline section is active or transitioning in.
+ *
+ * Particles in group 0/1/2 track strictly along education / work / experiences
+ * lane rivers (or left spine on mobile), keeping a clean readability buffer around text.
+ */
+export const setTimelineParticleTargets = (
+  particles: TimelineRendererParticle[],
+  viewportWidth: number,
+  viewportHeight: number,
+  frameCount: number,
+  runtime: TimelineRuntime
+): void => {
+  const state = runtime.stateRef.current;
+  const layout = state.layout;
+  const hasDesktopGeometry =
+    state.enabled &&
+    state.layoutMode === "desktop" &&
+    layout !== null &&
+    state.viewport.width > 0 &&
+    state.viewport.height > 0;
+
+  if (state.enabled && state.layoutMode === "mobile") {
+    const spineX = Math.max(24, state.viewport.left + 8);
+    const topY = Math.max(82, state.viewport.top + 8);
+    const spanH = Math.max(280, Math.min(state.viewport.height, viewportHeight - topY));
+
+    particles.forEach((p, idx) => {
+      const speed = 0.00065 + p.group * 0.0001;
+      const progress = (pseudoRandom(idx * 1.7 + 3) + frameCount * speed) % 1;
+      const jitterX = Math.sin(frameCount * 0.014 + p.id) * 4.5;
+      p.tx = spineX + jitterX;
+      p.ty = topY + progress * spanH;
+    });
     return;
   }
 
-  particle.x += (targetX - particle.x) * 0.16;
-  particle.y += (targetY - particle.y) * 0.16;
-};
+  const vpLeft = hasDesktopGeometry ? state.viewport.left : 0;
+  const vpTop = hasDesktopGeometry ? state.viewport.top : 96;
+  const vpW = hasDesktopGeometry ? state.viewport.width : viewportWidth;
+  const vpH = hasDesktopGeometry
+    ? state.viewport.height
+    : Math.max(460, viewportHeight - 160);
 
-const drawParticle = (
-  ctx: CanvasRenderingContext2D,
-  particle: TimelineRendererParticle,
-  color: string,
-  radius: number,
-  alpha: number,
-  glowRadius: number
-) => {
-  ctx.fillStyle = colorWithAlpha(color, alpha * 0.22);
-  ctx.beginPath();
-  ctx.arc(particle.x, particle.y, glowRadius, 0, TAU);
-  ctx.fill();
+  const fallbackLaneY: Record<TimelineBranchId, number> = {
+    education: vpTop + vpH * 0.25,
+    work: vpTop + vpH * 0.54,
+    experiences: vpTop + vpH * 0.82,
+  };
 
-  ctx.fillStyle = colorWithAlpha(color, alpha);
-  ctx.beginPath();
-  ctx.arc(particle.x, particle.y, radius, 0, TAU);
-  ctx.fill();
-};
+  const laneYByBranch: Record<TimelineBranchId, number> = { ...fallbackLaneY };
+  if (hasDesktopGeometry && layout) {
+    layout.branches.forEach((branch) => {
+      laneYByBranch[branch.id] = vpTop + branch.y;
+    });
+  }
 
-const drawEdgeParticles = (
-  ctx: CanvasRenderingContext2D,
-  particles: TimelineRendererParticle[],
-  edges: TimelineEdgeGeometry[],
-  state: TimelineRuntimeState,
-  revealThreshold: number,
-  animateContinuously: boolean
-) => {
-  edges.slice(0, EDGE_SLOT_COUNT).forEach((edge, edgeIndex) => {
-    const color = getBranchColor(edge.branchId, state);
-    const alpha = getEdgeAlpha(edge, state);
-    const stride = getEdgeParticleStride(edge);
-    const lastPointIndex = Math.max(0, edge.points.length - 1);
+  const cardZones = getVisibleDesktopCardZones(state);
+  const visibleNodesByBranch: Record<TimelineBranchId, TimelineMilestoneNode[]> = {
+    education: [],
+    work: [],
+    experiences: [],
+  };
+  const visibleEdgesByBranch: Record<
+    TimelineBranchId,
+    NonNullable<TimelineRuntimeState["layout"]>["edges"]
+  > = {
+    education: [],
+    work: [],
+    experiences: [],
+  };
 
-    for (
-      let localIndex = 0;
-      localIndex < EDGE_PARTICLES_PER_SLOT;
-      localIndex += 1
-    ) {
-      if (localIndex % stride !== 0) continue;
-      const particle =
-        particles[edgeIndex * EDGE_PARTICLES_PER_SLOT + localIndex];
-      if (!particle) continue;
-
-      const pointIndex = Math.round(
-        (localIndex / (EDGE_PARTICLES_PER_SLOT - 1)) * lastPointIndex
+  if (hasDesktopGeometry && layout) {
+    layout.nodes.forEach((node) => {
+      const screenX = vpLeft + node.x - state.scrollLeft;
+      if (screenX >= vpLeft - 48 && screenX <= vpLeft + vpW + 48) {
+        visibleNodesByBranch[node.branchId].push(node);
+      }
+    });
+    layout.edges.forEach((edge) => {
+      if (edge.kind === "continuity") return;
+      const first = getTimelineScreenPoint(edge.points[0], state);
+      const last = getTimelineScreenPoint(
+        edge.points[edge.points.length - 1],
+        state
       );
-      const point = edge.points[pointIndex];
-      if (!point || point.y > revealThreshold) continue;
+      const minX = Math.min(first.x, last.x);
+      const maxX = Math.max(first.x, last.x);
+      if (maxX >= vpLeft - 48 && minX <= vpLeft + vpW + 48) {
+        visibleEdgesByBranch[edge.toBranchId].push(edge);
+      }
+    });
+  }
 
-      const screenPoint = getTimelineScreenPoint(point, state);
-      positionParticle(
-        particle,
-        screenPoint.x,
-        screenPoint.y,
-        animateContinuously
+  const totalPerGroup = Math.max(1, Math.floor(particles.length / 3));
+  const streamWidth = vpW + 80;
+  const scrollShift = hasDesktopGeometry ? state.scrollLeft * 0.55 : 0;
+
+  particles.forEach((p) => {
+    const branchId = BRANCH_BY_GROUP[p.group % 3] ?? "work";
+    const laneY = laneYByBranch[branchId];
+    const slot = getGroupSlot(p.id, p.group);
+    const normalizedSlot = (slot % totalPerGroup) / totalPerGroup;
+
+    const branchNodes = visibleNodesByBranch[branchId];
+    const branchEdges = visibleEdgesByBranch[branchId];
+
+    // 1. ~16% tight halo orbit around visible milestones on the branch lane
+    const isMilestoneCluster = slot % 6 === 1 && branchNodes.length > 0;
+    // 2. ~8% trace cross-branch fork/merge curves
+    const isCurveTracer = slot % 12 === 4 && branchEdges.length > 0;
+
+    if (isMilestoneCluster && hasDesktopGeometry) {
+      const node = branchNodes[slot % branchNodes.length];
+      const isFocused =
+        state.hoveredMilestoneId === node.id ||
+        state.selectedMilestoneId === node.id;
+      const screenX = vpLeft + node.x - state.scrollLeft;
+      const screenY = vpTop + node.y;
+      const orbitR = isFocused
+        ? 8 + p.radiusMultiplier * 6
+        : 9 + p.radiusMultiplier * 7;
+      const speed = isFocused ? 0.016 : 0.008;
+      const angle = p.angleOffset + frameCount * speed;
+
+      const safe = clampTargetOutsideCards(
+        screenX + Math.cos(angle) * orbitR,
+        screenY + Math.sin(angle) * orbitR,
+        laneY,
+        cardZones
       );
-      drawParticle(
-        ctx,
-        particle,
-        color,
-        edge.kind === "merge-parent" ? 1.2 : 1,
-        0.68 * alpha,
-        edge.kind === "merge-parent" ? 3.8 : 3
-      );
+      p.tx = safe.x;
+      p.ty = safe.y;
+      return;
     }
-  });
-};
 
-const getHighlightedNodeIds = (
-  edges: TimelineEdgeGeometry[],
-  state: TimelineRuntimeState
-): Set<string> => {
-  if (state.activeBranchId === null) return new Set();
-
-  const highlightedIds = new Set<string>();
-  edges.forEach((edge) => {
-    if (edge.branchId !== state.activeBranchId) return;
-    highlightedIds.add(edge.parentId);
-    highlightedIds.add(edge.childId);
-  });
-  return highlightedIds;
-};
-
-const getNodeAlpha = (
-  node: TimelineNodeGeometry,
-  highlightedNodeIds: Set<string>,
-  state: TimelineRuntimeState
-): number => {
-  const branchSelected = state.activeBranchId !== null;
-  const inSelectedLineage =
-    node.branchId === state.activeBranchId || highlightedNodeIds.has(node.id);
-  const branchFactor = !branchSelected || inSelectedLineage ? 1 : 0.18;
-  const statusFactor =
-    node.status === "committed" ? 1 : node.status === "wip" ? 0.74 : 0.46;
-  return branchFactor * statusFactor;
-};
-
-const getClusterParticleStride = (node: TimelineNodeGeometry): number => {
-  if (node.status === "forecast") return 3;
-  if (node.status === "wip") return 2;
-  return 1;
-};
-
-const drawCommitClusters = (
-  ctx: CanvasRenderingContext2D,
-  particles: TimelineRendererParticle[],
-  nodes: TimelineNodeGeometry[],
-  edges: TimelineEdgeGeometry[],
-  state: TimelineRuntimeState,
-  revealThreshold: number,
-  animateContinuously: boolean
-) => {
-  const highlightedNodeIds = getHighlightedNodeIds(edges, state);
-
-  nodes.slice(0, CLUSTER_SLOT_COUNT).forEach((node, nodeIndex) => {
-    if (node.y > revealThreshold) return;
-
-    const color = getBranchColor(node.branchId, state);
-    const isActiveCommit = state.activeCommitId === node.id;
-    const isMerge = node.isMerge;
-    const alpha = isActiveCommit
-      ? 1
-      : getNodeAlpha(node, highlightedNodeIds, state);
-    const stride = getClusterParticleStride(node);
-    const center = getTimelineScreenPoint(node, state);
-    const clusterRadius =
-      node.radius * (isActiveCommit ? 1.78 : isMerge ? 1.38 : 1.12);
-
-    ctx.save();
-    if (node.status !== "committed") {
-      ctx.setLineDash(node.status === "forecast" ? [2, 6] : [4, 5]);
-    }
-    ctx.strokeStyle = colorWithAlpha(
-      color,
-      alpha * (isActiveCommit ? 0.92 : 0.52)
-    );
-    ctx.lineWidth = isActiveCommit ? 1.8 : isMerge ? 1.35 : 0.9;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, clusterRadius, 0, TAU);
-    ctx.stroke();
-    ctx.restore();
-
-    for (
-      let localIndex = 0;
-      localIndex < CLUSTER_PARTICLES_PER_SLOT;
-      localIndex += 1
-    ) {
-      if (localIndex % stride !== 0) continue;
-      const particle =
-        particles[
-          EDGE_PARTICLE_BUDGET +
-            nodeIndex * CLUSTER_PARTICLES_PER_SLOT +
-            localIndex
-        ];
-      if (!particle) continue;
-
-      const radialProgress =
-        localIndex === 0
-          ? 0
-          : Math.sqrt(localIndex / (CLUSTER_PARTICLES_PER_SLOT - 1));
-      const angle = localIndex * GOLDEN_ANGLE + nodeIndex * 0.37;
-      const targetX =
-        center.x + Math.cos(angle) * clusterRadius * radialProgress;
-      const targetY =
-        center.y + Math.sin(angle) * clusterRadius * radialProgress;
-      positionParticle(particle, targetX, targetY, animateContinuously);
-      drawParticle(
-        ctx,
-        particle,
-        color,
-        isActiveCommit ? 1.85 : isMerge ? 1.38 : 1.12,
-        alpha * (isActiveCommit ? 1 : 0.78),
-        isActiveCommit ? 6.4 : isMerge ? 4.4 : 3.6
+    if (isCurveTracer && hasDesktopGeometry) {
+      const edge = branchEdges[slot % branchEdges.length];
+      const progress = (normalizedSlot * 3.7 + frameCount * 0.0045) % 1;
+      const ptIdx = Math.min(
+        edge.points.length - 1,
+        Math.floor(progress * (edge.points.length - 1))
       );
+      const pt = getTimelineScreenPoint(edge.points[ptIdx], state);
+      const jitter = Math.sin(frameCount * 0.02 + p.id) * 1.6;
+      const safe = clampTargetOutsideCards(pt.x, pt.y + jitter, laneY, cardZones);
+      p.tx = safe.x;
+      p.ty = safe.y;
+      return;
     }
+
+    // Core branch river cleanly channeled along each horizontal lane (~76% of particles)
+    const speed =
+      branchId === "work"
+        ? 0.00052
+        : branchId === "education"
+        ? 0.00038
+        : 0.00045;
+    const rawPhase =
+      normalizedSlot +
+      pseudoRandom(p.id * 0.37) * 0.04 +
+      frameCount * speed -
+      scrollShift / streamWidth;
+    const wrapped = ((rawPhase % 1) + 1) % 1;
+    const x = vpLeft - 40 + wrapped * streamWidth;
+
+    const ribbonSpread = (pseudoRandom(p.id * 1.91) - 0.5) * 8;
+    const wave =
+      Math.sin(x * 0.008 + frameCount * 0.016 + p.group * 2.09) * 3;
+
+    const safe = clampTargetOutsideCards(x, laneY + ribbonSpread + wave, laneY, cardZones);
+    p.tx = safe.x;
+    p.ty = safe.y;
   });
 };
 
 /**
- * Renders the fixed-canvas Timeline scene from the final runtime snapshot.
- * Particle slots are a deterministic prefix of the shared network pool; the
- * renderer owns no canvas, RAF, event listener, or secondary particle array.
+ * Draws delicate same-lane particle filaments and lane-colored particles on the
+ * shared InteractiveNetwork canvas, fading cleanly outside readable milestone text zones.
  */
-export const renderTimelineParticles = (
+export const drawTimelineParticles = (
   ctx: CanvasRenderingContext2D,
   particles: TimelineRendererParticle[],
   runtime: TimelineRuntime,
-  options: TimelineRendererOptions
-) => {
+  mouse: TimelineMouseState,
+  globalDriftX: number,
+  globalDriftY: number
+): void => {
   const state = runtime.stateRef.current;
-  const layout = state.layout;
-  if (
-    !state.enabled ||
-    !layout ||
-    state.viewport.width <= 0 ||
-    state.viewport.height <= 0 ||
-    state.revealProgress <= 0
-  ) {
-    return;
+  const cardZones = getVisibleDesktopCardZones(state);
+  const maxConnections = Math.min(particles.length, 200);
+  const connectionDist = 64;
+
+  // 1. Subtle same-branch filaments between nearby stream particles
+  ctx.lineWidth = 0.65;
+  for (let i = 0; i < maxConnections; i += 1) {
+    const n1 = particles[i];
+    const branchId = BRANCH_BY_GROUP[n1.group % 3] ?? "work";
+    const branchBoost = getBranchHighlightFactor(branchId, state);
+    if (branchBoost < 0.3) continue;
+
+    const mask1 = getParticleReadabilityMask(
+      n1.x + globalDriftX,
+      n1.y + globalDriftY,
+      state,
+      cardZones
+    );
+    if (mask1 <= 0.04) continue;
+
+    for (let j = i + 1; j < maxConnections; j += 1) {
+      const n2 = particles[j];
+      if (n1.group !== n2.group) continue;
+
+      const dx = n1.x - n2.x;
+      const dy = n1.y - n2.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist >= connectionDist) continue;
+
+      const mask2 = getParticleReadabilityMask(
+        n2.x + globalDriftX,
+        n2.y + globalDriftY,
+        state,
+        cardZones
+      );
+      const mask = Math.min(mask1, mask2);
+      if (mask <= 0.04) continue;
+
+      let alpha =
+        (1 - dist / connectionDist) * 0.08 * Math.min(1.2, branchBoost) * mask;
+      if (mouse.active) {
+        const midX = (n1.x + n2.x) * 0.5;
+        const midY = (n1.y + n2.y) * 0.5;
+        const mDist = Math.hypot(mouse.x - midX, mouse.y - midY);
+        if (mDist < 120) {
+          alpha *= 1 + ((120 - mDist) / 120) * 1.3;
+        }
+      }
+
+      const r = Math.round(n1.r);
+      const g = Math.round(n1.g);
+      const b = Math.round(n1.b);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(4)})`;
+      ctx.beginPath();
+      ctx.moveTo(n1.x + globalDriftX, n1.y + globalDriftY);
+      ctx.lineTo(n2.x + globalDriftX, n2.y + globalDriftY);
+      ctx.stroke();
+    }
   }
 
-  const revealThreshold = getRevealThreshold(state);
-  const animateContinuously =
-    options.animateContinuously && !state.reducedMotion;
+  // 2. Render particles with smooth interpolated RGB, branch focus, and card readability mask
+  particles.forEach((node) => {
+    const px = node.x + globalDriftX;
+    const py = node.y + globalDriftY;
+    const mask = getParticleReadabilityMask(px, py, state, cardZones);
+    if (mask <= 0.02) return;
 
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(
-    state.viewport.left,
-    state.viewport.top,
-    state.viewport.width,
-    state.viewport.height
-  );
-  ctx.clip();
+    const branchId = BRANCH_BY_GROUP[node.group % 3] ?? "work";
+    const focusFactor = getBranchHighlightFactor(branchId, state);
 
-  drawEdges(ctx, layout.edges, state, revealThreshold);
-  drawEdgeParticles(
-    ctx,
-    particles,
-    layout.edges,
-    state,
-    revealThreshold,
-    animateContinuously
-  );
-  drawCommitClusters(
-    ctx,
-    particles,
-    layout.nodes,
-    layout.edges,
-    state,
-    revealThreshold,
-    animateContinuously
-  );
+    let radius = node.baseRadius * (focusFactor > 1 ? 1.12 : 1);
+    let alphaMultiplier = focusFactor * mask;
 
-  ctx.restore();
+    if (mouse.active) {
+      const mDist = Math.hypot(mouse.x - node.x, mouse.y - node.y);
+      const hoverRadius = 125;
+      if (mDist < hoverRadius) {
+        const ratio = (hoverRadius - mDist) / hoverRadius;
+        radius *= 1 + ratio * 0.65;
+        alphaMultiplier *= 1 + ratio * 1.4;
+      }
+    }
+
+    const r = Math.round(node.r);
+    const g = Math.round(node.g);
+    const b = Math.round(node.b);
+
+    const outerAlpha = Math.min(0.45, 0.2 * alphaMultiplier);
+    const coreAlpha = Math.min(0.88, 0.55 * alphaMultiplier);
+
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${outerAlpha.toFixed(4)})`;
+    ctx.beginPath();
+    ctx.arc(px, py, radius, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${coreAlpha.toFixed(4)})`;
+    ctx.beginPath();
+    ctx.arc(px, py, radius * 0.44, 0, TAU);
+    ctx.fill();
+  });
 };

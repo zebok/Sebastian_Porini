@@ -1,91 +1,116 @@
-import { curveLinear, extent, line, scalePoint, scaleUtc } from "d3";
 import type {
-  CareerBranchId,
   CareerCommitKind,
-  CareerCommitStatus,
-  CareerParentKind,
-  CareerRefKind,
-  CareerTime,
   LocalizedCareerRepository,
 } from "@/types/content";
+
+export type TimelineBranchId = "education" | "work" | "experiences";
 
 export interface TimelinePoint {
   x: number;
   y: number;
 }
 
-export interface TimelineLayoutOptions {
-  width: number;
-  topPadding?: number;
-  bottomPadding?: number;
-  laneInset?: number;
-  minimumNodeGap?: number;
-  pixelsPerYear?: number;
-  edgeSamples?: number;
-  nodeRadius?: number;
-}
-
-export interface TimelineLaneGeometry {
-  id: CareerBranchId;
-  label: string;
-  description: string;
-  color: string;
-  index: number;
-  x: number;
-  nodeIds: string[];
-  path: string;
-  points: TimelinePoint[];
-}
-
-export interface TimelineNodeGeometry {
-  id: string;
-  sha: string | null;
-  source: "commit" | "staging";
-  branchId: CareerBranchId;
-  status: CareerCommitStatus;
-  kind: CareerCommitKind;
-  time: CareerTime;
+export interface TimelineRect {
   x: number;
   y: number;
-  radius: number;
-  isMerge: boolean;
-  parentIds: string[];
-  refIds: string[];
+  width: number;
+  height: number;
 }
+
+export interface TimelineRgb {
+  r: number;
+  g: number;
+  b: number;
+}
+
+export interface TimelineBranchMeta {
+  id: TimelineBranchId;
+  /** Primary visual color for track dots, particles, and borders. */
+  color: string;
+  /** High-contrast foreground ink color for text on #F9F9F7 paper. */
+  inkColor: string;
+  rgb: TimelineRgb;
+  y: number;
+  count: number;
+}
+
+export interface TimelineMilestoneNode {
+  id: string;
+  sha: string;
+  kind: Exclude<CareerCommitKind, "milestone">;
+  branchId: TimelineBranchId;
+  color: string;
+  inkColor: string;
+  title: string;
+  organization: string;
+  period: string;
+  summary: string;
+  details: string[];
+  decimalYear: number;
+  spanStartYear: number | null;
+  spanEndYear: number | null;
+  spanStartX: number | null;
+  spanEndX: number | null;
+  x: number;
+  y: number;
+  cardPlacement: "above" | "below";
+  cardRect: TimelineRect;
+  stemHeight: number;
+  isOrigin: boolean;
+  isHead: boolean;
+  isBranchEnd: boolean;
+}
+
+export type TimelineEdgeKind = "continuity" | "fork" | "merge";
 
 export interface TimelineEdgeGeometry {
   id: string;
-  parentId: string;
-  childId: string;
-  branchId: CareerBranchId;
-  status: CareerCommitStatus;
-  kind: CareerParentKind;
+  sourceId: string;
+  targetId: string;
+  fromBranchId: TimelineBranchId;
+  toBranchId: TimelineBranchId;
+  branchId: TimelineBranchId;
+  kind: TimelineEdgeKind;
+  color: string;
   path: string;
   points: TimelinePoint[];
 }
 
-export interface TimelineRefGeometry {
-  id: string;
-  kind: CareerRefKind;
-  name: string;
-  targetId: string;
+export interface TimelineYearTick {
+  year: number;
+  age: number;
   x: number;
-  y: number;
+  isCurrentYear: boolean;
+  isFirstYear: boolean;
 }
 
-export interface TimelineLayout {
+export interface TimelineLayoutOptions {
+  stageHeight: number;
+  currentDecimalYear: number;
+  currentYear?: number;
+  minYear?: number;
+  yearWidth?: number;
+  startX?: number;
+  endPadding?: number;
+  cardWidth?: number;
+  cardHeight?: number;
+}
+
+export interface TimelineHorizontalLayout {
   width: number;
   height: number;
-  lanes: TimelineLaneGeometry[];
-  nodes: TimelineNodeGeometry[];
+  axisY: number;
+  startX: number;
+  yearWidth: number;
+  minYear: number;
+  maxYear: number;
+  presentX: number;
+  cardWidth: number;
+  cardHeight: number;
+  branches: TimelineBranchMeta[];
+  nodes: TimelineMilestoneNode[];
   edges: TimelineEdgeGeometry[];
-  refs: TimelineRefGeometry[];
-  bounds: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
+  ticks: TimelineYearTick[];
 }
 
 export interface TimelineViewportRect {
@@ -97,12 +122,14 @@ export interface TimelineViewportRect {
 
 export interface TimelineRuntimeState {
   enabled: boolean;
-  layout: TimelineLayout | null;
+  layoutMode: "desktop" | "mobile";
+  layout: TimelineHorizontalLayout | null;
   viewport: TimelineViewportRect;
-  scrollTop: number;
-  revealProgress: number;
-  activeBranchId: CareerBranchId | null;
-  activeCommitId: string | null;
+  scrollLeft: number;
+  activeBranchId: TimelineBranchId | null;
+  hoveredBranchId: TimelineBranchId | null;
+  hoveredMilestoneId: string | null;
+  selectedMilestoneId: string | null;
   reducedMotion: boolean;
 }
 
@@ -111,25 +138,43 @@ export interface TimelineRuntime {
   requestRenderRef: { current: () => void };
 }
 
-type RepositoryNode =
-  | LocalizedCareerRepository["commits"][number]
-  | LocalizedCareerRepository["staging"][number];
+export const TIMELINE_BRANCH_ORDER: readonly TimelineBranchId[] = [
+  "education",
+  "work",
+  "experiences",
+] as const;
 
-interface AuthoredNode {
-  node: RepositoryNode;
-  source: TimelineNodeGeometry["source"];
-  authoredIndex: number;
-}
+export const TIMELINE_BRANCH_STYLE: Record<
+  TimelineBranchId,
+  { color: string; inkColor: string; rgb: TimelineRgb }
+> = {
+  education: {
+    color: "#D97706",
+    inkColor: "#B45309",
+    rgb: { r: 217, g: 119, b: 6 },
+  },
+  work: {
+    color: "#2D5BE3",
+    inkColor: "#1E44B8",
+    rgb: { r: 45, g: 91, b: 227 },
+  },
+  experiences: {
+    color: "#059669",
+    inkColor: "#047857",
+    rgb: { r: 5, g: 150, b: 105 },
+  },
+};
 
-const DEFAULT_LAYOUT = {
-  topPadding: 176,
-  bottomPadding: 176,
-  laneInset: 48,
-  minimumNodeGap: 116,
-  pixelsPerYear: 132,
-  edgeSamples: 24,
-  nodeRadius: 8,
-} as const;
+const BIRTH_YEAR = 1998;
+const DEFAULT_MIN_YEAR = 2016;
+const DEFAULT_YEAR_WIDTH = 276;
+const DEFAULT_START_X = 128;
+const DEFAULT_END_PADDING = 200;
+const DEFAULT_CARD_WIDTH = 236;
+const DEFAULT_CARD_HEIGHT = 76;
+const CARD_STEM_HEIGHT = 20;
+const CARD_ANCHOR_OFFSET = -26;
+const EDGE_SAMPLES = 22;
 
 const EMPTY_VIEWPORT: TimelineViewportRect = {
   left: 0,
@@ -138,236 +183,569 @@ const EMPTY_VIEWPORT: TimelineViewportRect = {
   height: 0,
 };
 
-const pathGenerator = line<TimelinePoint>()
-  .x((point) => point.x)
-  .y((point) => point.y)
-  .curve(curveLinear);
-
-const getTimeDate = (time: CareerTime): Date => {
-  const [yearText, monthText] = time.value.split("-");
-  const year = Number(yearText);
-  const month = monthText ? Number(monthText) - 1 : 0;
-  return new Date(Date.UTC(year, month, 1));
+export const getCurrentDecimalYear = (): number => {
+  if (typeof window === "undefined") return 2026.85;
+  const now = new Date();
+  const year = now.getFullYear();
+  const start = new Date(year, 0, 0);
+  const diff = now.getTime() - start.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const daysInYear =
+    (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365;
+  return year + dayOfYear / daysInYear;
 };
 
-const sampleEdge = (
-  parent: TimelinePoint,
-  child: TimelinePoint,
+export const parseDecimalYear = (timeVal: string): number => {
+  const parts = timeVal.split("-");
+  const yr = parseInt(parts[0], 10);
+  if (parts.length > 1) {
+    const mo = parseInt(parts[1], 10);
+    return yr + (mo - 0.5) / 12;
+  }
+  return yr + 0.3;
+};
+
+const MONTH_TOKENS: readonly string[][] = [
+  ["jan", "ene"],
+  ["feb"],
+  ["mar"],
+  ["apr", "abr"],
+  ["may", "mai"],
+  ["jun"],
+  ["jul"],
+  ["aug", "ago"],
+  ["sep", "set"],
+  ["oct", "okt"],
+  ["nov"],
+  ["dec", "dic", "dez"],
+];
+
+const parsePeriodEndpoint = (
+  part: string,
+  isEnd: boolean,
+  currentDecimalYear: number
+): number | null => {
+  const lower = part.trim().toLowerCase();
+  if (
+    lower.includes("present") ||
+    lower.includes("presente") ||
+    lower.includes("hoy") ||
+    lower.includes("today") ||
+    lower.includes("heute")
+  ) {
+    return currentDecimalYear;
+  }
+
+  const yearMatch = lower.match(/(\d{4})/);
+  if (!yearMatch) return null;
+
+  const year = parseInt(yearMatch[1], 10);
+  const monthIndex = MONTH_TOKENS.findIndex((group) =>
+    group.some((token) => lower.includes(token))
+  );
+  if (monthIndex !== -1) {
+    return year + (monthIndex + (isEnd ? 0.5 : 0)) / 12;
+  }
+  return year;
+};
+
+export const parsePeriodSpan = (
+  period: string,
+  currentDecimalYear: number
+): { start: number | null; end: number | null } => {
+  const clean = period.trim().replace(/\s+/g, " ");
+  const parts = clean.split(/[-–—]/).map((p) => p.trim());
+  if (parts.length < 2) {
+    const single = parsePeriodEndpoint(clean, false, currentDecimalYear);
+    return { start: single, end: single };
+  }
+  return {
+    start: parsePeriodEndpoint(parts[0], false, currentDecimalYear),
+    end: parsePeriodEndpoint(parts[1], true, currentDecimalYear),
+  };
+};
+
+export const formatPeriodDuration = (
+  period: string,
+  currentDecimalYear: number,
+  lang: string
+): string | null => {
+  const { start, end } = parsePeriodSpan(period, currentDecimalYear);
+  if (start === null || end === null) return null;
+  const diff = end - start;
+  if (diff < 0.08) return null;
+
+  if (diff < 0.95) {
+    const months = Math.max(1, Math.round(diff * 12));
+    if (lang === "es") return `${months} ${months === 1 ? "mes" : "meses"}`;
+    if (lang === "de") return `${months} Mon.`;
+    return `${months} ${months === 1 ? "mo" : "mos"}`;
+  }
+
+  const rounded = Math.round(diff);
+  if (Math.abs(diff - rounded) < 0.08) {
+    if (lang === "es") return `${rounded} ${rounded === 1 ? "año" : "años"}`;
+    if (lang === "de") return `${rounded} ${rounded === 1 ? "Jahr" : "Jahre"}`;
+    return `${rounded} ${rounded === 1 ? "yr" : "yrs"}`;
+  }
+
+  const fixed = diff.toFixed(1);
+  if (lang === "es") return `${fixed} años`;
+  if (lang === "de") return `${fixed} Jahre`;
+  return `${fixed} yrs`;
+};
+
+export const mapCommitToBranch = (
+  commit: LocalizedCareerRepository["commits"][number]
+): TimelineBranchId => {
+  if (
+    commit.branchId === "experiences" ||
+    commit.id.startsWith("work-travel")
+  ) {
+    return "experiences";
+  }
+  if (
+    commit.branchId === "learn/education" ||
+    commit.id === "ort-technical-foundations" ||
+    commit.id === "it-management-degree"
+  ) {
+    return "education";
+  }
+  return "work";
+};
+
+const rectsOverlap = (
+  a: TimelineRect,
+  b: TimelineRect,
+  padX = 12,
+  padY = 8
+): boolean => {
+  return (
+    a.x < b.x + b.width + padX &&
+    a.x + a.width + padX > b.x &&
+    a.y < b.y + b.height + padY &&
+    a.y + a.height + padY > b.y
+  );
+};
+
+const sampleCubicBezier = (
+  p0: TimelinePoint,
+  c1: TimelinePoint,
+  c2: TimelinePoint,
+  p1: TimelinePoint,
   sampleCount: number
 ): TimelinePoint[] =>
-  Array.from({ length: sampleCount + 1 }, (_, index) => {
-    const progress = index / sampleCount;
-    const eased = progress * progress * (3 - 2 * progress);
+  Array.from({ length: sampleCount + 1 }, (_, idx) => {
+    const t = idx / sampleCount;
+    const u = 1 - t;
+    const tt = t * t;
+    const uu = u * u;
+    const uuu = uu * u;
+    const ttt = tt * t;
     return {
-      x: parent.x + (child.x - parent.x) * eased,
-      y: parent.y + (child.y - parent.y) * progress,
+      x:
+        uuu * p0.x +
+        3 * uu * t * c1.x +
+        3 * u * tt * c2.x +
+        ttt * p1.x,
+      y:
+        uuu * p0.y +
+        3 * uu * t * c1.y +
+        3 * u * tt * c2.y +
+        ttt * p1.y,
     };
   });
 
-const toPath = (points: TimelinePoint[]): string => pathGenerator(points) ?? "";
+const buildCurveGeometry = (
+  id: string,
+  sourceId: string,
+  targetId: string,
+  fromBranchId: TimelineBranchId,
+  toBranchId: TimelineBranchId,
+  kind: TimelineEdgeKind,
+  p0: TimelinePoint,
+  p1: TimelinePoint
+): TimelineEdgeGeometry => {
+  const color = TIMELINE_BRANCH_STYLE[toBranchId].color;
+  if (Math.abs(p0.y - p1.y) < 1) {
+    const path = `M ${p0.x} ${p0.y} L ${p1.x} ${p1.y}`;
+    const points = Array.from({ length: EDGE_SAMPLES + 1 }, (_, i) => {
+      const t = i / EDGE_SAMPLES;
+      return { x: p0.x + (p1.x - p0.x) * t, y: p0.y };
+    });
+    return {
+      id,
+      sourceId,
+      targetId,
+      fromBranchId,
+      toBranchId,
+      branchId: toBranchId,
+      kind,
+      color,
+      path,
+      points,
+    };
+  }
+
+  const midX = p0.x + (p1.x - p0.x) * 0.5;
+  const c1 = { x: midX, y: p0.y };
+  const c2 = { x: midX, y: p1.y };
+  const path = `M ${p0.x} ${p0.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${p1.x} ${p1.y}`;
+  const points = sampleCubicBezier(p0, c1, c2, p1, EDGE_SAMPLES);
+
+  return {
+    id,
+    sourceId,
+    targetId,
+    fromBranchId,
+    toBranchId,
+    branchId: toBranchId,
+    kind,
+    color,
+    path,
+    points,
+  };
+};
 
 /**
- * Produces immutable, content-coordinate geometry. D3 owns scales and path
- * calculation only; React/SVG and the fixed canvas renderer can consume the
- * same arrays without either renderer granting D3 DOM ownership.
+ * Computes a collision-free, responsive horizontal 3-branch milestone layout
+ * from the career repository. Pure geometry with zero DOM access.
  */
-export const createTimelineLayout = (
+export const createTimelineHorizontalLayout = (
   repository: LocalizedCareerRepository,
   options: TimelineLayoutOptions
-): TimelineLayout => {
-  const width = Math.max(320, options.width);
-  const topPadding = options.topPadding ?? DEFAULT_LAYOUT.topPadding;
-  const bottomPadding = options.bottomPadding ?? DEFAULT_LAYOUT.bottomPadding;
-  const laneInset = Math.min(
-    options.laneInset ?? DEFAULT_LAYOUT.laneInset,
-    width * 0.2
-  );
-  const minimumNodeGap = Math.max(
-    48,
-    options.minimumNodeGap ?? DEFAULT_LAYOUT.minimumNodeGap
-  );
-  const pixelsPerYear = Math.max(
-    1,
-    options.pixelsPerYear ?? DEFAULT_LAYOUT.pixelsPerYear
-  );
-  const edgeSamples = Math.max(
-    4,
-    Math.round(options.edgeSamples ?? DEFAULT_LAYOUT.edgeSamples)
-  );
-  const nodeRadius = Math.max(2, options.nodeRadius ?? DEFAULT_LAYOUT.nodeRadius);
+): TimelineHorizontalLayout => {
+  const height = Math.max(460, Math.min(760, Math.round(options.stageHeight)));
+  const minYear = options.minYear ?? DEFAULT_MIN_YEAR;
+  const currentYear = options.currentYear ?? new Date().getFullYear();
+  const maxYear = Math.max(currentYear + 1, 2027);
+  const yearWidth = options.yearWidth ?? DEFAULT_YEAR_WIDTH;
+  const startX = options.startX ?? DEFAULT_START_X;
+  const endPadding = options.endPadding ?? DEFAULT_END_PADDING;
+  const cardWidth = options.cardWidth ?? DEFAULT_CARD_WIDTH;
+  const cardHeight = options.cardHeight ?? DEFAULT_CARD_HEIGHT;
 
-  const laneScale = scalePoint<CareerBranchId>()
-    .domain(repository.branches.map((branch) => branch.id))
-    .range([laneInset, width - laneInset])
-    .padding(0.45);
+  const axisY = height - 42;
+  const usableTop = 18;
+  const usableBottom = axisY - 22;
+  const usableSpan = usableBottom - usableTop;
 
-  const authoredNodes: AuthoredNode[] = [
-    ...repository.commits.map((node, authoredIndex) => ({
-      node,
-      source: "commit" as const,
-      authoredIndex,
-    })),
-    ...repository.staging.map((node, stagingIndex) => ({
-      node,
-      source: "staging" as const,
-      authoredIndex: repository.commits.length + stagingIndex,
-    })),
-  ];
+  const laneYMap: Record<TimelineBranchId, number> = {
+    education: Math.round(usableTop + usableSpan * 0.25),
+    work: Math.round(usableTop + usableSpan * 0.57),
+    experiences: Math.round(usableTop + usableSpan * 0.87),
+  };
 
-  const dates = authoredNodes.map(({ node }) => getTimeDate(node.time));
-  const [minimumDate, maximumDate] = extent(dates);
-  const fallbackDate = new Date(Date.UTC(2000, 0, 1));
-  const domainStart = minimumDate ?? fallbackDate;
-  const domainEnd = maximumDate ?? domainStart;
-  const yearSpan = Math.max(
-    1,
-    (domainEnd.getTime() - domainStart.getTime()) /
-      (365.2425 * 24 * 60 * 60 * 1000)
-  );
-  const timeSpan = Math.max(
-    minimumNodeGap * Math.max(0, authoredNodes.length - 1),
-    yearSpan * pixelsPerYear
-  );
-  const timeScale = scaleUtc()
-    .domain([domainEnd, domainStart])
-    .range([topPadding, topPadding + timeSpan]);
+  const toX = (decimalYear: number): number =>
+    Math.round(startX + (decimalYear - minYear) * yearWidth);
 
-  const yByNodeId = new Map<string, number>();
-  let previousY = topPadding - minimumNodeGap;
-  [...authoredNodes]
-    .sort((left, right) => right.authoredIndex - left.authoredIndex)
-    .forEach(({ node }) => {
-      const timeY = timeScale(getTimeDate(node.time));
-      const y = Math.max(timeY, previousY + minimumNodeGap);
-      yByNodeId.set(node.id, y);
-      previousY = y;
-    });
+  const presentX = toX(options.currentDecimalYear);
+  const maxContentX = Math.max(presentX, toX(maxYear));
+  const width = maxContentX + endPadding;
 
-  const refIdsByNode = new Map<string, string[]>();
-  repository.refs.forEach((ref) => {
-    const ids = refIdsByNode.get(ref.targetId) ?? [];
-    ids.push(ref.id);
-    refIdsByNode.set(ref.targetId, ids);
+  const milestoneCommits = repository.commits
+    .filter(
+      (c) =>
+        c.kind === "role" ||
+        c.kind === "foundation" ||
+        c.kind === "education"
+    )
+    .map((commit) => ({
+      commit,
+      branchId: mapCommitToBranch(commit),
+      decimalYear: parseDecimalYear(commit.time.value),
+    }))
+    .sort((a, b) => a.decimalYear - b.decimalYear);
+
+  const countByBranch: Record<TimelineBranchId, number> = {
+    education: 0,
+    work: 0,
+    experiences: 0,
+  };
+  const lastIdByBranch: Partial<Record<TimelineBranchId, string>> = {};
+  milestoneCommits.forEach(({ commit, branchId }) => {
+    countByBranch[branchId] += 1;
+    lastIdByBranch[branchId] = commit.id;
   });
 
-  const toNodeGeometry = ({ node, source }: AuthoredNode): TimelineNodeGeometry => ({
-    id: node.id,
-    sha: "sha" in node ? node.sha : null,
-    source,
-    branchId: node.branchId,
-    status: node.status,
-    kind: node.kind,
-    time: { ...node.time },
-    x: laneScale(node.branchId) ?? width / 2,
-    y: yByNodeId.get(node.id) ?? topPadding,
-    radius: nodeRadius,
-    isMerge: node.parents.length > 1,
-    parentIds: node.parents.map((parent) => parent.id),
-    refIds: [...(refIdsByNode.get(node.id) ?? [])],
+  const branches: TimelineBranchMeta[] = TIMELINE_BRANCH_ORDER.map((id) => ({
+    id,
+    ...TIMELINE_BRANCH_STYLE[id],
+    y: laneYMap[id],
+    count: countByBranch[id],
+  }));
+
+  // Reserve a small clearance zone around the HEAD pill at top-right of Present
+  const headReservedRect: TimelineRect = {
+    x: presentX - 58,
+    y: 4,
+    width: 116,
+    height: 26,
+  };
+
+  const placedCardRects: TimelineRect[] = [headReservedRect];
+  const workIndexByCommitId = new Map<string, number>();
+  let workCounter = 0;
+  milestoneCommits.forEach(({ commit, branchId }) => {
+    if (branchId === "work") {
+      workIndexByCommitId.set(commit.id, workCounter);
+      workCounter += 1;
+    }
   });
 
-  const authoredGeometry = authoredNodes.map(toNodeGeometry);
-  const geometryById = new Map(authoredGeometry.map((node) => [node.id, node]));
+  const headTargetId =
+    milestoneCommits.find(({ commit }) =>
+      /present|presente|hoy|today|heute/i.test(commit.period)
+    )?.commit.id ?? lastIdByBranch.work ?? null;
 
-  // Historical output is intentionally present-to-past; staging follows as a
-  // distinct WIP/forecast sequence even though its coordinates sit above HEAD.
-  const commitNodes = authoredGeometry
-    .slice(0, repository.commits.length)
-    .reverse();
-  const stagingNodes = authoredGeometry.slice(repository.commits.length);
-  const nodes = [...commitNodes, ...stagingNodes];
+  const nodes: TimelineMilestoneNode[] = milestoneCommits.map(
+    ({ commit, branchId, decimalYear }, index) => {
+      const style = TIMELINE_BRANCH_STYLE[branchId];
+      const x = toX(decimalYear);
+      const y = laneYMap[branchId];
+      const span = parsePeriodSpan(commit.period, options.currentDecimalYear);
+      const clampedStart =
+        span.start !== null ? Math.max(minYear - 0.15, span.start) : null;
+      const clampedEnd = span.end !== null ? span.end : null;
+      const spanStartX =
+        clampedStart !== null && clampedStart < decimalYear - 0.15
+          ? toX(clampedStart)
+          : null;
+      const spanEndX =
+        clampedEnd !== null && clampedEnd > decimalYear + 0.15
+          ? toX(clampedEnd)
+          : null;
 
-  const edges: TimelineEdgeGeometry[] = authoredNodes.flatMap(({ node }) =>
-    node.parents.flatMap((parent) => {
-      const parentGeometry = geometryById.get(parent.id);
-      const childGeometry = geometryById.get(node.id);
-      if (!parentGeometry || !childGeometry) return [];
-      const points = sampleEdge(parentGeometry, childGeometry, edgeSamples);
-      return [
-        {
-          id: `edge-${parent.id}-${node.id}-${parent.kind}`,
-          parentId: parent.id,
-          childId: node.id,
-          branchId:
-            parent.kind === "merge-parent"
-              ? parentGeometry.branchId
-              : node.branchId,
-          status: node.status,
-          kind: parent.kind,
-          path: toPath(points),
-          points,
-        },
+      // Preferred side per lane:
+      // - education: always above
+      // - experiences: always above (well clear of time axis)
+      // - work: alternates above/below so dense 2023-2026 transitions never overlap
+      let preferredSide: "above" | "below" = "above";
+      if (branchId === "work") {
+        const wIdx = workIndexByCommitId.get(commit.id) ?? 0;
+        preferredSide = wIdx % 2 === 0 ? "above" : "below";
+      }
+
+      const buildCardRect = (
+        side: "above" | "below",
+        offsetX: number
+      ): TimelineRect => ({
+        x: Math.max(12, Math.min(width - cardWidth - 16, x + offsetX)),
+        y:
+          side === "above"
+            ? Math.max(8, y - CARD_STEM_HEIGHT - cardHeight)
+            : Math.min(axisY - cardHeight - 10, y + CARD_STEM_HEIGHT),
+        width: cardWidth,
+        height: cardHeight,
+      });
+
+      const candidateSides: ("above" | "below")[] =
+        branchId === "work"
+          ? [preferredSide, preferredSide === "above" ? "below" : "above"]
+          : [preferredSide, "below"];
+      const candidateOffsets = [
+        CARD_ANCHOR_OFFSET,
+        -cardWidth + 32,
+        -cardWidth / 2,
+        20,
       ];
-    })
-  );
 
-  const graphBottom = Math.max(
-    topPadding,
-    ...authoredGeometry.map((node) => node.y)
-  );
-  const height = graphBottom + bottomPadding;
+      let chosenSide = preferredSide;
+      let chosenRect = buildCardRect(preferredSide, CARD_ANCHOR_OFFSET);
+      let placed = false;
 
-  const lanes: TimelineLaneGeometry[] = repository.branches.map(
-    (branch, index) => {
-      const x = laneScale(branch.id) ?? width / 2;
-      const points = [
-        { x, y: topPadding - nodeRadius * 2 },
-        { x, y: graphBottom + nodeRadius * 2 },
-      ];
+      for (const side of candidateSides) {
+        for (const offset of candidateOffsets) {
+          const candidate = buildCardRect(side, offset);
+          const collidesWithCard = placedCardRects.some((r) =>
+            rectsOverlap(candidate, r)
+          );
+          // Also ensure cards do not sit directly on top of another branch's horizontal line
+          const crossesOtherLane = TIMELINE_BRANCH_ORDER.some((otherId) => {
+            if (otherId === branchId) return false;
+            const otherY = laneYMap[otherId];
+            return otherY >= candidate.y - 4 && otherY <= candidate.y + candidate.height + 4;
+          });
+          if (!collidesWithCard && !crossesOtherLane) {
+            chosenSide = side;
+            chosenRect = candidate;
+            placed = true;
+            break;
+          }
+        }
+        if (placed) break;
+      }
+
+      // Final nudge fallback if all candidates collided
+      if (!placed) {
+        let shift = 0;
+        while (
+          placedCardRects.some((r) => rectsOverlap(chosenRect, r)) &&
+          shift < 420
+        ) {
+          shift += 36;
+          chosenRect = buildCardRect(chosenSide, CARD_ANCHOR_OFFSET + shift);
+        }
+      }
+
+      placedCardRects.push(chosenRect);
+
       return {
-        id: branch.id,
-        label: branch.label,
-        description: branch.description,
-        color: branch.color,
-        index,
+        id: commit.id,
+        sha: commit.sha,
+        kind: commit.kind as Exclude<CareerCommitKind, "milestone">,
+        branchId,
+        color: style.color,
+        inkColor: style.inkColor,
+        title: commit.title,
+        organization: commit.organization ?? "",
+        period: commit.period,
+        summary: commit.summary,
+        details:
+          commit.details && commit.details.length > 0
+            ? commit.details
+            : [commit.summary],
+        decimalYear,
+        spanStartYear: clampedStart,
+        spanEndYear: clampedEnd,
+        spanStartX,
+        spanEndX,
         x,
-        nodeIds: authoredGeometry
-          .filter((node) => node.branchId === branch.id)
-          .map((node) => node.id),
-        path: toPath(points),
-        points,
+        y,
+        cardPlacement: chosenSide,
+        cardRect: chosenRect,
+        stemHeight: CARD_STEM_HEIGHT,
+        isOrigin: index === 0,
+        isHead: commit.id === headTargetId,
+        isBranchEnd: lastIdByBranch[branchId] === commit.id,
       };
     }
   );
 
-  const refs: TimelineRefGeometry[] = repository.refs.flatMap((ref) => {
-    const target = geometryById.get(ref.targetId);
-    if (!target) return [];
-    const targetRefIds = refIdsByNode.get(ref.targetId) ?? [];
-    const refIndex = Math.max(0, targetRefIds.indexOf(ref.id));
-    return [
-      {
-        ...ref,
-        x: target.x + nodeRadius * 2.25,
-        y: target.y + refIndex * 22,
-      },
-    ];
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  const edges: TimelineEdgeGeometry[] = [];
+  const edgeKeys = new Set<string>();
+
+  const pushEdge = (
+    sourceId: string,
+    targetId: string,
+    kind: TimelineEdgeKind,
+    overrideP0?: TimelinePoint
+  ) => {
+    const source = nodeById.get(sourceId);
+    const target = nodeById.get(targetId);
+    if (!source || !target) return;
+    const key = `${sourceId}->${targetId}`;
+    if (edgeKeys.has(key)) return;
+    edgeKeys.add(key);
+
+    edges.push(
+      buildCurveGeometry(
+        `edge-${sourceId}-${targetId}`,
+        sourceId,
+        targetId,
+        source.branchId,
+        target.branchId,
+        kind,
+        overrideP0 ?? { x: source.x, y: source.y },
+        { x: target.x, y: target.y }
+      )
+    );
+  };
+
+  // 1. Sequential continuity along each branch
+  TIMELINE_BRANCH_ORDER.forEach((branchId) => {
+    const branchNodes = nodes.filter((n) => n.branchId === branchId);
+    for (let i = 0; i < branchNodes.length - 1; i += 1) {
+      // Education spans 10 years with DevBorn/work happening in between; connect via fork/merge instead of a flat 10-year jump
+      if (branchId === "education") continue;
+      pushEdge(branchNodes[i].id, branchNodes[i + 1].id, "continuity");
+    }
   });
+
+  // 2. Authentic career fork & merge transitions across the 3 branches
+  // Respect authored cross-branch parent links among visible milestones
+  milestoneCommits.forEach(({ commit }) => {
+    commit.parents.forEach((parent) => {
+      if (nodeById.has(parent.id)) {
+        const src = nodeById.get(parent.id)!;
+        const dst = nodeById.get(commit.id)!;
+        if (src.branchId === dst.branchId) return;
+        pushEdge(
+          parent.id,
+          commit.id,
+          parent.kind === "merge-parent" ? "merge" : "fork"
+        );
+      }
+    });
+  });
+
+  // Connect DevBorn -> UADE (started 2021 while working) & UADE (2026) -> GEA (2026 Present)
+  const devborn = nodeById.get("devborn-operations-automation");
+  const uade = nodeById.get("it-management-degree");
+  const gea = nodeById.get("gea-backend-api-delivery");
+  if (devborn && uade) {
+    const uadeStartX = uade.spanStartX ?? toX(2021.2);
+    // Fork upward from work lane around 2021 to the start of the UADE education span
+    edges.push(
+      buildCurveGeometry(
+        "edge-devborn-uade-start",
+        devborn.id,
+        uade.id,
+        "work",
+        "education",
+        "fork",
+        { x: Math.max(devborn.x, uadeStartX - 90), y: devborn.y },
+        { x: uadeStartX, y: uade.y }
+      )
+    );
+  }
+  if (uade && gea) {
+    pushEdge(uade.id, gea.id, "merge");
+  }
+
+  const ticks: TimelineYearTick[] = Array.from(
+    { length: maxYear - minYear + 1 },
+    (_, idx) => {
+      const year = minYear + idx;
+      return {
+        year,
+        age: year - BIRTH_YEAR,
+        x: toX(year),
+        isCurrentYear: year === currentYear,
+        isFirstYear: idx === 0,
+      };
+    }
+  );
 
   return {
     width,
     height,
-    lanes,
+    axisY,
+    startX,
+    yearWidth,
+    minYear,
+    maxYear,
+    presentX,
+    cardWidth,
+    cardHeight,
+    branches,
     nodes,
     edges,
-    refs,
-    bounds: {
-      top: topPadding,
-      right: width - laneInset,
-      bottom: graphBottom,
-      left: laneInset,
-    },
+    ticks,
   };
 };
 
 const createInitialTimelineState = (): TimelineRuntimeState => ({
   enabled: false,
+  layoutMode: "desktop",
   layout: null,
   viewport: { ...EMPTY_VIEWPORT },
-  scrollTop: 0,
-  revealProgress: 0,
+  scrollLeft: 0,
   activeBranchId: null,
-  activeCommitId: null,
+  hoveredBranchId: null,
+  hoveredMilestoneId: null,
+  selectedMilestoneId: null,
   reducedMotion: false,
 });
 
@@ -381,10 +759,6 @@ export const createTimelineRuntime = (
       viewport: initialState.viewport
         ? { ...initialState.viewport }
         : { ...EMPTY_VIEWPORT },
-      revealProgress: Math.max(
-        0,
-        Math.min(1, initialState.revealProgress ?? 0)
-      ),
     },
   },
   requestRenderRef: { current: () => undefined },
@@ -394,20 +768,6 @@ export const getTimelineScreenPoint = (
   point: TimelinePoint,
   state: TimelineRuntimeState
 ): TimelinePoint => ({
-  x: state.viewport.left + point.x,
-  y: state.viewport.top + point.y - state.scrollTop,
+  x: state.viewport.left + point.x - state.scrollLeft,
+  y: state.viewport.top + point.y,
 });
-
-export const isTimelinePointVisible = (
-  point: TimelinePoint,
-  state: TimelineRuntimeState,
-  margin = 80
-): boolean => {
-  const screenPoint = getTimelineScreenPoint(point, state);
-  return (
-    screenPoint.x >= state.viewport.left - margin &&
-    screenPoint.x <= state.viewport.left + state.viewport.width + margin &&
-    screenPoint.y >= state.viewport.top - margin &&
-    screenPoint.y <= state.viewport.top + state.viewport.height + margin
-  );
-};
