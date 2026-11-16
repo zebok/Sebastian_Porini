@@ -9,17 +9,17 @@
   background-color: transparent;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: clamp(0.75rem, 2vh, 1.75rem) var(--section-inline-gutter);
+  padding: clamp(1rem, 2.5vh, 2.25rem) var(--section-inline-gutter);
 }
 
 .stage {
   position: relative;
   width: 100%;
-  max-width: 1220px;
+  max-width: 1380px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
-  column-gap: clamp(2.5rem, 5vw, 5rem);
+  grid-template-columns: minmax(320px, 440px) minmax(0, 1fr);
+  column-gap: clamp(3rem, 5.5vw, 5.5rem);
   align-items: stretch;
   z-index: 5;
 }
@@ -30,7 +30,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(0.9rem, 2vh, 1.5rem);
+  gap: clamp(1.2rem, 2.6vh, 2rem);
 }
 
 .indexItem {
@@ -38,10 +38,10 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.65rem 0.5rem 0.65rem 0.9rem;
+  padding: 0.75rem 0.6rem 0.75rem 1.1rem;
   background: transparent;
   border: none;
-  border-left: 2px solid transparent;
+  border-left: 2.5px solid transparent;
   text-align: left;
   cursor: pointer;
   transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
@@ -49,11 +49,11 @@
 }
 
 .indexItem:hover {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .indexItemActive {
-  transform: translateX(4px);
+  transform: translateX(6px);
 }
 
 .indexItem:focus-visible {
@@ -65,7 +65,7 @@
 .indexTextBlock {
   display: flex;
   flex-direction: column;
-  gap: 0.26rem;
+  gap: 0.34rem;
   min-width: 0;
   flex: 1;
 }
@@ -74,9 +74,9 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.42rem;
+  gap: 0.48rem;
   font-family: var(--font-mono);
-  font-size: 0.71rem;
+  font-size: 0.78rem;
   line-height: 1.2;
 }
 
@@ -105,16 +105,16 @@
 .indexNature {
   display: inline-flex;
   align-items: center;
-  gap: 0.22rem;
+  gap: 0.25rem;
   color: var(--ink-muted);
   opacity: 0.85;
 }
 
 .indexMatchedTag {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 0.08rem 0.42rem;
+  padding: 0.1rem 0.48rem;
   border-radius: 999px;
   border: 1px solid transparent;
   margin-left: 0.15rem;
@@ -122,9 +122,9 @@
 
 .indexTitle {
   font-family: var(--font-serif);
-  font-size: clamp(1.04rem, 1.3vw, 1.22rem);
+  font-size: clamp(1.22rem, 1.55vw, 1.46rem);
   font-weight: 500;
-  line-height: 1.28;
+  line-height: 1.26;
   color: var(--ink-muted);
   transition: color 0.22s ease, font-weight 0.22s ease;
 }
@@ -147,14 +147,14 @@
   opacity: 0.28;
 }
 
-/* ─── RIGHT COLUMN: PARTICLE PROTAGONIST STAGE + FOOTER DOCK ───────────────── */
+/* ─── RIGHT COLUMN: PURE PARTICLE PROTAGONIST STAGE + FOOTER DOCK ──────────── */
 
 .rightCol {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
-  min-height: 440px;
+  min-height: 480px;
   height: 100%;
 }
 
@@ -162,57 +162,7 @@
   position: relative;
   flex: 1;
   width: 100%;
-  min-height: 310px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 0.75rem;
-}
-
-.calloutsLayer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.conceptCallout {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.36rem;
-  font-family: var(--font-mono);
-  font-size: 0.71rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  background-color: rgba(249, 249, 247, 0.86);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.2rem 0.62rem;
-  white-space: nowrap;
-  box-shadow: 0 2px 10px rgba(26, 26, 24, 0.04);
-}
-
-.calloutDot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.stageIdleHint {
-  font-family: var(--font-mono);
-  font-size: 0.73rem;
-  color: var(--ink-muted);
-  opacity: 0.68;
-  text-align: center;
-  letter-spacing: 0.02em;
-  padding: 0.2rem 0.6rem;
-  background-color: rgba(249, 249, 247, 0.75);
-  border-radius: 999px;
-  pointer-events: none;
+  min-height: 360px;
 }
 
 /* ─── ORDERED FOOTER DOCK ──────────────────────────────────────────────────── */
@@ -220,8 +170,8 @@
 .stageFooter {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  padding-top: 1rem;
+  gap: 1rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--border);
   background: linear-gradient(
     to bottom,
@@ -236,39 +186,39 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
 .footerDesc {
   font-family: var(--font-sans);
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: var(--ink-muted);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--ink);
   margin: 0;
   flex: 1;
-  min-width: 240px;
+  min-width: 260px;
 }
 
 .footerLinks {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.65rem;
   flex-shrink: 0;
 }
 
 .repoLinkPill {
   display: inline-flex;
   align-items: center;
-  gap: 0.32rem;
+  gap: 0.38rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--ink);
-  background-color: rgba(255, 255, 255, 0.82);
+  background-color: rgba(255, 255, 255, 0.85);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.24rem 0.7rem;
+  padding: 0.32rem 0.85rem;
   transition: transform 0.2s ease, background-color 0.2s ease,
     border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -283,35 +233,35 @@
 .privateBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.34rem;
+  gap: 0.38rem;
   font-family: var(--font-mono);
-  font-size: 0.71rem;
+  font-size: 0.76rem;
   font-weight: 500;
   color: var(--ink-muted);
   border: 1px dashed var(--border);
   border-radius: 999px;
-  padding: 0.22rem 0.64rem;
+  padding: 0.28rem 0.78rem;
 }
 
 .tagsRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .tagPill {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-family: var(--font-mono);
-  font-size: 0.73rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--ink);
-  background-color: rgba(255, 255, 255, 0.72);
+  background-color: rgba(255, 255, 255, 0.75);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 0.26rem 0.68rem;
+  padding: 0.34rem 0.82rem;
   cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease,
@@ -334,11 +284,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 15px;
-  height: 15px;
+  min-width: 17px;
+  height: 17px;
   padding: 0 4px;
   border-radius: 999px;
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-weight: 600;
   background-color: var(--bg-subtle);
   color: var(--ink-muted);
@@ -347,7 +297,7 @@
 
 .tagClearIcon {
   opacity: 0.75;
-  margin-left: 0.08rem;
+  margin-left: 0.1rem;
 }
 
 /* ─── RESPONSIVE (< 860px) ─────────────────────────────────────────────────── */
@@ -359,28 +309,28 @@
 
   .stage {
     grid-template-columns: 1fr;
-    row-gap: 1.25rem;
+    row-gap: 1.5rem;
   }
 
   .indexCol {
-    gap: 0.5rem;
+    gap: 0.6rem;
     border-bottom: 1px solid var(--border);
     padding-bottom: 1rem;
   }
 
   .indexItem {
-    padding: 0.45rem 0.5rem;
+    padding: 0.5rem 0.6rem;
   }
 
   .indexTitle {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .rightCol {
-    min-height: 360px;
+    min-height: 380px;
   }
 
   .particleStage {
-    min-height: 250px;
+    min-height: 260px;
   }
 }

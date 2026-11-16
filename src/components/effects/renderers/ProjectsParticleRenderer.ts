@@ -93,8 +93,8 @@ const readStageBounds = (
       const rect = el.getBoundingClientRect();
       if (rect.width > 80 && rect.height > 80) {
         const scale = Math.min(
-          1.15,
-          Math.max(0.62, Math.min(rect.width / 540, rect.height / 360))
+          1.42,
+          Math.max(0.75, Math.min(rect.width / 460, rect.height / 310))
         );
         return {
           left: rect.left,
@@ -110,11 +110,11 @@ const readStageBounds = (
   }
 
   const isMobile = viewportWidth < 860;
-  const left = isMobile ? 24 : viewportWidth * 0.42;
-  const top = isMobile ? 240 : 96;
-  const width = isMobile ? viewportWidth - 48 : viewportWidth * 0.52;
-  const height = isMobile ? 280 : viewportHeight * 0.58;
-  const scale = Math.min(1.1, Math.max(0.62, Math.min(width / 540, height / 360)));
+  const left = isMobile ? 24 : viewportWidth * 0.4;
+  const top = isMobile ? 240 : 88;
+  const width = isMobile ? viewportWidth - 48 : viewportWidth * 0.55;
+  const height = isMobile ? 280 : viewportHeight * 0.62;
+  const scale = Math.min(1.38, Math.max(0.75, Math.min(width / 460, height / 310)));
 
   return {
     left,
@@ -702,31 +702,31 @@ export const drawProjectsParticles = (
     const py = node.y + globalDriftY;
     const mask = getReadabilityMask(px, py, readabilityZones);
 
-    let radius = Math.max(1.5, node.baseRadius);
-    let alphaMultiplier = (state.activeProjectId ? 1.15 : 0.92) * mask;
+    let radius = Math.max(1.75, node.baseRadius * 1.12);
+    let alphaMultiplier = (state.activeProjectId ? 1.22 : 0.96) * mask;
 
     if (mouse.active) {
       const mDist = Math.hypot(mouse.x - node.x, mouse.y - node.y);
-      const hoverRadius = 105;
+      const hoverRadius = 115;
       if (mDist < hoverRadius) {
         const ratio = (hoverRadius - mDist) / hoverRadius;
-        radius *= 1 + ratio * 0.55;
-        alphaMultiplier *= 1 + ratio * 1.3;
+        radius *= 1 + ratio * 0.6;
+        alphaMultiplier *= 1 + ratio * 1.35;
       }
     }
 
     const rgb = focusProj ? activeColor : { r: node.r, g: node.g, b: node.b };
-    const outerAlpha = Math.min(0.38, 0.18 * alphaMultiplier);
-    const coreAlpha = Math.min(0.88, 0.62 * alphaMultiplier);
+    const outerAlpha = Math.min(0.4, 0.19 * alphaMultiplier);
+    const coreAlpha = Math.min(0.92, 0.66 * alphaMultiplier);
 
     ctx.fillStyle = rgba(rgb, outerAlpha);
     ctx.beginPath();
-    ctx.arc(px, py, radius * 1.35, 0, TAU);
+    ctx.arc(px, py, radius * 1.45, 0, TAU);
     ctx.fill();
 
     ctx.fillStyle = rgba(rgb, coreAlpha);
     ctx.beginPath();
-    ctx.arc(px, py, radius * 0.55, 0, TAU);
+    ctx.arc(px, py, radius * 0.58, 0, TAU);
     ctx.fill();
   });
 

@@ -20,83 +20,6 @@ interface ProjectsProps {
   lang?: string;
 }
 
-interface ConceptCallout {
-  label: { es: string; en: string };
-  top: string;
-  left: string;
-}
-
-const PROJECT_CONCEPT_CALLOUTS: Record<string, ConceptCallout[]> = {
-  "geological-data-platform": [
-    {
-      label: { es: "Ingesta AWS Lambda", en: "AWS Lambda Ingestion" },
-      top: "13%",
-      left: "50%",
-    },
-    {
-      label: { es: "SSOT PostgreSQL (RDS)", en: "SSOT PostgreSQL (RDS)" },
-      top: "52%",
-      left: "50%",
-    },
-    {
-      label: { es: "Aislamiento VPC · IAM", en: "Private VPC · IAM" },
-      top: "87%",
-      left: "50%",
-    },
-  ],
-  "attorney-scrapper": [
-    {
-      label: { es: "Fuentes Públicas", en: "Public Sources" },
-      top: "26%",
-      left: "21%",
-    },
-    {
-      label: { es: "Motor de Similitud", en: "Similarity Engine" },
-      top: "74%",
-      left: "45%",
-    },
-    {
-      label: { es: "Human-in-the-Loop", en: "Human-in-the-Loop" },
-      top: "16%",
-      left: "60%",
-    },
-  ],
-  "cloud-iac-hardening": [
-    {
-      label: { es: "Perímetro VPC Segmentado", en: "Segmented VPC Perimeter" },
-      top: "14%",
-      left: "44%",
-    },
-    {
-      label: { es: "Núcleo AWS SAM / IaC", en: "AWS SAM / IaC Core" },
-      top: "50%",
-      left: "44%",
-    },
-    {
-      label: { es: "CI/CD & Migraciones", en: "CI/CD & Migrations" },
-      top: "64%",
-      left: "80%",
-    },
-  ],
-  "portfolio-cv-engine": [
-    {
-      label: { es: "Modelo Único JSON (SSOT)", en: "Single JSON Model (SSOT)" },
-      top: "50%",
-      left: "26%",
-    },
-    {
-      label: { es: "Canvas 2D & GSAP", en: "Canvas 2D & GSAP" },
-      top: "20%",
-      left: "76%",
-    },
-    {
-      label: { es: "Motor de CVs en PDF", en: "Automated PDF Engine" },
-      top: "80%",
-      left: "76%",
-    },
-  ],
-};
-
 export default function Projects({
   dict,
   projects,
@@ -253,23 +176,17 @@ export default function Projects({
   const activeStyle = getProjectCategoryStyle(
     activeProject?.category ?? "data"
   );
-  const conceptCallouts = activeProject
-    ? PROJECT_CONCEPT_CALLOUTS[activeProject.id] ?? []
-    : [];
 
   const privateLabel = isEs
     ? "Trabajo Profesional · Código Privado"
     : "Professional Work · Private Code";
   const publicShortLabel = "GitHub";
   const privateShortLabel = isEs ? "Privado" : "Private";
-  const stagePrompt = isEs
-    ? "Hacé clic en un proyecto para reagrupar las partículas en su arquitectura"
-    : "Click a project to regroup the particles into its architecture";
 
   return (
     <section className={styles.section} aria-label={dict.projects.title}>
       <div className={styles.stage}>
-        {/* ─── LEFT COLUMN: CLEAN EDITORIAL INDEX (No connection dots) ──── */}
+        {/* ─── LEFT COLUMN: CLEAN EDITORIAL INDEX ───────────────────────── */}
         <nav
           className={styles.indexCol}
           aria-label={isEs ? "Índice de proyectos" : "Projects index"}
@@ -329,12 +246,12 @@ export default function Projects({
                     <span className={styles.indexNature}>
                       {isPublic ? (
                         <>
-                          <ArrowUpRight size={11} />
+                          <ArrowUpRight size={12} />
                           <span>{publicShortLabel}</span>
                         </>
                       ) : (
                         <>
-                          <Lock size={10} />
+                          <Lock size={11} />
                           <span>{privateShortLabel}</span>
                         </>
                       )}
@@ -360,76 +277,18 @@ export default function Projects({
           })}
         </nav>
 
-        {/* ─── RIGHT COLUMN: PARTICLE PROTAGONIST STAGE + ORDERED FOOTER ── */}
+        {/* ─── RIGHT COLUMN: PURE PARTICLE STAGE + ORDERED FOOTER ───────── */}
         <div className={styles.rightCol}>
-          {/* 1. Protagonist Particle Stage */}
+          {/* 1. Pure Protagonist Particle Stage (No text overlays) */}
           <div
             id="projects-particle-stage"
             className={styles.particleStage}
             onClick={() => {
               if (activeProjectId !== null) setActiveProjectId(null);
             }}
-          >
-            <AnimatePresence mode="wait">
-              {activeProject ? (
-                <motion.div
-                  key={`callouts-${activeProject.id}`}
-                  className={styles.calloutsLayer}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  {conceptCallouts.map((callout, idx) => (
-                    <motion.span
-                      key={callout.label.en}
-                      className={styles.conceptCallout}
-                      data-projects-readability-zone="true"
-                      style={{
-                        top: callout.top,
-                        left: callout.left,
-                        borderColor: `${activeStyle.color}55`,
-                        color: activeStyle.inkColor,
-                      }}
-                      initial={
-                        prefersReducedMotion
-                          ? { opacity: 1 }
-                          : { opacity: 0, scale: 0.88 }
-                      }
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        delay: prefersReducedMotion ? 0 : 0.14 + idx * 0.08,
-                        duration: 0.32,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                    >
-                      <span
-                        className={styles.calloutDot}
-                        style={{ backgroundColor: activeStyle.color }}
-                      />
-                      <span>
-                        {isEs ? callout.label.es : callout.label.en}
-                      </span>
-                    </motion.span>
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.p
-                  key="idle-prompt"
-                  className={styles.stageIdleHint}
-                  data-projects-readability-zone="true"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  {stagePrompt}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
+          />
 
-          {/* 2. Ordered Footer Dock: Summary/Links + Technologies */}
+          {/* 2. Ordered Footer Dock: Text + Professional/GitHub + Tools */}
           <footer
             className={styles.stageFooter}
             data-projects-readability-zone="true"
@@ -464,11 +323,11 @@ export default function Projects({
                         style={{ borderColor: `${activeStyle.color}66` }}
                       >
                         <span>GitHub · {dict.projects.viewCode}</span>
-                        <ArrowUpRight size={13} />
+                        <ArrowUpRight size={14} />
                       </a>
                     ) : (
                       <span className={styles.privateBadge}>
-                        <Lock size={11} />
+                        <Lock size={12} />
                         <span>{privateLabel}</span>
                       </span>
                     )}
@@ -481,7 +340,7 @@ export default function Projects({
                         className={styles.repoLinkPill}
                       >
                         <span>{dict.projects.viewDemo}</span>
-                        <ExternalLink size={12} />
+                        <ExternalLink size={13} />
                       </a>
                     )}
                   </div>
@@ -543,7 +402,7 @@ export default function Projects({
                     )}
                     {isPinned && (
                       <X
-                        size={11}
+                        size={12}
                         className={styles.tagClearIcon}
                         aria-hidden="true"
                       />
