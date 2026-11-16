@@ -2,7 +2,6 @@ import {
   getProjectCategoryStyle,
   type ProjectsRgb,
   type ProjectsRuntime,
-  type ProjectsRuntimeState,
 } from "../../visualizations/Projects.runtime";
 
 export interface ProjectsRendererParticle {
@@ -26,17 +25,14 @@ export interface ProjectsMouseState {
   active: boolean;
 }
 
-interface ScreenPoint {
-  x: number;
-  y: number;
-}
-
-interface ScreenTagBox {
-  tag: string;
-  x: number;
-  y: number;
+interface StageBounds {
+  left: number;
+  top: number;
   width: number;
   height: number;
+  cx: number;
+  cy: number;
+  scale: number;
 }
 
 interface ScreenRect {
@@ -46,18 +42,10 @@ interface ScreenRect {
   bottom: number;
 }
 
-interface ProjectsDomGeometry {
-  nodesById: Map<string, ScreenPoint>;
-  orderedNodeIds: string[];
-  highlights: ScreenPoint[];
-  tags: ScreenTagBox[];
-  readabilityZones: ScreenRect[];
-}
-
 const TAU = Math.PI * 2;
-const READABILITY_PAD_X = 14;
-const READABILITY_PAD_Y = 10;
-const READABILITY_FADE = 18;
+const READABILITY_PAD_X = 10;
+const READABILITY_PAD_Y = 8;
+const READABILITY_FADE = 16;
 
 const pseudoRandom = (seed: number): number => {
   const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
@@ -69,40 +57,25 @@ const rgba = (rgb: ProjectsRgb, alpha: number): string =>
     rgb.b
   )}, ${Math.max(0, Math.min(1, alpha)).toFixed(4)})`;
 
-const evalCubicBezier = (
-  p0: ScreenPoint,
-  p1: ScreenPoint,
-  p2: ScreenPoint,
-  p3: ScreenPoint,
-  t: number
-): ScreenPoint => {
-  const u = 1 - t;
-  const tt = t * t;
-  const uu = u * u;
-  const uuu = uu * u;
-  const ttt = tt * t;
-
-  return {
-    x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
-    y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
-  };
-};
-
 export const getProjectsGroupColor = (
   group: number,
   runtime?: ProjectsRuntime
 ): ProjectsRgb => {
   const state = runtime?.stateRef.current;
   if (state && state.projects.length > 0) {
-    const activeProj =
-      state.projects.find((p) => p.id === state.activeProjectId) ??
-      state.projects[0];
-    if (group === 0) {
-      return getProjectCategoryStyle(activeProj.category).rgb;
-    }
-    const mappedProj = state.projects[group % state.projects.length];
-    if (mappedProj) {
-      return getProjectCategoryStyle(mappedProj.category).rgb;
+    const focusId = state.activeProjectId ?? state.hoveredProjectId;
+    if (focusId) {
+      const proj = state.projects.find((p) => p.id === focusId);
+      if (proj) {
+        const primary = getProjectCategoryStyle(proj.category).rgb;
+        if (group === 0 || group === 1) return primary;
+        // Subtle complementary slate/accent mix for depth
+        return {
+          r: Math.round(primary.r * 0.72 + 40),
+          g: Math.round(primary.g * 0.72 + 45),
+          b: Math.round(primary.b * 0.72 + 55),
+        };
+      }
     }
   }
   if (group === 0) return { r: 45, g: 91, b: 227 };
@@ -110,113 +83,69 @@ export const getProjectsGroupColor = (
   return { r: 5, g: 150, b: 105 };
 };
 
-const readProjectsDomGeometry = (
-  state: ProjectsRuntimeState,
+const readStageBounds = (
   viewportWidth: number,
   viewportHeight: number
-): ProjectsDomGeometry => {
-  const nodesById = new Map<string, ScreenPoint>();
-  const orderedNodeIds: string[] = [];
-  const highlights: ScreenPoint[] = [];
-  const tags: ScreenTagBox[] = [];
-  const readabilityZones: ScreenRect[] = [];
-
-  if (typeof document !== "undefined" && state.enabled) {
-    state.projects.forEach((proj) => {
-      const el = document.getElementById(`project-node-${proj.id}`);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          nodesById.set(proj.id, {
-            x: rect.left + rect.width * 0.5,
-            y: rect.top + rect.height * 0.5,
-          });
-          orderedNodeIds.push(proj.id);
-        }
-      }
-    });
-
-    for (let i = 0; i < 4; i++) {
-      const el = document.getElementById(`project-highlight-${i}`);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          highlights.push({
-            x: rect.left + rect.width * 0.5,
-            y: rect.top + rect.height * 0.5,
-          });
-        }
-      }
-    }
-
-    const tagEls = document.querySelectorAll<HTMLElement>("[data-project-tag]");
-    tagEls.forEach((el) => {
-      const tag = el.getAttribute("data-project-tag");
-      if (!tag) return;
+): StageBounds => {
+  if (typeof document !== "undefined") {
+    const el = document.getElementById("projects-particle-stage");
+    if (el) {
       const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        tags.push({
-          tag,
-          x: rect.left + rect.width * 0.5,
-          y: rect.top + rect.height * 0.5,
-          width: rect.width,
-          height: rect.height,
-        });
-      }
-    });
-
-    const textEls = document.querySelectorAll<HTMLElement>(
-      '[data-projects-readability-zone="true"]'
-    );
-    textEls.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        readabilityZones.push({
+      if (rect.width > 80 && rect.height > 80) {
+        const scale = Math.min(
+          1.15,
+          Math.max(0.62, Math.min(rect.width / 540, rect.height / 360))
+        );
+        return {
           left: rect.left,
           top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom,
-        });
+          width: rect.width,
+          height: rect.height,
+          cx: rect.left + rect.width * 0.5,
+          cy: rect.top + rect.height * 0.5,
+          scale,
+        };
       }
-    });
-  }
-
-  // Fallback geometry if DOM hasn't mounted yet
-  if (orderedNodeIds.length === 0) {
-    const projectIds =
-      state.projects.length > 0
-        ? state.projects.map((p) => p.id)
-        : [
-            "geological-data-platform",
-            "attorney-scrapper",
-            "cloud-iac-hardening",
-            "portfolio-cv-engine",
-          ];
-    const startY = viewportHeight * 0.3;
-    const stepY = Math.min(88, viewportHeight * 0.13);
-    const leftX = Math.max(64, viewportWidth * 0.16);
-
-    projectIds.forEach((id, idx) => {
-      nodesById.set(id, { x: leftX, y: startY + idx * stepY });
-      orderedNodeIds.push(id);
-    });
-  }
-
-  if (highlights.length === 0) {
-    const rightX = viewportWidth * 0.52;
-    const baseY = viewportHeight * 0.44;
-    for (let i = 0; i < 3; i++) {
-      highlights.push({ x: rightX, y: baseY + i * 38 });
     }
   }
 
+  const isMobile = viewportWidth < 860;
+  const left = isMobile ? 24 : viewportWidth * 0.42;
+  const top = isMobile ? 240 : 96;
+  const width = isMobile ? viewportWidth - 48 : viewportWidth * 0.52;
+  const height = isMobile ? 280 : viewportHeight * 0.58;
+  const scale = Math.min(1.1, Math.max(0.62, Math.min(width / 540, height / 360)));
+
   return {
-    nodesById,
-    orderedNodeIds,
-    highlights,
-    tags,
-    readabilityZones,
+    left,
+    top,
+    width,
+    height,
+    cx: left + width * 0.5,
+    cy: top + height * 0.5,
+    scale,
   };
+};
+
+const readReadabilityZones = (): ScreenRect[] => {
+  const zones: ScreenRect[] = [];
+  if (typeof document === "undefined") return zones;
+
+  const els = document.querySelectorAll<HTMLElement>(
+    '[data-projects-readability-zone="true"]'
+  );
+  els.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      zones.push({
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+      });
+    }
+  });
+  return zones;
 };
 
 const getReadabilityMask = (
@@ -237,20 +166,310 @@ const getReadabilityMask = (
       y - (z.bottom + READABILITY_PAD_Y)
     );
     const dist = Math.hypot(dx, dy);
-    if (dist <= 0.01) return 0;
+    if (dist <= 0.01) return 0.14;
     if (dist < READABILITY_FADE) {
-      mask = Math.min(mask, dist / READABILITY_FADE);
+      mask = Math.min(mask, 0.14 + (dist / READABILITY_FADE) * 0.86);
     }
   }
   return mask;
 };
 
 /**
- * Assigns deterministic target coordinates for all shared InteractiveNetwork
- * particles when the Projects section is active.
- *
- * Zero random background noise: every particle belongs to an index node ring,
- * a tag perimeter satellite, or a connecting filament stream.
+ * ─── STATE 0: FREE-FLOATING CLOUD IN STAGE AREA ──────────────────────────────
+ * When no project is clicked yet, particles float freely and organically inside
+ * the right-hand stage area, gently stirring if a project in the index is hovered.
+ */
+const setFreeFloatingStageTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number,
+  isHoveringProject: boolean
+) => {
+  const spreadX = stage.width * (isHoveringProject ? 0.36 : 0.45);
+  const spreadY = stage.height * (isHoveringProject ? 0.36 : 0.43);
+
+  particles.forEach((p, idx) => {
+    const rx = (pseudoRandom(idx * 3.17 + 1.1) - 0.5) * 2 * spreadX;
+    const ry = (pseudoRandom(idx * 5.23 + 2.7) - 0.5) * 2 * spreadY;
+
+    const speed = isHoveringProject ? 0.0048 : 0.0026;
+    const phase = p.angleOffset + idx * 0.37;
+    const driftAmp = (isHoveringProject ? 18 : 26) * stage.scale;
+
+    const driftX = Math.sin(frameCount * speed + phase) * driftAmp;
+    const driftY = Math.cos(frameCount * (speed * 0.85) + phase * 1.3) * driftAmp;
+
+    p.tx = stage.cx + rx + driftX;
+    p.ty = stage.cy + ry + driftY;
+  });
+};
+
+/**
+ * ─── CONCEPT 1: GEOLOGICAL DATA PLATFORM ─────────────────────────────────────
+ * Stage A: Serverless AWS Lambda Ingestion Funnel (Top)
+ * Stage B: Relational PostgreSQL Schema Matrix (Center)
+ * Stage C: Private VPC Zero-Trust Perimeter Arc (Bottom)
+ */
+const setGeologicalConceptTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const total = particles.length;
+  const stageAEnd = Math.floor(total * 0.34);
+  const stageBEnd = Math.floor(total * 0.74);
+
+  particles.forEach((p, idx) => {
+    // Stage A: Serverless Ingestion Funnel
+    if (idx < stageAEnd) {
+      const speed = 0.0014 + (idx % 4) * 0.00022;
+      const progress = (pseudoRandom(p.id * 2.7) + frameCount * speed) % 1;
+      const startX = cx + (pseudoRandom(p.id * 7.1) - 0.5) * 260 * scale;
+      const startY = cy - 132 * scale;
+      const throatX = cx + (pseudoRandom(p.id * 3.3) - 0.5) * 18 * scale;
+      const throatY = cy - 22 * scale;
+
+      const curvedX = startX + (throatX - startX) * Math.pow(progress, 1.75);
+      const curvedY = startY + (throatY - startY) * progress;
+      const jitter = Math.sin(frameCount * 0.024 + p.id) * 2 * scale;
+
+      p.tx = curvedX + jitter;
+      p.ty = curvedY;
+      return;
+    }
+
+    // Stage B: Relational PostgreSQL Schema Grid (10 cols x 6 rows)
+    if (idx < stageBEnd) {
+      const slot = idx - stageAEnd;
+      const cols = 10;
+      const rows = 6;
+      const cell = slot % (cols * rows);
+      const col = cell % cols;
+      const row = Math.floor(cell / cols);
+
+      const gridW = 176 * scale;
+      const gridH = 84 * scale;
+      const gx = cx - gridW * 0.5 + (col / (cols - 1)) * gridW;
+      const gy = cy + 2 * scale + (row / (rows - 1)) * gridH;
+      const wave =
+        Math.sin(frameCount * 0.028 + row * 0.5 + col * 0.3) * 1.6 * scale;
+
+      p.tx = gx;
+      p.ty = gy + wave;
+      return;
+    }
+
+    // Stage C: Zero-Trust Private VPC Perimeter Arc enveloping the schema
+    const slot = idx - stageBEnd;
+    const countC = Math.max(1, total - stageBEnd);
+    const t = slot / countC;
+    // Lower protective arc from -0.12*PI to 1.12*PI
+    const arcAngle = -0.1 * Math.PI + t * 1.2 * Math.PI;
+    const ringLayer = slot % 2 === 0 ? 128 * scale : 138 * scale;
+    const ryLayer = slot % 2 === 0 ? 104 * scale : 112 * scale;
+    const pulse = Math.sin(frameCount * 0.022 + slot * 0.2) * 2.2 * scale;
+
+    p.tx = cx + Math.cos(arcAngle) * (ringLayer + pulse);
+    p.ty = cy + 16 * scale + Math.sin(arcAngle) * (ryLayer + pulse);
+  });
+};
+
+/**
+ * ─── CONCEPT 2: INGESTION PIPELINE & ENTITY RESOLUTION ───────────────────────
+ * Stage A: Disjoint Turbulent Public Streams (Left)
+ * Stage B: Unified Clean Deduplicated Stream (Right)
+ * Stage C: Human-in-the-Loop Audit Orbit (Top-Right)
+ */
+const setAttorneyConceptTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const total = particles.length;
+  const stageAEnd = Math.floor(total * 0.42);
+  const stageBEnd = Math.floor(total * 0.76);
+
+  particles.forEach((p, idx) => {
+    // Stage A: 3 Disjoint Input Streams converging into Similarity Lens
+    if (idx < stageAEnd) {
+      const streamLane = idx % 3; // -1, 0, +1
+      const speed = 0.0016 + (idx % 4) * 0.00022;
+      const progress = (pseudoRandom(p.id * 1.7) + frameCount * speed) % 1;
+      const startX = cx - 190 * scale;
+      const laneOffset = (streamLane - 1) * 68 * scale;
+      const startY = cy + laneOffset;
+      const lensX = cx - 22 * scale;
+      const lensY = cy + (streamLane - 1) * 5 * scale;
+
+      const px = startX + (lensX - startX) * progress;
+      const turbulence =
+        Math.sin(frameCount * 0.036 + p.id * 0.7) *
+        (14 * scale * (1 - progress * 0.78));
+      const py = startY + (lensY - startY) * progress + turbulence;
+
+      p.tx = px;
+      p.ty = py;
+      return;
+    }
+
+    // Stage B: Clean Unified Deduplicated Dataset Stream
+    if (idx < stageBEnd) {
+      const slot = idx - stageAEnd;
+      const speed = 0.0014 + (slot % 4) * 0.00018;
+      const progress = (pseudoRandom(p.id * 2.3) + frameCount * speed) % 1;
+      const startX = cx - 18 * scale;
+      const endX = cx + 190 * scale;
+      const laneSpread = ((slot % 5) - 2) * 3.2 * scale;
+
+      p.tx = startX + (endX - startX) * progress;
+      p.ty = cy + laneSpread;
+      return;
+    }
+
+    // Stage C: Human-in-the-Loop Audit Orbit
+    const slot = idx - stageBEnd;
+    const loopCx = cx + 44 * scale;
+    const loopCy = cy - 72 * scale;
+    const loopRadius = (32 + (slot % 2) * 5) * scale;
+    const speed = 0.0058 + (slot % 3) * 0.001;
+    const angle = p.angleOffset + frameCount * speed;
+
+    p.tx = loopCx + Math.cos(angle) * loopRadius;
+    p.ty = loopCy + Math.sin(angle) * (loopRadius * 0.88);
+  });
+};
+
+/**
+ * ─── CONCEPT 3: CLOUD IaC & HARDENING ────────────────────────────────────────
+ * Stage A: Reproducible IaC Core Rings (Center-Left)
+ * Stage B: Segmented VPC Orbital Perimeter Shield (Outer Ellipse)
+ * Stage C: Auditable CI/CD Release Stream (Right)
+ */
+const setCloudIacConceptTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const coreX = cx - 26 * scale;
+  const total = particles.length;
+  const stageAEnd = Math.floor(total * 0.34);
+  const stageBEnd = Math.floor(total * 0.74);
+
+  particles.forEach((p, idx) => {
+    // Stage A: Reproducible SAM/CloudFormation Nucleus
+    if (idx < stageAEnd) {
+      const isInner = idx < stageAEnd * 0.42;
+      const ring = (isInner ? 20 : 44) * scale;
+      const speed = 0.0034 * (isInner ? 1 : -0.75);
+      const angle = p.angleOffset + frameCount * speed;
+      const pulse = Math.sin(frameCount * 0.03) * 1.8 * scale;
+
+      p.tx = coreX + Math.cos(angle) * (ring + pulse);
+      p.ty = cy + Math.sin(angle) * ((ring + pulse) * 0.88);
+      return;
+    }
+
+    // Stage B: Hardened VPC Subnet Perimeter Shield
+    if (idx < stageBEnd) {
+      const slot = idx - stageAEnd;
+      const speed = 0.0045 * (slot % 2 === 0 ? 1 : -1);
+      const angle = p.angleOffset + frameCount * speed;
+      const rx = (104 + p.radiusMultiplier * 10) * scale;
+      const ry = (84 + p.radiusMultiplier * 8) * scale;
+
+      p.tx = coreX + Math.cos(angle) * rx;
+      p.ty = cy + Math.sin(angle) * ry;
+      return;
+    }
+
+    // Stage C: Auditable CI/CD Release Stream
+    const slot = idx - stageBEnd;
+    const speed = 0.0015 + (slot % 4) * 0.0002;
+    const progress = (pseudoRandom(p.id * 3.1) + frameCount * speed) % 1;
+    const startX = coreX + 106 * scale;
+    const endX = cx + 195 * scale;
+    const laneY = cy + ((slot % 4) - 1.5) * 5.5 * scale;
+
+    p.tx = startX + (endX - startX) * progress;
+    p.ty = laneY;
+  });
+};
+
+/**
+ * ─── CONCEPT 4: INTERACTIVE PORTFOLIO & CV ENGINE ────────────────────────────
+ * Stage A: Single-Source-of-Truth JSON Nucleus (Left-Center)
+ * Stage B: Interactive Canvas 2D / GSAP Harmonic Wave (Top-Right)
+ * Stage C: Automated Node.js PDF Compilation Stream (Bottom-Right)
+ */
+const setPortfolioConceptTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const coreX = cx - 54 * scale;
+  const total = particles.length;
+  const stageAEnd = Math.floor(total * 0.32);
+  const stageBEnd = Math.floor(total * 0.66);
+
+  particles.forEach((p, idx) => {
+    // Stage A: SSOT JSON Nucleus
+    if (idx < stageAEnd) {
+      const speed = 0.0042 * (idx % 2 === 0 ? 1 : -1);
+      const angle = p.angleOffset + frameCount * speed;
+      const breathing = Math.sin(frameCount * 0.028) * 3 * scale;
+      const r = (18 + (idx % 3) * 9) * scale + breathing;
+
+      p.tx = coreX + Math.cos(angle) * r;
+      p.ty = cy + Math.sin(angle) * (r * 0.88);
+      return;
+    }
+
+    // Stage B: Interactive Canvas 2D Harmonic Wave (Upper Branch)
+    if (idx < stageBEnd) {
+      const slot = idx - stageAEnd;
+      const speed = 0.0015 + (slot % 3) * 0.00022;
+      const progress = (pseudoRandom(p.id * 1.9) + frameCount * speed) % 1;
+      const startX = coreX + 28 * scale;
+      const endX = cx + 185 * scale;
+      const startY = cy;
+      const endY = cy - 76 * scale;
+
+      const px = startX + (endX - startX) * progress;
+      const basePy = startY + (endY - startY) * Math.pow(progress, 0.9);
+      const wave =
+        Math.sin(progress * Math.PI * 4 + frameCount * 0.04) * 7.5 * scale;
+
+      p.tx = px;
+      p.ty = basePy + wave;
+      return;
+    }
+
+    // Stage C: Automated PDF Compilation Stream (Lower Branch)
+    const slot = idx - stageBEnd;
+    const speed = 0.0012 + (slot % 3) * 0.00018;
+    const progress = (pseudoRandom(p.id * 2.8) + frameCount * speed) % 1;
+    const startX = coreX + 28 * scale;
+    const endX = cx + 185 * scale;
+    const startY = cy;
+    const endY = cy + 76 * scale;
+
+    const stepped = Math.floor(progress * 4) / 4 + (progress % 0.25) * 0.72;
+    const px = startX + (endX - startX) * stepped;
+    const py = startY + (endY - startY) * stepped;
+    const blockJitter = ((slot % 3) - 1) * 3.5 * scale;
+
+    p.tx = px;
+    p.ty = py + blockJitter;
+  });
+};
+
+/**
+ * Computes deterministic target coordinates for all shared InteractiveNetwork
+ * particles while the Projects section is active.
  */
 export const setProjectsParticleTargets = (
   particles: ProjectsRendererParticle[],
@@ -260,188 +479,150 @@ export const setProjectsParticleTargets = (
   runtime: ProjectsRuntime
 ): void => {
   const state = runtime.stateRef.current;
-  const geom = readProjectsDomGeometry(state, viewportWidth, viewportHeight);
-  const focusTag = state.hoveredTag ?? state.selectedTag;
+  const stage = readStageBounds(viewportWidth, viewportHeight);
 
-  const activeNode =
-    geom.nodesById.get(state.activeProjectId) ??
-    geom.nodesById.get(geom.orderedNodeIds[0]) ?? {
-      x: viewportWidth * 0.2,
-      y: viewportHeight * 0.4,
-    };
+  if (!state.activeProjectId) {
+    setFreeFloatingStageTargets(
+      particles,
+      stage,
+      frameCount,
+      state.hoveredProjectId !== null
+    );
+    return;
+  }
 
-  // Identify projects that share the currently focused tag
-  const matchingProjectIds = focusTag
-    ? state.projects
-        .filter((p) => p.tags.includes(focusTag))
-        .map((p) => p.id)
-        .filter((id) => geom.nodesById.has(id))
-    : [];
-
-  const focusedTagBox = focusTag
-    ? geom.tags.find((t) => t.tag === focusTag) ?? null
-    : null;
-
-  const projectCount = Math.max(1, geom.orderedNodeIds.length);
-  const RING_SLOTS_PER_PROJECT = 36;
-  const totalRingSlots = projectCount * RING_SLOTS_PER_PROJECT;
-  const TAG_SATELLITE_SLOTS = 120;
-  const tagSlotsEnd = totalRingSlots + TAG_SATELLITE_SLOTS;
-
-  particles.forEach((p, idx) => {
-    // ─── 1. INDEX NODE RINGS (Left Column) ───────────────────────────────────
-    if (idx < totalRingSlots) {
-      const projIdx = Math.floor(idx / RING_SLOTS_PER_PROJECT);
-      const slot = idx % RING_SLOTS_PER_PROJECT;
-      const projId = geom.orderedNodeIds[projIdx] ?? geom.orderedNodeIds[0];
-      const center = geom.nodesById.get(projId) ?? activeNode;
-
-      const isActive = projId === state.activeProjectId;
-      const isHovered = projId === state.hoveredProjectId;
-      const isTagMatch = focusTag !== null && matchingProjectIds.includes(projId);
-
-      // Boundary ring vs inner core orbit
-      const isBoundary = slot < 24;
-      let targetRadius = 8.5;
-      let rotSpeed = 0.0025;
-
-      if (isActive) {
-        targetRadius = isBoundary ? 21 : 9 + p.radiusMultiplier * 7;
-        rotSpeed = isBoundary ? 0.0032 : 0.0055;
-      } else if (isTagMatch) {
-        targetRadius = isBoundary ? 17.5 : 7 + p.radiusMultiplier * 5;
-        rotSpeed = 0.0042;
-      } else if (isHovered) {
-        targetRadius = isBoundary ? 14.5 : 6 + p.radiusMultiplier * 4;
-        rotSpeed = 0.0035;
-      } else if (focusTag !== null) {
-        targetRadius = isBoundary ? 5.5 : 3;
-        rotSpeed = 0.0012;
-      }
-
-      const baseAngle = isBoundary
-        ? (slot / 24) * TAU
-        : p.angleOffset + slot * 0.4;
-      const angle =
-        baseAngle + frameCount * rotSpeed * (projIdx % 2 === 0 ? 1 : -1);
-      const wave =
-        isActive || isTagMatch
-          ? Math.sin(frameCount * 0.02 + slot * 0.35) * 1.4
-          : 0;
-
-      p.tx = center.x + Math.cos(angle) * (targetRadius + wave);
-      p.ty = center.y + Math.sin(angle) * (targetRadius + wave);
-      return;
-    }
-
-    // ─── 2. TAG PERIMETER SATELLITES (Right Stage) ───────────────────────────
-    if (idx < tagSlotsEnd && geom.tags.length > 0) {
-      const localIdx = idx - totalRingSlots;
-      const tagBox = geom.tags[localIdx % geom.tags.length];
-      const isThisTagFocused = focusTag !== null && tagBox.tag === focusTag;
-
-      const orbitSpeed = isThisTagFocused ? 0.0085 : 0.0035;
-      const angle = p.angleOffset + frameCount * orbitSpeed + localIdx * 0.55;
-      const padX = isThisTagFocused
-        ? 6 + 9 * p.radiusMultiplier
-        : 4 + 6 * p.radiusMultiplier;
-      const padY = isThisTagFocused
-        ? 5 + 7 * p.radiusMultiplier
-        : 3 + 5 * p.radiusMultiplier;
-
-      const rx = tagBox.width * 0.5 + padX;
-      const ry = tagBox.height * 0.5 + padY;
-
-      p.tx =
-        tagBox.x +
-        Math.cos(angle) * rx +
-        Math.sin(frameCount * 0.012 + p.id) * 1.5;
-      p.ty =
-        tagBox.y +
-        Math.sin(angle) * ry +
-        Math.cos(frameCount * 0.011 + p.id) * 1.5;
-      return;
-    }
-
-    // ─── 3. BRIDGE STREAM PARTICLES (Filaments between Index, Highlights & Tags)
-    const streamIdx = idx - tagSlotsEnd;
-
-    // 3A. When a tag is focused, stream particles along bridges from that tag to all matching projects!
-    if (focusedTagBox && matchingProjectIds.length > 0) {
-      const targetProjId =
-        matchingProjectIds[streamIdx % matchingProjectIds.length];
-      const targetNode = geom.nodesById.get(targetProjId) ?? activeNode;
-      const isProjActive = targetProjId === state.activeProjectId;
-      const ringR = isProjActive ? 21 : 17.5;
-
-      const speed = 0.0032 + (streamIdx % 5) * 0.00045;
-      const t = (pseudoRandom(p.id * 1.73) + frameCount * speed) % 1;
-
-      const startPt: ScreenPoint = {
-        x: focusedTagBox.x,
-        y: focusedTagBox.y - focusedTagBox.height * 0.5 - 4,
-      };
-      const endPt: ScreenPoint = {
-        x: targetNode.x + ringR,
-        y: targetNode.y,
-      };
-      const dx = Math.max(60, Math.abs(startPt.x - endPt.x));
-      const cp1: ScreenPoint = {
-        x: startPt.x - Math.min(90, dx * 0.32),
-        y: startPt.y - 32,
-      };
-      const cp2: ScreenPoint = {
-        x: endPt.x + Math.max(48, dx * 0.38),
-        y: endPt.y,
-      };
-
-      const pt = evalCubicBezier(startPt, cp1, cp2, endPt, t);
-      const spread = (pseudoRandom(p.id * 3.1) - 0.5) * 4.5;
-      p.tx = pt.x;
-      p.ty = pt.y + spread;
-      return;
-    }
-
-    // 3B. Default state: gentle stream from active project node to its highlights & tags
-    const targets: ScreenPoint[] = [
-      ...geom.highlights,
-      ...geom.tags.map((t) => ({ x: t.x - t.width * 0.5 - 4, y: t.y })),
-    ];
-
-    if (targets.length > 0) {
-      const dest = targets[streamIdx % targets.length];
-      const speed = 0.0022 + (streamIdx % 4) * 0.00035;
-      const t = (pseudoRandom(p.id * 2.17) + frameCount * speed) % 1;
-
-      const startPt: ScreenPoint = {
-        x: activeNode.x + 21,
-        y: activeNode.y,
-      };
-      const endPt: ScreenPoint = {
-        x: dest.x,
-        y: dest.y,
-      };
-      const midX = startPt.x + (endPt.x - startPt.x) * 0.5;
-      const cp1: ScreenPoint = { x: midX, y: startPt.y };
-      const cp2: ScreenPoint = { x: midX, y: endPt.y };
-
-      const pt = evalCubicBezier(startPt, cp1, cp2, endPt, t);
-      const jitter = Math.sin(frameCount * 0.018 + p.id) * 2.2;
-      p.tx = pt.x;
-      p.ty = pt.y + jitter;
-      return;
-    }
-
-    // Fallback orbit around active node
-    const fallbackAngle = p.angleOffset + frameCount * 0.003;
-    p.tx = activeNode.x + Math.cos(fallbackAngle) * 20;
-    p.ty = activeNode.y + Math.sin(fallbackAngle) * 20;
-  });
+  switch (state.activeProjectId) {
+    case "geological-data-platform":
+      setGeologicalConceptTargets(particles, stage, frameCount);
+      break;
+    case "attorney-scrapper":
+      setAttorneyConceptTargets(particles, stage, frameCount);
+      break;
+    case "cloud-iac-hardening":
+      setCloudIacConceptTargets(particles, stage, frameCount);
+      break;
+    case "portfolio-cv-engine":
+    default:
+      setPortfolioConceptTargets(particles, stage, frameCount);
+      break;
+  }
 };
 
 /**
- * Draws the structural rings, dashed Bézier filaments, travelling light beads,
- * and readability-masked particles for the Projects section.
+ * Draws delicate architectural guide curves for the active project concept.
+ */
+const drawConceptGuides = (
+  ctx: CanvasRenderingContext2D,
+  stage: StageBounds,
+  projectId: string,
+  color: ProjectsRgb
+) => {
+  const { cx, cy, scale } = stage;
+  ctx.save();
+  ctx.strokeStyle = rgba(color, 0.22);
+  ctx.lineWidth = 1.1;
+
+  switch (projectId) {
+    case "geological-data-platform": {
+      // Funnel guides
+      ctx.beginPath();
+      ctx.moveTo(cx - 125 * scale, cy - 130 * scale);
+      ctx.quadraticCurveTo(
+        cx - 38 * scale,
+        cy - 72 * scale,
+        cx - 16 * scale,
+        cy - 22 * scale
+      );
+      ctx.moveTo(cx + 125 * scale, cy - 130 * scale);
+      ctx.quadraticCurveTo(
+        cx + 38 * scale,
+        cy - 72 * scale,
+        cx + 16 * scale,
+        cy - 22 * scale
+      );
+      ctx.stroke();
+
+      // VPC protective lower arc
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = rgba(color, 0.28);
+      ctx.beginPath();
+      ctx.ellipse(
+        cx,
+        cy + 16 * scale,
+        133 * scale,
+        108 * scale,
+        0,
+        -0.08 * Math.PI,
+        1.08 * Math.PI
+      );
+      ctx.stroke();
+      break;
+    }
+
+    case "attorney-scrapper": {
+      // Similarity focal lens
+      ctx.beginPath();
+      ctx.ellipse(cx - 20 * scale, cy, 10 * scale, 56 * scale, 0, 0, TAU);
+      ctx.stroke();
+
+      // Human-in-the-loop audit ring
+      ctx.setLineDash([3, 3.5]);
+      ctx.beginPath();
+      ctx.ellipse(
+        cx + 44 * scale,
+        cy - 72 * scale,
+        34 * scale,
+        30 * scale,
+        0,
+        0,
+        TAU
+      );
+      ctx.stroke();
+      break;
+    }
+
+    case "cloud-iac-hardening": {
+      const coreX = cx - 26 * scale;
+      // Inner IaC ring
+      ctx.beginPath();
+      ctx.ellipse(coreX, cy, 44 * scale, 39 * scale, 0, 0, TAU);
+      ctx.stroke();
+
+      // Outer VPC perimeter shield
+      ctx.setLineDash([3.5, 4]);
+      ctx.strokeStyle = rgba(color, 0.28);
+      ctx.beginPath();
+      ctx.ellipse(coreX, cy, 108 * scale, 88 * scale, 0, 0, TAU);
+      ctx.stroke();
+      break;
+    }
+
+    case "portfolio-cv-engine":
+    default: {
+      const coreX = cx - 54 * scale;
+      ctx.beginPath();
+      ctx.arc(coreX, cy, 32 * scale, 0, TAU);
+      ctx.stroke();
+
+      // Forking paths from SSOT core
+      ctx.setLineDash([2.5, 3.5]);
+      ctx.beginPath();
+      ctx.moveTo(coreX + 32 * scale, cy - 6 * scale);
+      ctx.lineTo(cx + 175 * scale, cy - 74 * scale);
+      ctx.moveTo(coreX + 32 * scale, cy + 6 * scale);
+      ctx.lineTo(cx + 175 * scale, cy + 74 * scale);
+      ctx.stroke();
+      break;
+    }
+  }
+
+  ctx.restore();
+};
+
+/**
+ * Renders the Projects particle stage:
+ * - In free-floating mode: calm network filaments + drifting particles in the stage.
+ * - In concept mode: architectural guides + high-definition concept formation.
  */
 export const drawProjectsParticles = (
   ctx: CanvasRenderingContext2D,
@@ -450,285 +631,102 @@ export const drawProjectsParticles = (
   mouse: ProjectsMouseState,
   globalDriftX: number,
   globalDriftY: number,
-  frameCount: number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _frameCount: number
 ): void => {
   const state = runtime.stateRef.current;
   const w = typeof window !== "undefined" ? window.innerWidth : ctx.canvas.width;
-  const h = typeof window !== "undefined" ? window.innerHeight : ctx.canvas.height;
-  const geom = readProjectsDomGeometry(state, w, h);
-  const focusTag = state.hoveredTag ?? state.selectedTag;
+  const h =
+    typeof window !== "undefined" ? window.innerHeight : ctx.canvas.height;
+  const stage = readStageBounds(w, h);
+  const readabilityZones = readReadabilityZones();
 
-  const activeProj =
-    state.projects.find((p) => p.id === state.activeProjectId) ??
-    state.projects[0];
-  const activeColor = getProjectCategoryStyle(
-    activeProj?.category ?? "data"
-  ).rgb;
-
-  const matchingProjectIds = focusTag
-    ? state.projects
-        .filter((p) => p.tags.includes(focusTag))
-        .map((p) => p.id)
-    : [];
-
-  const focusedTagBox = focusTag
-    ? geom.tags.find((t) => t.tag === focusTag) ?? null
+  const focusId = state.activeProjectId ?? state.hoveredProjectId;
+  const focusProj = focusId
+    ? state.projects.find((p) => p.id === focusId)
     : null;
+  const activeColor = focusProj
+    ? getProjectCategoryStyle(focusProj.category).rgb
+    : { r: 45, g: 91, b: 227 };
 
   ctx.save();
 
-  // ─── 1. DRAW INDEX NODE RINGS (Venn-style structural circles) ──────────────
-  geom.orderedNodeIds.forEach((projId) => {
-    const center = geom.nodesById.get(projId);
-    if (!center) return;
-
-    const proj = state.projects.find((p) => p.id === projId);
-    const rgb = getProjectCategoryStyle(proj?.category ?? "data").rgb;
-    const isActive = projId === state.activeProjectId;
-    const isHovered = projId === state.hoveredProjectId;
-    const isTagMatch = focusTag !== null && matchingProjectIds.includes(projId);
-
-    const cx = center.x + globalDriftX;
-    const cy = center.y + globalDriftY;
-
-    let radius = 8.5;
-    let fillAlpha = 0.015;
-    let strokeAlpha = 0.16;
-    let lineWidth = 1.0;
-    let dashed = false;
-
-    if (isActive) {
-      radius = 21 + Math.sin(frameCount * 0.035) * 0.8;
-      fillAlpha = 0.045;
-      strokeAlpha = 0.42;
-      lineWidth = 1.5;
-    } else if (isTagMatch) {
-      radius = 17.5 + Math.sin(frameCount * 0.045) * 0.8;
-      fillAlpha = 0.04;
-      strokeAlpha = 0.46;
-      lineWidth = 1.35;
-      dashed = true;
-    } else if (isHovered) {
-      radius = 14.5;
-      fillAlpha = 0.03;
-      strokeAlpha = 0.3;
-      lineWidth = 1.2;
-    } else if (focusTag !== null) {
-      radius = 5.5;
-      fillAlpha = 0;
-      strokeAlpha = 0.08;
-    }
-
-    ctx.setLineDash(dashed ? [3, 3] : []);
-    if (fillAlpha > 0) {
-      ctx.fillStyle = rgba(rgb, fillAlpha);
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, TAU);
-      ctx.fill();
-    }
-    ctx.strokeStyle = rgba(rgb, strokeAlpha);
-    ctx.lineWidth = lineWidth;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, TAU);
-    ctx.stroke();
-  });
-
-  // ─── 2. DRAW ACTIVE PROJECT -> HIGHLIGHT FILAMENTS ─────────────────────────
-  const activeCenter = geom.nodesById.get(state.activeProjectId);
-  if (activeCenter && geom.highlights.length > 0) {
-    const startX = activeCenter.x + 21 + globalDriftX;
-    const startY = activeCenter.y + globalDriftY;
-    const dimFactor = focusTag !== null ? 0.42 : 1;
-
-    geom.highlights.forEach((hl, idx) => {
-      const endX = hl.x - 6 + globalDriftX;
-      const endY = hl.y + globalDriftY;
-      const midX = startX + (endX - startX) * 0.52;
-
-      const p0 = { x: startX, y: startY };
-      const p1 = { x: midX, y: startY };
-      const p2 = { x: midX, y: endY };
-      const p3 = { x: endX, y: endY };
-
-      // Soft outer glow
-      const gradGlow = ctx.createLinearGradient(startX, startY, endX, endY);
-      gradGlow.addColorStop(0, rgba(activeColor, 0.14 * dimFactor));
-      gradGlow.addColorStop(1, rgba(activeColor, 0.06 * dimFactor));
-
-      ctx.setLineDash([]);
-      ctx.strokeStyle = gradGlow;
-      ctx.lineWidth = 3.0;
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-      ctx.stroke();
-
-      // Crisp dashed core
-      const gradCore = ctx.createLinearGradient(startX, startY, endX, endY);
-      gradCore.addColorStop(0, rgba(activeColor, 0.45 * dimFactor));
-      gradCore.addColorStop(1, rgba(activeColor, 0.28 * dimFactor));
-
-      ctx.setLineDash([2.5, 3.5]);
-      ctx.strokeStyle = rgba(activeColor, 0.34 * dimFactor);
-      ctx.lineWidth = 1.05;
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-      ctx.stroke();
-
-      // Travelling energy pulse bead
-      if (!state.reducedMotion && focusTag === null) {
-        const progress = (frameCount * 0.0042 + idx * 0.33) % 1;
-        const bead = evalCubicBezier(p0, p1, p2, p3, progress);
-        ctx.setLineDash([]);
-        ctx.fillStyle = rgba(activeColor, 0.78);
-        ctx.beginPath();
-        ctx.arc(bead.x, bead.y, 2.2, 0, TAU);
-        ctx.fill();
-
-        ctx.fillStyle = rgba(activeColor, 0.18);
-        ctx.beginPath();
-        ctx.arc(bead.x, bead.y, 4.6, 0, TAU);
-        ctx.fill();
-      }
-    });
+  // 1. Draw architectural concept guides when a project is active
+  if (state.activeProjectId) {
+    drawConceptGuides(
+      ctx,
+      {
+        ...stage,
+        cx: stage.cx + globalDriftX,
+        cy: stage.cy + globalDriftY,
+      },
+      state.activeProjectId,
+      activeColor
+    );
   }
 
-  // ─── 3. DRAW TAG CONNECTION BRIDGES (Tag -> All Matching Projects) ─────────
-  if (focusedTagBox && matchingProjectIds.length > 0) {
-    const startX = focusedTagBox.x + globalDriftX;
-    const startY =
-      focusedTagBox.y - focusedTagBox.height * 0.5 - 4 + globalDriftY;
+  // 2. Subtle local connections between nearby particles
+  const maxConnections = Math.min(particles.length, 220);
+  const connectionDist = state.activeProjectId ? 44 : 62;
+  ctx.lineWidth = 0.65;
 
-    matchingProjectIds.forEach((projId, idx) => {
-      const targetCenter = geom.nodesById.get(projId);
-      if (!targetCenter) return;
+  for (let i = 0; i < maxConnections; i += 1) {
+    const n1 = particles[i];
+    const p1x = n1.x + globalDriftX;
+    const p1y = n1.y + globalDriftY;
 
-      const proj = state.projects.find((p) => p.id === projId);
-      const projRgb = getProjectCategoryStyle(proj?.category ?? "data").rgb;
-      const isProjActive = projId === state.activeProjectId;
-      const ringR = isProjActive ? 21 : 17.5;
+    for (let j = i + 1; j < maxConnections; j += 1) {
+      const n2 = particles[j];
+      const dx = n1.x - n2.x;
+      const dy = n1.y - n2.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist >= connectionDist) continue;
 
-      const endX = targetCenter.x + ringR + globalDriftX;
-      const endY = targetCenter.y + globalDriftY;
-      const dx = Math.max(60, Math.abs(startX - endX));
+      const alpha =
+        (1 - dist / connectionDist) * (state.activeProjectId ? 0.11 : 0.085);
+      const rgb = state.activeProjectId
+        ? activeColor
+        : { r: n1.r, g: n1.g, b: n1.b };
 
-      const p0 = { x: startX, y: startY };
-      const p1 = { x: startX - Math.min(90, dx * 0.32), y: startY - 32 };
-      const p2 = { x: endX + Math.max(48, dx * 0.38), y: endY };
-      const p3 = { x: endX, y: endY };
-
-      // Outer glow
-      const gradGlow = ctx.createLinearGradient(startX, startY, endX, endY);
-      gradGlow.addColorStop(0, rgba(activeColor, 0.26));
-      gradGlow.addColorStop(1, rgba(projRgb, 0.26));
-
-      ctx.setLineDash([]);
-      ctx.strokeStyle = gradGlow;
-      ctx.lineWidth = 3.8;
+      ctx.strokeStyle = rgba(rgb, alpha);
       ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+      ctx.moveTo(p1x, p1y);
+      ctx.lineTo(n2.x + globalDriftX, n2.y + globalDriftY);
       ctx.stroke();
-
-      // Dashed inner filament
-      const gradCore = ctx.createLinearGradient(startX, startY, endX, endY);
-      gradCore.addColorStop(0, rgba(activeColor, 0.78));
-      gradCore.addColorStop(1, rgba(projRgb, 0.85));
-
-      ctx.setLineDash([2.5, 3.5]);
-      ctx.strokeStyle = gradCore;
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      ctx.moveTo(p0.x, p0.y);
-      ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-      ctx.stroke();
-
-      // Travelling energy bead from Tag -> Matching Project Node
-      if (!state.reducedMotion) {
-        const progress = (frameCount * 0.0055 + idx * 0.28) % 1;
-        const bead = evalCubicBezier(p0, p1, p2, p3, progress);
-        ctx.setLineDash([]);
-        ctx.fillStyle = rgba(projRgb, 0.92);
-        ctx.beginPath();
-        ctx.arc(bead.x, bead.y, 2.6, 0, TAU);
-        ctx.fill();
-
-        ctx.fillStyle = rgba(projRgb, 0.24);
-        ctx.beginPath();
-        ctx.arc(bead.x, bead.y, 5.2, 0, TAU);
-        ctx.fill();
-      }
-    });
+    }
   }
 
-  ctx.setLineDash([]);
-
-  // ─── 4. DRAW PARTICLES (with readability attenuation over text) ────────────
-  const projectCount = Math.max(1, geom.orderedNodeIds.length);
-  const totalRingSlots = projectCount * 36;
-  const tagSlotsEnd = totalRingSlots + 120;
-
-  particles.forEach((node, idx) => {
+  // 3. Draw particles
+  particles.forEach((node) => {
     const px = node.x + globalDriftX;
     const py = node.y + globalDriftY;
+    const mask = getReadabilityMask(px, py, readabilityZones);
 
-    const mask = getReadabilityMask(px, py, geom.readabilityZones);
-    if (mask <= 0.02) return;
-
-    let alphaMultiplier = mask;
-    let radius = node.baseRadius;
-
-    let rgb = { r: node.r, g: node.g, b: node.b };
-
-    if (idx < totalRingSlots) {
-      const projIdx = Math.floor(idx / 36);
-      const projId = geom.orderedNodeIds[projIdx];
-      const proj = state.projects.find((p) => p.id === projId);
-      if (proj) {
-        rgb = getProjectCategoryStyle(proj.category).rgb;
-      }
-      const isActive = projId === state.activeProjectId;
-      const isTagMatch = focusTag !== null && matchingProjectIds.includes(projId);
-      if (isActive || isTagMatch) {
-        radius *= 1.18;
-        alphaMultiplier *= 1.45;
-      } else if (focusTag !== null) {
-        alphaMultiplier *= 0.35;
-      } else {
-        alphaMultiplier *= 0.85;
-      }
-    } else if (idx < tagSlotsEnd) {
-      rgb = activeColor;
-      alphaMultiplier *= focusTag !== null ? 1.15 : 0.9;
-    } else {
-      // Stream & channel particles: keep delicate so they never overpower
-      rgb = activeColor;
-      radius *= 0.88;
-      alphaMultiplier *= focusTag !== null ? 0.92 : 0.62;
-    }
+    let radius = Math.max(1.5, node.baseRadius);
+    let alphaMultiplier = (state.activeProjectId ? 1.15 : 0.92) * mask;
 
     if (mouse.active) {
       const mDist = Math.hypot(mouse.x - node.x, mouse.y - node.y);
-      const hoverRadius = 110;
+      const hoverRadius = 105;
       if (mDist < hoverRadius) {
         const ratio = (hoverRadius - mDist) / hoverRadius;
         radius *= 1 + ratio * 0.55;
-        alphaMultiplier *= 1 + ratio * 1.25;
+        alphaMultiplier *= 1 + ratio * 1.3;
       }
     }
 
-    const outerAlpha = Math.min(0.42, 0.2 * alphaMultiplier);
-    const coreAlpha = Math.min(0.86, 0.54 * alphaMultiplier);
+    const rgb = focusProj ? activeColor : { r: node.r, g: node.g, b: node.b };
+    const outerAlpha = Math.min(0.38, 0.18 * alphaMultiplier);
+    const coreAlpha = Math.min(0.88, 0.62 * alphaMultiplier);
 
     ctx.fillStyle = rgba(rgb, outerAlpha);
     ctx.beginPath();
-    ctx.arc(px, py, radius, 0, TAU);
+    ctx.arc(px, py, radius * 1.35, 0, TAU);
     ctx.fill();
 
     ctx.fillStyle = rgba(rgb, coreAlpha);
     ctx.beginPath();
-    ctx.arc(px, py, radius * 0.44, 0, TAU);
+    ctx.arc(px, py, radius * 0.55, 0, TAU);
     ctx.fill();
   });
 

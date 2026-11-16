@@ -48,7 +48,7 @@ export interface ProjectsRuntimeItem {
 
 export interface ProjectsRuntimeState {
   enabled: boolean;
-  activeProjectId: string;
+  activeProjectId: string | null;
   hoveredProjectId: string | null;
   selectedTag: string | null;
   hoveredTag: string | null;
@@ -65,7 +65,7 @@ export const createProjectsRuntime = (): ProjectsRuntime => ({
   stateRef: {
     current: {
       enabled: false,
-      activeProjectId: "geological-data-platform",
+      activeProjectId: null,
       hoveredProjectId: null,
       selectedTag: null,
       hoveredTag: null,

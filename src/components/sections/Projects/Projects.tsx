@@ -20,6 +20,83 @@ interface ProjectsProps {
   lang?: string;
 }
 
+interface ConceptCallout {
+  label: { es: string; en: string };
+  top: string;
+  left: string;
+}
+
+const PROJECT_CONCEPT_CALLOUTS: Record<string, ConceptCallout[]> = {
+  "geological-data-platform": [
+    {
+      label: { es: "Ingesta AWS Lambda", en: "AWS Lambda Ingestion" },
+      top: "13%",
+      left: "50%",
+    },
+    {
+      label: { es: "SSOT PostgreSQL (RDS)", en: "SSOT PostgreSQL (RDS)" },
+      top: "52%",
+      left: "50%",
+    },
+    {
+      label: { es: "Aislamiento VPC · IAM", en: "Private VPC · IAM" },
+      top: "87%",
+      left: "50%",
+    },
+  ],
+  "attorney-scrapper": [
+    {
+      label: { es: "Fuentes Públicas", en: "Public Sources" },
+      top: "26%",
+      left: "21%",
+    },
+    {
+      label: { es: "Motor de Similitud", en: "Similarity Engine" },
+      top: "74%",
+      left: "45%",
+    },
+    {
+      label: { es: "Human-in-the-Loop", en: "Human-in-the-Loop" },
+      top: "16%",
+      left: "60%",
+    },
+  ],
+  "cloud-iac-hardening": [
+    {
+      label: { es: "Perímetro VPC Segmentado", en: "Segmented VPC Perimeter" },
+      top: "14%",
+      left: "44%",
+    },
+    {
+      label: { es: "Núcleo AWS SAM / IaC", en: "AWS SAM / IaC Core" },
+      top: "50%",
+      left: "44%",
+    },
+    {
+      label: { es: "CI/CD & Migraciones", en: "CI/CD & Migrations" },
+      top: "64%",
+      left: "80%",
+    },
+  ],
+  "portfolio-cv-engine": [
+    {
+      label: { es: "Modelo Único JSON (SSOT)", en: "Single JSON Model (SSOT)" },
+      top: "50%",
+      left: "26%",
+    },
+    {
+      label: { es: "Canvas 2D & GSAP", en: "Canvas 2D & GSAP" },
+      top: "20%",
+      left: "76%",
+    },
+    {
+      label: { es: "Motor de CVs en PDF", en: "Automated PDF Engine" },
+      top: "80%",
+      left: "76%",
+    },
+  ],
+};
+
 export default function Projects({
   dict,
   projects,
@@ -30,9 +107,8 @@ export default function Projects({
   const prefersReducedMotion = useReducedMotionPreference();
   const isEs = lang === "es";
 
-  const [activeProjectId, setActiveProjectId] = useState<string>(
-    projects[0]?.id ?? "geological-data-platform"
-  );
+  // Starts null so particles float freely in the stage until a project is clicked
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
@@ -40,7 +116,10 @@ export default function Projects({
   const focusTag = hoveredTag ?? selectedTag;
 
   const activeProject = useMemo(
-    () => projects.find((p) => p.id === activeProjectId) ?? projects[0],
+    () =>
+      activeProjectId
+        ? projects.find((p) => p.id === activeProjectId) ?? null
+        : null,
     [projects, activeProjectId]
   );
 
@@ -55,12 +134,22 @@ export default function Projects({
     return map;
   }, [projects]);
 
+  // All unique tags ordered by shared count first (for idle footer state)
+  const allUniqueTags = useMemo(() => {
+    const unique = Array.from(tagCounts.keys());
+    return unique.sort(
+      (a, b) => (tagCounts.get(b) ?? 0) - (tagCounts.get(a) ?? 0)
+    );
+  }, [tagCounts]);
+
+  const displayedTags = activeProject ? activeProject.tags : allUniqueTags;
+
   // Sync state with shared canvas particle runtime
   const syncRuntime = useCallback(() => {
     if (!projectsRuntime) return;
     projectsRuntime.stateRef.current = {
       enabled: isActive,
-      activeProjectId: activeProject?.id ?? "",
+      activeProjectId,
       hoveredProjectId,
       selectedTag,
       hoveredTag,
@@ -76,7 +165,7 @@ export default function Projects({
   }, [
     projectsRuntime,
     isActive,
-    activeProject,
+    activeProjectId,
     hoveredProjectId,
     selectedTag,
     hoveredTag,
@@ -88,7 +177,7 @@ export default function Projects({
     syncRuntime();
   }, [syncRuntime]);
 
-  // Clear transient hover/tag states when leaving section
+  // Clear transient hover states when leaving section
   useEffect(() => {
     if (!isActive) {
       setHoveredProjectId(null);
@@ -96,12 +185,15 @@ export default function Projects({
     }
   }, [isActive]);
 
-  const handleSelectProject = useCallback(
+  const handleToggleProject = useCallback(
     (proj: LocalizedProject) => {
-      setActiveProjectId(proj.id);
-      if (selectedTag && !proj.tags.includes(selectedTag)) {
-        setSelectedTag(null);
-      }
+      setActiveProjectId((prev) => {
+        const next = prev === proj.id ? null : proj.id;
+        if (next && selectedTag && !proj.tags.includes(selectedTag)) {
+          setSelectedTag(null);
+        }
+        return next;
+      });
     },
     [selectedTag]
   );
@@ -110,7 +202,7 @@ export default function Projects({
     setSelectedTag((prev) => (prev === tag ? null : tag));
   }, []);
 
-  // Keyboard navigation (Up/Down to switch projects, Escape to clear selected tag)
+  // Keyboard navigation (Up/Down to switch projects, Escape to release back to free-floating)
   useEffect(() => {
     if (!isActive) return;
 
@@ -122,54 +214,69 @@ export default function Projects({
         return;
       }
 
-      if (e.key === "Escape" && selectedTag !== null) {
-        e.preventDefault();
-        setSelectedTag(null);
-        return;
+      if (e.key === "Escape") {
+        if (selectedTag !== null) {
+          e.preventDefault();
+          setSelectedTag(null);
+          return;
+        }
+        if (activeProjectId !== null) {
+          e.preventDefault();
+          setActiveProjectId(null);
+          return;
+        }
       }
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
-        const currentIdx = projects.findIndex(
-          (p) => p.id === activeProject?.id
-        );
+        if (!activeProjectId) {
+          const first =
+            e.key === "ArrowDown"
+              ? projects[0]
+              : projects[projects.length - 1];
+          if (first) setActiveProjectId(first.id);
+          return;
+        }
+        const currentIdx = projects.findIndex((p) => p.id === activeProjectId);
         if (currentIdx === -1) return;
         const delta = e.key === "ArrowDown" ? 1 : -1;
         const nextIdx =
           (currentIdx + delta + projects.length) % projects.length;
-        handleSelectProject(projects[nextIdx]);
+        handleToggleProject(projects[nextIdx]);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isActive, selectedTag, projects, activeProject, handleSelectProject]);
+  }, [isActive, selectedTag, activeProjectId, projects, handleToggleProject]);
 
-  if (!activeProject) return null;
-
-  const activeStyle = getProjectCategoryStyle(activeProject.category);
-  const categoryLabel =
-    dict.projects.categories[
-      activeProject.category as keyof typeof dict.projects.categories
-    ] || activeProject.category;
+  const activeStyle = getProjectCategoryStyle(
+    activeProject?.category ?? "data"
+  );
+  const conceptCallouts = activeProject
+    ? PROJECT_CONCEPT_CALLOUTS[activeProject.id] ?? []
+    : [];
 
   const privateLabel = isEs
     ? "Trabajo Profesional · Código Privado"
     : "Professional Work · Private Code";
   const publicShortLabel = "GitHub";
   const privateShortLabel = isEs ? "Privado" : "Private";
+  const stagePrompt = isEs
+    ? "Hacé clic en un proyecto para reagrupar las partículas en su arquitectura"
+    : "Click a project to regroup the particles into its architecture";
 
   return (
     <section className={styles.section} aria-label={dict.projects.title}>
       <div className={styles.stage}>
-        {/* ─── LEFT COLUMN: EDITORIAL INDEX ─────────────────────────────── */}
+        {/* ─── LEFT COLUMN: CLEAN EDITORIAL INDEX (No connection dots) ──── */}
         <nav
           className={styles.indexCol}
           aria-label={isEs ? "Índice de proyectos" : "Projects index"}
         >
           {projects.map((proj, idx) => {
             const style = getProjectCategoryStyle(proj.category);
-            const isSelected = proj.id === activeProject.id;
+            const isSelected = proj.id === activeProjectId;
             const isTagMatch =
               focusTag !== null && proj.tags.includes(focusTag);
             const isDimmed = focusTag !== null && !isTagMatch;
@@ -188,12 +295,19 @@ export default function Projects({
                 } ${isTagMatch ? styles.indexItemTagMatch : ""} ${
                   isDimmed ? styles.indexItemDimmed : ""
                 }`}
-                onClick={() => handleSelectProject(proj)}
+                style={
+                  isSelected
+                    ? { borderLeftColor: style.color }
+                    : isTagMatch
+                    ? { borderLeftColor: `${style.color}77` }
+                    : undefined
+                }
+                onClick={() => handleToggleProject(proj)}
                 onMouseEnter={() => setHoveredProjectId(proj.id)}
                 onMouseLeave={() => setHoveredProjectId(null)}
                 onFocus={() => setHoveredProjectId(proj.id)}
                 onBlur={() => setHoveredProjectId(null)}
-                aria-current={isSelected ? "true" : undefined}
+                aria-pressed={isSelected}
               >
                 <div
                   className={styles.indexTextBlock}
@@ -241,188 +355,204 @@ export default function Projects({
 
                   <span className={styles.indexTitle}>{proj.title}</span>
                 </div>
-
-                {/* Node marker on the inner channel edge where canvas particles orbit */}
-                <span
-                  id={`project-node-${proj.id}`}
-                  className={`${styles.nodeMarker} ${
-                    isSelected || isTagMatch ? styles.nodeMarkerActive : ""
-                  }`}
-                  style={{
-                    borderColor: style.color,
-                    color: style.color,
-                  }}
-                  aria-hidden="true"
-                >
-                  <span
-                    className={styles.nodeInnerCore}
-                    style={{ backgroundColor: style.color }}
-                  />
-                </span>
               </button>
             );
           })}
         </nav>
 
-        {/* ─── RIGHT COLUMN: ACTIVE PROJECT STAGE ───────────────────────── */}
-        <div className={styles.detailCol}>
-          <AnimatePresence mode="wait">
-            <motion.article
-              key={activeProject.id}
-              className={styles.detailArticle}
-              initial={
-                prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }
-              }
-              animate={{ opacity: 1, y: 0 }}
-              exit={
-                prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }
-              }
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {/* Meta & Nature Row */}
-              <div
-                className={styles.detailHeader}
-                data-projects-readability-zone="true"
-              >
-                <div className={styles.detailMetaRow}>
-                  <span className={styles.categoryIndicator}>
-                    <span
-                      className={styles.categoryDot}
-                      style={{ backgroundColor: activeStyle.color }}
-                    />
-                    <span style={{ color: activeStyle.inkColor }}>
-                      {categoryLabel}
-                    </span>
-                  </span>
-
-                  {activeProject.codeUrl ? (
-                    <a
-                      href={activeProject.codeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.repoLinkPill}
-                      style={{
-                        borderColor: `${activeStyle.color}55`,
-                      }}
-                    >
-                      <span>GitHub · {dict.projects.viewCode}</span>
-                      <ArrowUpRight size={13} />
-                    </a>
-                  ) : (
-                    <span className={styles.privateBadge}>
-                      <Lock size={11} />
-                      <span>{privateLabel}</span>
-                    </span>
-                  )}
-
-                  {activeProject.demoUrl && activeProject.demoUrl !== "#" && (
-                    <a
-                      href={activeProject.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.repoLinkPill}
-                    >
-                      <span>{dict.projects.viewDemo}</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  )}
-                </div>
-
-                <h2 className={styles.detailTitle}>{activeProject.title}</h2>
-                <p className={styles.detailDesc}>{activeProject.description}</p>
-              </div>
-
-              {/* 3 Concise Architectural Highlights receiving particle filaments */}
-              <ul className={styles.highlightsList}>
-                {activeProject.highlights.map((highlight, idx) => (
-                  <li key={idx} className={styles.highlightItem}>
-                    <span
-                      id={`project-highlight-${idx}`}
-                      className={styles.highlightDot}
-                      style={{
-                        borderColor: activeStyle.color,
-                        backgroundColor: `${activeStyle.color}22`,
-                      }}
-                      aria-hidden="true"
-                    />
-                    <span
-                      className={styles.highlightText}
+        {/* ─── RIGHT COLUMN: PARTICLE PROTAGONIST STAGE + ORDERED FOOTER ── */}
+        <div className={styles.rightCol}>
+          {/* 1. Protagonist Particle Stage */}
+          <div
+            id="projects-particle-stage"
+            className={styles.particleStage}
+            onClick={() => {
+              if (activeProjectId !== null) setActiveProjectId(null);
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {activeProject ? (
+                <motion.div
+                  key={`callouts-${activeProject.id}`}
+                  className={styles.calloutsLayer}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {conceptCallouts.map((callout, idx) => (
+                    <motion.span
+                      key={callout.label.en}
+                      className={styles.conceptCallout}
                       data-projects-readability-zone="true"
+                      style={{
+                        top: callout.top,
+                        left: callout.left,
+                        borderColor: `${activeStyle.color}55`,
+                        color: activeStyle.inkColor,
+                      }}
+                      initial={
+                        prefersReducedMotion
+                          ? { opacity: 1 }
+                          : { opacity: 0, scale: 0.88 }
+                      }
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        delay: prefersReducedMotion ? 0 : 0.14 + idx * 0.08,
+                        duration: 0.32,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
                     >
-                      {highlight}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                      <span
+                        className={styles.calloutDot}
+                        style={{ backgroundColor: activeStyle.color }}
+                      />
+                      <span>
+                        {isEs ? callout.label.es : callout.label.en}
+                      </span>
+                    </motion.span>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.p
+                  key="idle-prompt"
+                  className={styles.stageIdleHint}
+                  data-projects-readability-zone="true"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {stagePrompt}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
 
-              {/* Interactive Stack Tags (click or hover to illuminate shared projects) */}
-              <div className={styles.tagsSection}>
-                <div className={styles.tagsRow}>
-                  {activeProject.tags.map((tag, idx) => {
-                    const isPinned = selectedTag === tag;
-                    const isFocused = focusTag === tag;
-                    const sharedCount = tagCounts.get(tag) ?? 1;
+          {/* 2. Ordered Footer Dock: Summary/Links + Technologies */}
+          <footer
+            className={styles.stageFooter}
+            data-projects-readability-zone="true"
+          >
+            <AnimatePresence mode="wait">
+              {activeProject && (
+                <motion.div
+                  key={`footer-meta-${activeProject.id}`}
+                  className={styles.footerTopRow}
+                  initial={
+                    prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }
+                  }
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={
+                    prefersReducedMotion
+                      ? { opacity: 0 }
+                      : { opacity: 0, y: -4 }
+                  }
+                  transition={{ duration: 0.22 }}
+                >
+                  <p className={styles.footerDesc}>
+                    {activeProject.description}
+                  </p>
 
-                    return (
-                      <button
-                        key={tag}
-                        id={`project-tag-${idx}`}
-                        type="button"
-                        data-project-tag={tag}
-                        className={`${styles.tagPill} ${
-                          isFocused ? styles.tagPillActive : ""
-                        }`}
+                  <div className={styles.footerLinks}>
+                    {activeProject.codeUrl ? (
+                      <a
+                        href={activeProject.codeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.repoLinkPill}
+                        style={{ borderColor: `${activeStyle.color}66` }}
+                      >
+                        <span>GitHub · {dict.projects.viewCode}</span>
+                        <ArrowUpRight size={13} />
+                      </a>
+                    ) : (
+                      <span className={styles.privateBadge}>
+                        <Lock size={11} />
+                        <span>{privateLabel}</span>
+                      </span>
+                    )}
+
+                    {activeProject.demoUrl && activeProject.demoUrl !== "#" && (
+                      <a
+                        href={activeProject.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.repoLinkPill}
+                      >
+                        <span>{dict.projects.viewDemo}</span>
+                        <ExternalLink size={12} />
+                      </a>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className={styles.tagsRow}>
+              {displayedTags.map((tag, idx) => {
+                const isPinned = selectedTag === tag;
+                const isFocused = focusTag === tag;
+                const sharedCount = tagCounts.get(tag) ?? 1;
+
+                return (
+                  <button
+                    key={tag}
+                    id={`project-tag-${idx}`}
+                    type="button"
+                    data-project-tag={tag}
+                    className={`${styles.tagPill} ${
+                      isFocused ? styles.tagPillActive : ""
+                    }`}
+                    style={
+                      isFocused
+                        ? {
+                            borderColor: activeStyle.color,
+                            color: activeStyle.inkColor,
+                            boxShadow: `0 0 14px ${activeStyle.color}28`,
+                          }
+                        : undefined
+                    }
+                    onClick={() => handleToggleTag(tag)}
+                    onMouseEnter={() => setHoveredTag(tag)}
+                    onMouseLeave={() => setHoveredTag(null)}
+                    onFocus={() => setHoveredTag(tag)}
+                    onBlur={() => setHoveredTag(null)}
+                    aria-pressed={isPinned}
+                  >
+                    <span>{tag}</span>
+                    {sharedCount > 1 && (
+                      <span
+                        className={styles.tagSharedCount}
                         style={
                           isFocused
                             ? {
-                                borderColor: activeStyle.color,
-                                color: activeStyle.inkColor,
-                                boxShadow: `0 0 18px ${activeStyle.color}30`,
+                                backgroundColor: activeStyle.color,
+                                color: "#ffffff",
                               }
                             : undefined
                         }
-                        onClick={() => handleToggleTag(tag)}
-                        onMouseEnter={() => setHoveredTag(tag)}
-                        onMouseLeave={() => setHoveredTag(null)}
-                        onFocus={() => setHoveredTag(tag)}
-                        onBlur={() => setHoveredTag(null)}
-                        aria-pressed={isPinned}
+                        title={
+                          isEs
+                            ? `Compartido en ${sharedCount} proyectos`
+                            : `Shared across ${sharedCount} projects`
+                        }
                       >
-                        <span>{tag}</span>
-                        {sharedCount > 1 && (
-                          <span
-                            className={styles.tagSharedCount}
-                            style={
-                              isFocused
-                                ? {
-                                    backgroundColor: activeStyle.color,
-                                    color: "#ffffff",
-                                  }
-                                : undefined
-                            }
-                            title={
-                              isEs
-                                ? `Compartido en ${sharedCount} proyectos`
-                                : `Shared across ${sharedCount} projects`
-                            }
-                          >
-                            {sharedCount}
-                          </span>
-                        )}
-                        {isPinned && (
-                          <X
-                            size={11}
-                            className={styles.tagClearIcon}
-                            aria-hidden="true"
-                          />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </motion.article>
-          </AnimatePresence>
+                        {sharedCount}
+                      </span>
+                    )}
+                    {isPinned && (
+                      <X
+                        size={11}
+                        className={styles.tagClearIcon}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </footer>
         </div>
       </div>
     </section>
