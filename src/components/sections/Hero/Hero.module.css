@@ -11,13 +11,17 @@
 }
 
 .hero::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04), transparent 70%);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(139, 92, 246, 0.04),
+    transparent 70%
+  );
   pointer-events: none;
   z-index: 1;
 }
@@ -47,26 +51,9 @@
 }
 
 .vennSizing {
-  /* This controls the physical size of the SVG in the center of the grid */
   width: 100%;
   max-width: 100vh;
-  /* Increased from 85vh */
   aspect-ratio: 1 / 1;
-  animation: floatHero 8s ease-in-out infinite;
-}
-
-@keyframes floatHero {
-  0% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-12px);
-  }
-
-  100% {
-    transform: translateY(0px);
-  }
 }
 
 /* GRID CONTENT ZONES */
@@ -84,12 +71,10 @@
 .gridBottomLeft {
   grid-column: 1;
   grid-row: 2;
-  /* Align with Venn horizontally */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Center vertically relative to Venn */
   text-align: center;
   z-index: 5;
   padding: 1rem;
@@ -98,12 +83,10 @@
 .gridBottomRight {
   grid-column: 3;
   grid-row: 2;
-  /* Align with Venn horizontally */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Center vertically relative to Venn */
   text-align: center;
   z-index: 5;
   padding: 1rem;
@@ -116,29 +99,13 @@
   align-items: center;
 }
 
-.gridTop .segmentContent {
-  align-items: center;
-}
-
-.gridBottomLeft .segmentContent {
-  align-items: center;
-}
-
+.gridTop .segmentContent,
+.gridBottomLeft .segmentContent,
 .gridBottomRight .segmentContent {
   align-items: center;
 }
 
-/* TYPOGRAPHY - Scaled up as requested */
-.greeting {
-  font-family: var(--font-display), serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
-  color: var(--accent);
-  margin-bottom: 0.2rem;
-  text-shadow: 0 0 10px rgba(0, 255, 196, 0.25);
-}
-
+/* TYPOGRAPHY */
 .name {
   font-family: var(--font-playfair), serif;
   font-weight: 900;
@@ -290,56 +257,16 @@
   font-weight: 700;
   font-size: clamp(2rem, 5vw, 3.5rem);
   line-height: 1.2;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.35rem;
   white-space: nowrap;
 }
 
-.handwrittenDescription {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(1rem, 1.8vw, 1.2rem);
-  line-height: 1.6;
-  color: var(--ink-muted);
-  max-width: 450px;
-}
-
-.setContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.itemsWrapper {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.6rem;
-  max-width: 420px;
-}
-
-.setItem {
+.hoverSubtitle {
   font-family: var(--font-mono), monospace;
-  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
-  font-weight: 500;
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.45rem 1rem;
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-  cursor: pointer;
+  font-size: clamp(0.76rem, 1.1vw, 0.88rem);
+  color: var(--ink-muted);
   letter-spacing: 0.03em;
-}
-
-.setItem:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
+  margin-top: 0.15rem;
 }
 
 /* RESPONSIVE */
@@ -361,7 +288,6 @@
     max-width: 100%;
     height: 50vh;
     aspect-ratio: auto;
-    animation: none;
   }
 
   .gridTop,
@@ -385,32 +311,6 @@
   }
 }
 
-.tipWrapper {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
-  pointer-events: none;
-}
-
-.tipText {
-  font-family: var(--font-mono);
-  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
-  color: var(--ink-muted);
-  background: rgba(249, 249, 247, 0.85);
-  backdrop-filter: blur(8px);
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  border: 1px dashed var(--border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  text-align: center;
-  pointer-events: auto;
-}
-
 .vennAnchor {
   position: relative;
   width: 62vh;
@@ -432,10 +332,18 @@
   font: inherit;
   color: inherit;
   text-align: inherit;
-  /* invisible, handles pointer events */
-  transition: all 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
   z-index: 10;
+}
+
+/* 1st Animation: smooth hover expansion without GSAP conflict */
+.vennAnchor:not(.zoomed) .vennCirclePlaceholder:hover {
+  transform: scale(1.14);
 }
 
 .zoomed .vennCirclePlaceholder.active {
@@ -449,18 +357,17 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 20%;
+  padding-top: 18%;
   pointer-events: none;
   font-family: var(--font-playfair), serif;
   font-weight: 700;
-  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  font-size: clamp(1.5rem, 3.1vw, 2.5rem);
   color: var(--ink);
   text-align: center;
   line-height: 1.2;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.4s ease;
 }
 
-/* Show the title when the circle is hovered or selected */
 .hovered .circleTitle,
 .active .circleTitle {
   opacity: 1;
@@ -482,16 +389,13 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-    Venn Zoom / Focus States
-    Active circle: 96%, centered or shifted horizontally
-    Background circles: 28%, overlapping each other and active circle's border
+    Venn Zoom / Focus States (2nd Animation: Immersion + Overlapping Companions)
     ──────────────────────────────────────────────────────────────────────────── */
 
 .selected0 .circle0 {
   width: 90%;
   height: 90%;
   top: -16%;
-  /* Centered, slightly higher UP */
   left: 5%;
   z-index: 12;
 }
@@ -500,42 +404,31 @@
   width: 28%;
   height: 28%;
   top: 68%;
-  /* Closer vertically and shifted higher UP */
   left: 25%;
-  /* Shifted back slightly from 24% to maintain overlap */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected0 .circle2 {
   width: 28%;
   height: 28%;
   top: 68%;
-  /* Closer vertically and shifted higher UP */
   left: 47%;
-  /* Shifted back slightly from 48% to maintain overlap */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected1 .circle0 {
   width: 28%;
   height: 28%;
   top: -4.5%;
-  /* Background, slightly higher UP */
   left: 57.5%;
-  /* Shifted to maintain a subtle overlap with circle2 */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected1 .circle1 {
   width: 90%;
   height: 90%;
   top: -1%;
-  /* Active, shifted slightly down */
   left: -17%;
-  /* Shifted right slightly */
   z-index: 12;
 }
 
@@ -543,42 +436,31 @@
   width: 28%;
   height: 28%;
   top: 20.5%;
-  /* Background, slightly lower DOWN */
   left: 66.5%;
-  /* Shifted to maintain a subtle overlap with circle0 */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected2 .circle0 {
   width: 28%;
   height: 28%;
   top: -4.5%;
-  /* Background, slightly higher UP */
   left: 14.5%;
-  /* Shifted to maintain a subtle overlap with circle1 */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected2 .circle1 {
   width: 28%;
   height: 28%;
   top: 20.5%;
-  /* Background, slightly lower DOWN */
   left: 5.5%;
-  /* Shifted to maintain a subtle overlap with circle0 */
-  opacity: 0.15;
-  z-index: 11;
+  z-index: 13;
 }
 
 .selected2 .circle2 {
   width: 90%;
   height: 90%;
   top: -1%;
-  /* Active, shifted slightly down */
   left: 27%;
-  /* Shifted right slightly */
   z-index: 12;
 }
 
@@ -591,7 +473,6 @@
   .vennCirclePlaceholder {
     width: 210px;
     height: 210px;
-    transition: all 1.1s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .circle0 {
@@ -609,12 +490,10 @@
     left: 145px;
   }
 
-  /* Zoomed states - Mobile positions */
   .selected0 .circle0 {
     width: 410px;
     height: 410px;
     top: -15px;
-    /* Shifted to center smaller active circle */
     left: -15px;
     z-index: 12;
   }
@@ -624,9 +503,7 @@
     height: 140px;
     top: 280px;
     left: 75px;
-    /* Shifted back slightly to maintain overlap */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected0 .circle2 {
@@ -634,27 +511,21 @@
     height: 140px;
     top: 280px;
     left: 165px;
-    /* Shifted back slightly to maintain overlap */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected1 .circle0 {
     width: 140px;
     height: 140px;
     top: -45px;
-    /* Shifted to maintain overlap with circle2 */
     left: 195px;
-    /* Shifted to maintain overlap with circle2 */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected1 .circle1 {
     width: 410px;
     height: 410px;
     top: 45px;
-    /* Shifted to center smaller active circle */
     left: -45px;
     z-index: 12;
   }
@@ -663,68 +534,55 @@
     width: 140px;
     height: 140px;
     top: 45px;
-    /* Shifted to maintain overlap with circle0 */
     left: 235px;
-    /* Shifted to maintain overlap with circle0 */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected2 .circle0 {
     width: 140px;
     height: 140px;
     top: -45px;
-    /* Shifted to maintain overlap with circle1 */
     left: 45px;
-    /* Shifted to maintain overlap with circle1 */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected2 .circle1 {
     width: 140px;
     height: 140px;
     top: 45px;
-    /* Shifted to maintain overlap with circle0 */
     left: 5px;
-    /* Shifted to maintain overlap with circle0 */
-    opacity: 0.15;
-    z-index: 11;
+    z-index: 13;
   }
 
   .selected2 .circle2 {
     width: 410px;
     height: 410px;
     top: 45px;
-    /* Shifted to center smaller active circle */
     left: 15px;
     z-index: 12;
   }
 }
 
-/* Attached tags (filaments connected labels) inside selected Venn circle */
+/* Floating concept labels inside selected Venn circle */
 .attachedTag {
   pointer-events: auto;
   cursor: default;
   font-family: var(--font-mono), monospace;
-  font-size: clamp(0.7rem, 1.1vw, 0.8rem);
+  font-size: clamp(0.72rem, 1.1vw, 0.82rem);
   font-weight: 500;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.35rem 0.85rem;
-  border-radius: 16px;
+  background: rgba(249, 249, 247, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.38rem 0.9rem;
+  border-radius: 18px;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   white-space: nowrap;
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 15;
 }
 
-/* Height-based media query to scale down text sizes on smaller laptop screens */
 @media (max-height: 850px) and (min-width: 993px) {
-
-  /* Compact typography scales for laptop landscape mode */
   .name {
     font-size: clamp(2rem, 4.5vw, 3.2rem);
   }

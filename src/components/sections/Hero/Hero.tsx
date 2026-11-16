@@ -27,7 +27,10 @@ const AnimatedText = ({
   const chars = Array.from(text);
 
   return (
-    <motion.div className={className} style={{ ...style, display: "inline-block" }}>
+    <motion.div
+      className={className}
+      style={{ ...style, display: "inline-block" }}
+    >
       {chars.map((char, i) => (
         <motion.span
           key={i}
@@ -58,12 +61,10 @@ interface HeroProps {
 
 interface SegmentContentData {
   id: string;
-  type: "home" | "circle" | "intersection";
+  type: "home" | "circle";
   title?: string;
-  description?: string;
-  items?: string[];
+  subtitle?: string;
   colorVar?: string;
-  isActive?: boolean;
   name?: string;
   tagline?: string;
   valueProp?: string;
@@ -89,10 +90,14 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
     >
       {content.type === "home" ? (
-        <div key="home-intro-inner" className={styles.segmentContent} style={{ width: "100%" }}>
+        <div
+          key="home-intro-inner"
+          className={styles.segmentContent}
+          style={{ width: "100%" }}
+        >
           <h1 className={styles.name}>{content.name}</h1>
           <div className={styles.tagline}>{content.tagline}</div>
           {content.valueProp ? (
@@ -150,52 +155,23 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
             }}
             transition={{
               type: "spring",
-              stiffness: 38,
-              damping: 13,
+              stiffness: 48,
+              damping: 14,
               mass: 1,
             }}
           >
             <AnimatedText text={content.title || ""} stagger={0.02} />
           </motion.div>
-
-          <motion.div
-            initial={false}
-            animate={{
-              height: content.isActive ? "auto" : 0,
-              opacity: content.isActive ? 1 : 0,
-              y: content.isActive ? 0 : -10,
-              scale: content.isActive ? 1 : 0.98,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: [0.16, 1, 0.3, 1],
-              opacity: { duration: 0.45 },
-            }}
-            style={{ overflow: "hidden", transformOrigin: "top center", width: "100%" }}
-          >
-            {content.items && content.items.length > 0 && (
-              <div className={styles.setContainer}>
-                <div className={styles.itemsWrapper}>
-                  {content.items.map((item: string, idx: number) => (
-                    <motion.span
-                      key={item}
-                      className={styles.setItem}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 + idx * 0.05, duration: 0.3 }}
-                      whileHover={{
-                        y: -2,
-                        borderColor: content.colorVar,
-                        boxShadow: `0 4px 12px ${content.colorVar}30`,
-                      }}
-                    >
-                      {item}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </motion.div>
+          {content.subtitle && (
+            <motion.p
+              className={styles.hoverSubtitle}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.28 }}
+            >
+              {content.subtitle}
+            </motion.p>
+          )}
         </div>
       )}
     </motion.div>
@@ -234,138 +210,128 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
   const circles = [
     {
       title: focusData.circle1.title,
+      description: focusData.circle1.description,
       items: focusData.circle1.items,
       tags: focusData.circle1.tags,
       color: "var(--accent)",
       hex: "#2d5be3",
-      targetSection: "skills" as const,
     },
     {
       title: focusData.circle2.title,
+      description: focusData.circle2.description,
       items: focusData.circle2.items,
       tags: focusData.circle2.tags,
       color: "var(--accent-2)",
       hex: "#7c3aed",
-      targetSection: "projects" as const,
     },
     {
       title: focusData.circle3.title,
+      description: focusData.circle3.description,
       items: focusData.circle3.items,
       tags: focusData.circle3.tags,
       color: "var(--accent-3)",
       hex: "#059669",
-      targetSection: "skills" as const,
     },
   ];
 
-  const { contextSafe } = useGSAP(
+  const getIntersectionTitle = (a: number, b: number): string => {
+    const min = Math.min(a, b);
+    const max = Math.max(a, b);
+    if (min === 0 && max === 1) return focusData.intersection01.title;
+    if (min === 0 && max === 2) return focusData.intersection02.title;
+    return focusData.intersection12.title;
+  };
+
+  useGSAP(
     () => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
       tl.from(`.${styles.name}`, { opacity: 0, y: 16, duration: 0.7 })
-        .from(`.${styles.tagline}`, { opacity: 0, y: 12, duration: 0.55 }, "-=0.45")
-        .from(`.${styles.vennSizing}`, { opacity: 0, scale: 0.92, duration: 0.8, ease: "power3.out" }, "-=0.45");
+        .from(
+          `.${styles.tagline}`,
+          { opacity: 0, y: 12, duration: 0.55 },
+          "-=0.45"
+        )
+        .from(
+          `.${styles.vennSizing}`,
+          { opacity: 0, scale: 0.92, duration: 0.8, ease: "power3.out" },
+          "-=0.45"
+        );
     },
     { scope: heroRef }
   );
 
-  const handleMouseEnterCircle = contextSafe((id: number) => {
+  const handleMouseEnterCircle = (id: number) => {
     setHoveredSegment(id);
-    const targetEl = document.getElementById(`venn-circle-${id}`);
-    if (targetEl) {
-      gsap.to(targetEl, {
-        scale: 1.25,
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    }
-  });
+  };
 
-  const handleMouseLeaveCircle = contextSafe((id: number) => {
+  const handleMouseLeaveCircle = () => {
     setHoveredSegment(null);
-    const targetEl = document.getElementById(`venn-circle-${id}`);
-    if (targetEl) {
-      gsap.to(targetEl, {
-        scale: 1.0,
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    }
-  });
+  };
 
-  const handleResetVenn = contextSafe(() => {
+  const handleResetVenn = () => {
     setSelectedSegment(null);
     setActiveSegments([]);
     setHoveredSegment(null);
-  });
+  };
 
-  const handleClickCircle = contextSafe((id: number) => {
-    if (selectedSegment !== null) {
+  const handleClickCircle = (id: number) => {
+    // Clicking the already-selected circle resets back to the 3-circle overview;
+    // clicking an overlapping companion circle glides directly into that companion!
+    if (selectedSegment === id) {
       handleResetVenn();
       return;
     }
 
     setSelectedSegment(id);
     setActiveSegments([id]);
-
-    const targetEl = document.getElementById(`venn-circle-${id}`);
-    if (targetEl) {
-      gsap.fromTo(
-        targetEl,
-        { scale: 0.92 },
-        { scale: 1.08, duration: 0.5, ease: "elastic.out(1.2, 0.4)" }
-      );
-    }
-  });
+    setHoveredSegment(null);
+  };
 
   const hasInteraction =
     activeSegments.length > 0 ||
     hoveredSegment !== null ||
     selectedSegment !== null;
 
-  const getSlotContent = (slot: "top" | "left" | "right"): SegmentContentData | null => {
+  const getSlotContent = (
+    slot: "top" | "left" | "right"
+  ): SegmentContentData | null => {
     const showInSlot = (targetId: number): SegmentContentData | null => {
+      // When immersed in a circle, hovering one of its overlapping companions
+      // shows that companion's title + their shared intersection concept in the outer space
       if (selectedSegment !== null) {
-        if (targetId === selectedSegment) {
+        if (hoveredSegment === targetId && targetId !== selectedSegment) {
           return {
             id: `circle-${targetId}`,
             type: "circle",
             title: circles[targetId].title,
-            items: circles[targetId].items,
+            subtitle: `∩ ${getIntersectionTitle(selectedSegment, targetId)}`,
             colorVar: circles[targetId].color,
-            isActive: true,
           };
         }
         return null;
       }
 
-      const isSelected = activeSegments.includes(targetId);
-      const isHovered = hoveredSegment === targetId;
-
-      if (isSelected || isHovered) {
+      // 1st Animation (Hover in overview): Title appears in the available outer space
+      if (hoveredSegment === targetId) {
         return {
           id: `circle-${targetId}`,
           type: "circle",
           title: circles[targetId].title,
-          items: circles[targetId].items,
+          subtitle: circles[targetId].description,
           colorVar: circles[targetId].color,
-          isActive: isSelected,
         };
       }
       return null;
     };
 
     if (slot === "top") {
-      if (selectedSegment !== null) return null;
-
       const active0 = showInSlot(0);
       if (active0) return active0;
 
       if (hasInteraction) return null;
 
-      const { url: activeCvUrl, filename: downloadFilename } = getCvDownloadInfo(
-        personal.contactDetails.cvPath,
-        lang
-      );
+      const { url: activeCvUrl, filename: downloadFilename } =
+        getCvDownloadInfo(personal.contactDetails.cvPath, lang);
 
       return {
         id: "home-intro",
@@ -374,20 +340,23 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
         tagline: personal.tagline,
         valueProp: personal.description,
         email: personal.contactDetails.email,
-        ctaProjectsLabel: dict?.hero?.ctaProjects || (lang === "es" ? "Ver Proyectos" : "View Projects"),
-        ctaContactLabel: dict?.hero?.ctaContact || (lang === "es" ? "Contactar" : "Get in Touch"),
+        ctaProjectsLabel:
+          dict?.hero?.ctaProjects ||
+          (lang === "es" ? "Ver Proyectos" : "View Projects"),
+        ctaContactLabel:
+          dict?.hero?.ctaContact ||
+          (lang === "es" ? "Contactar" : "Get in Touch"),
         cvUrl: activeCvUrl,
         downloadFilename,
-        downloadLabel: dict?.contact?.downloadCv || (lang === "es" ? "Descargar CV" : "Download CV"),
-        isActive: true,
+        downloadLabel:
+          dict?.contact?.downloadCv ||
+          (lang === "es" ? "Descargar CV" : "Download CV"),
       };
     }
     if (slot === "left") {
-      if (selectedSegment !== null) return null;
       return showInSlot(1);
     }
     if (slot === "right") {
-      if (selectedSegment !== null) return null;
       return showInSlot(2);
     }
 
@@ -398,11 +367,14 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
     <motion.div
       layoutId={`venn-title-circle-${circleIdx}`}
       className={styles.circleTitle}
-      style={{ color: circles[circleIdx].color }}
+      style={{
+        color: circles[circleIdx].color,
+        textShadow: `0 0 24px ${circles[circleIdx].hex}30`,
+      }}
       transition={{
         type: "spring",
-        stiffness: 38,
-        damping: 13,
+        stiffness: 48,
+        damping: 14,
         mass: 1,
       }}
     >
@@ -411,80 +383,104 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
         style={{
           display: "inline-block",
           position: "relative",
-          border: "1px solid transparent",
-          borderRadius: "12px",
-          padding: "1.5px 6px",
+          padding: "2px 8px",
         }}
       >
-        <AnimatedText text={circles[circleIdx].title} stagger={0.03} />
+        <AnimatedText text={circles[circleIdx].title} stagger={0.025} />
       </span>
     </motion.div>
   );
 
-  const renderAttachedTags = (circleIdx: number) => {
-    const tags = circles[circleIdx].tags || [];
+  const renderImmersedConcepts = (circleIdx: number) => {
+    const concepts = circles[circleIdx].items || [];
 
-    const positions = [
-      { left: "10%", top: "50%" },
-      { left: "30%", top: "80%" },
-      { left: "66%", top: "75%" },
-      { left: "70%", top: "55%" },
-    ];
+    // Symmetric positions inside the 1:1 circle around the central particle hub (50%, 50%)
+    const positions =
+      concepts.length === 3
+        ? [
+            { left: "26%", top: "48%" },
+            { left: "74%", top: "48%" },
+            { left: "50%", top: "75%" },
+          ]
+        : [
+            { left: "27%", top: "44%" },
+            { left: "73%", top: "44%" },
+            { left: "30%", top: "72%" },
+            { left: "70%", top: "72%" },
+          ];
 
     return (
       <>
-        {tags.map((tag, idx) => (
-          <motion.div
-            id={`venn-tag-${circleIdx}-${idx}`}
-            key={tag}
-            style={{
-              position: "absolute",
-              transform: "translate(-50%, -50%)",
-              zIndex: 15,
-            }}
-            initial={{
-              left: "50%",
-              top: "50%",
-              scale: 0,
-              opacity: 0,
-            }}
-            animate={{
-              left: positions[idx].left,
-              top: positions[idx].top,
-              scale: 1,
-              opacity: 1,
-            }}
-            transition={{
-              left: { type: "spring", stiffness: 42, damping: 10.5, delay: 1.2 + idx * 0.25 },
-              top: { type: "spring", stiffness: 42, damping: 10.5, delay: 1.2 + idx * 0.25 },
-              scale: { type: "spring", stiffness: 42, damping: 10.5, delay: 1.2 + idx * 0.25 },
-              opacity: { duration: 0.4, delay: 1.2 + idx * 0.25 },
-            }}
-          >
+        {concepts.map((concept, idx) => {
+          const pos = positions[idx] ?? { left: "50%", top: "65%" };
+          return (
             <motion.div
-              className={styles.attachedTag}
-              whileHover={{ scale: 1.04 }}
+              id={`venn-tag-${circleIdx}-${idx}`}
+              key={concept}
               style={{
-                borderColor: `${circles[circleIdx].hex}cc`,
-                boxShadow: `0 0 20px ${circles[circleIdx].hex}45, inset 0 0 8px ${circles[circleIdx].hex}25`,
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                zIndex: 15,
+              }}
+              initial={{
+                left: "50%",
+                top: "50%",
+                scale: 0.4,
+                opacity: 0,
               }}
               animate={{
-                y: [0, -3.5, 0],
+                left: pos.left,
+                top: pos.top,
+                scale: 1,
+                opacity: 1,
               }}
               transition={{
-                y: {
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  duration: 4.5 + idx * 0.8,
-                  ease: "easeInOut",
-                  delay: 2.0 + idx * 0.3,
+                left: {
+                  type: "spring",
+                  stiffness: 58,
+                  damping: 13,
+                  delay: 0.12 + idx * 0.08,
                 },
+                top: {
+                  type: "spring",
+                  stiffness: 58,
+                  damping: 13,
+                  delay: 0.12 + idx * 0.08,
+                },
+                scale: {
+                  type: "spring",
+                  stiffness: 58,
+                  damping: 13,
+                  delay: 0.12 + idx * 0.08,
+                },
+                opacity: { duration: 0.3, delay: 0.12 + idx * 0.08 },
               }}
             >
-              {tag}
+              <motion.div
+                className={styles.attachedTag}
+                whileHover={{ scale: 1.05 }}
+                style={{
+                  borderColor: `${circles[circleIdx].hex}88`,
+                  boxShadow: `0 0 22px ${circles[circleIdx].hex}30, inset 0 0 8px ${circles[circleIdx].hex}18`,
+                }}
+                animate={{
+                  y: [0, -3.5, 0],
+                }}
+                transition={{
+                  y: {
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    duration: 4.2 + idx * 0.7,
+                    ease: "easeInOut",
+                    delay: 0.6 + idx * 0.2,
+                  },
+                }}
+              >
+                {concept}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        ))}
+          );
+        })}
       </>
     );
   };
@@ -497,6 +493,11 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
     <section
       className={styles.hero}
       ref={heroRef}
+      onClick={(e) => {
+        if (e.target === e.currentTarget && selectedSegment !== null) {
+          handleResetVenn();
+        }
+      }}
       onKeyDown={(e) => {
         if (e.key === "Escape" && selectedSegment !== null) {
           handleResetVenn();
@@ -510,7 +511,9 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
               <SegmentContent
                 key={topContent.id}
                 content={topContent}
-                onViewProjects={spa ? () => spa.setActiveSection("projects") : undefined}
+                onViewProjects={
+                  spa ? () => spa.setActiveSection("projects") : undefined
+                }
               />
             )}
           </AnimatePresence>
@@ -539,29 +542,23 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
                   key={circle.title}
                   type="button"
                   id={`venn-circle-${idx}`}
-                  className={`${styles.vennCirclePlaceholder} ${styles["circle" + idx]} ${
+                  className={`${styles.vennCirclePlaceholder} ${
+                    styles["circle" + idx]
+                  } ${
                     activeSegments.includes(idx) || selectedSegment === idx
                       ? styles.active
                       : ""
                   } ${hoveredSegment === idx ? styles.hovered : ""}`}
                   aria-label={circle.title}
                   aria-pressed={selectedSegment === idx}
-                  onMouseEnter={() =>
-                    selectedSegment === null ? handleMouseEnterCircle(idx) : undefined
-                  }
-                  onMouseLeave={() =>
-                    selectedSegment === null ? handleMouseLeaveCircle(idx) : undefined
-                  }
-                  onFocus={() =>
-                    selectedSegment === null ? handleMouseEnterCircle(idx) : undefined
-                  }
-                  onBlur={() =>
-                    selectedSegment === null ? handleMouseLeaveCircle(idx) : undefined
-                  }
+                  onMouseEnter={() => handleMouseEnterCircle(idx)}
+                  onMouseLeave={handleMouseLeaveCircle}
+                  onFocus={() => handleMouseEnterCircle(idx)}
+                  onBlur={handleMouseLeaveCircle}
                   onClick={() => handleClickCircle(idx)}
                 >
                   {selectedSegment === idx && renderCircleTitle(idx)}
-                  {selectedSegment === idx && renderAttachedTags(idx)}
+                  {selectedSegment === idx && renderImmersedConcepts(idx)}
                 </button>
               ))}
             </div>
