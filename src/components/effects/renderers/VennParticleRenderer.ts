@@ -36,7 +36,15 @@ interface ScreenBox {
   height: number;
 }
 
+interface ScreenRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
 const TAU = Math.PI * 2;
+const HEADER_SAFE_TOP = 78;
 
 export const VENN_COLORS: readonly { r: number; g: number; b: number }[] = [
   { r: 45, g: 91, b: 227 }, // 0: Product Vision (Royal Blue)
@@ -102,18 +110,18 @@ export const updateVennCircleGeometry = (
 
   // Fallback before DOM mounts
   const cx = viewportWidth * 0.5;
-  const cy = viewportHeight * 0.54;
-  const r = Math.min(viewportWidth, viewportHeight) * 0.18;
+  const cy = viewportHeight * 0.56;
+  const r = Math.min(viewportWidth, viewportHeight) * 0.16;
   circles[0].x = cx;
-  circles[0].y = cy - r * 0.65;
+  circles[0].y = cy - r * 0.62;
   circles[0].r = r;
 
-  circles[1].x = cx - r * 0.78;
-  circles[1].y = cy + r * 0.45;
+  circles[1].x = cx - r * 0.75;
+  circles[1].y = cy + r * 0.44;
   circles[1].r = r;
 
-  circles[2].x = cx + r * 0.78;
-  circles[2].y = cy + r * 0.45;
+  circles[2].x = cx + r * 0.75;
+  circles[2].y = cy + r * 0.44;
   circles[2].r = r;
 };
 
@@ -121,7 +129,7 @@ const readActiveConceptAnchors = (selectedIdx: number): ScreenBox[] => {
   const boxes: ScreenBox[] = [];
   if (typeof document === "undefined") return boxes;
 
-  for (let idx = 0; idx < 6; idx++) {
+  for (let idx = 0; idx < 4; idx++) {
     const el = document.getElementById(`venn-tag-${selectedIdx}-${idx}`);
     if (el) {
       const rect = el.getBoundingClientRect();
@@ -152,15 +160,73 @@ const readActiveTitleBox = (selectedIdx: number): ScreenBox | null => {
   };
 };
 
+const readProjectionAnchor = (): ScreenBox | null => {
+  if (typeof document === "undefined") return null;
+  const el = document.getElementById("venn-projection-anchor");
+  if (!el) return null;
+  const rect = el.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return null;
+  return {
+    x: rect.left + rect.width * 0.5,
+    y: rect.top + rect.height * 0.5,
+    width: rect.width,
+    height: rect.height,
+  };
+};
+
+const readTextZones = (): ScreenRect[] => {
+  const zones: ScreenRect[] = [];
+  if (typeof document === "undefined") return zones;
+
+  const els = document.querySelectorAll<HTMLElement>(
+    '[data-venn-text="true"], [id^="venn-title-text-"], [id^="venn-tag-"], #venn-projection-anchor'
+  );
+  els.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      zones.push({
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+      });
+    }
+  });
+  return zones;
+};
+
 /**
- * Computes fluid target coordinates for all 720 particles across the 3 Venn circles.
- *
- * - In Overview / Hover (1st animation):
- *   Particles form a living perimeter + organic internal currents + rich intersection swarms.
- * - In Immersion / Click (2nd animation):
- *   Particles of the selected circle form a grand breathing membrane, living streams from
- *   the central core to each floating concept inside the circle, and orbital halos around
- *   each concept, while companion circles pulse in their overlapping border positions.
+ * Attenuates particle alpha inside or near any text box so text is always
+ * 100% legible and never saturated by particles.
+ */
+const getTextReadabilityMask = (
+  x: number,
+  y: number,
+  zones: ScreenRect[]
+): number => {
+  if (y < HEADER_SAFE_TOP) {
+    return Math.max(0, (y - 54) / 24) * 0.25;
+  }
+
+  let mask = 1;
+  const padX = 12;
+  const padY = 8;
+  const fade = 18;
+
+  for (const z of zones) {
+    const dx = Math.max(z.left - padX - x, 0, x - (z.right + padX));
+    const dy = Math.max(z.top - padY - y, 0, y - (z.bottom + padY));
+    const dist = Math.hypot(dx, dy);
+    if (dist <= 0.01) return 0.06;
+    if (dist < fade) {
+      mask = Math.min(mask, 0.06 + (dist / fade) * 0.94);
+    }
+  }
+  return mask;
+};
+
+/**
+ * Computes calm, airy target coordinates for particles across the 3 Venn circles.
  */
 export const setVennParticleTargets = (
   particles: VennRendererParticle[],
@@ -175,10 +241,14 @@ export const setVennParticleTargets = (
       : [];
   const titleBox =
     selectedCircleIdx !== null ? readActiveTitleBox(selectedCircleIdx) : null;
+  const projectionBox =
+    selectedCircleIdx !== null &&
+    hoveredCircleIdx !== null &&
+    hoveredCircleIdx !== selectedCircleIdx
+      ? readProjectionAnchor()
+      : null;
 
   const groupCounts = [0, 0, 0];
-  const centerAllX = (circles[0].x + circles[1].x + circles[2].x) / 3;
-  const centerAllY = (circles[0].y + circles[1].y + circles[2].y) / 3;
 
   particles.forEach((node) => {
     const g = node.group % 3;
@@ -189,111 +259,99 @@ export const setVennParticleTargets = (
 
     // ─── STATE 1: 3-CIRCLE OVERVIEW (+ HOVER 1ST ANIMATION) ────────────────
     if (selectedCircleIdx === null) {
-      // 1A. Living Perimeter Ring (Slots 0..69)
-      if (slot < 70) {
-        const baseAngle = (slot / 70) * TAU;
-        const speed = (isHovered ? 0.0032 : 0.0014) * (g % 2 === 0 ? 1 : -1);
+      // 1A. Clean Perimeter Ring (Slots 0..79)
+      if (slot < 80) {
+        const baseAngle = (slot / 80) * TAU;
+        const speed = (isHovered ? 0.0028 : 0.0012) * (g % 2 === 0 ? 1 : -1);
         const angle = baseAngle + frameCount * speed;
         const wave =
-          Math.sin(angle * 3 + frameCount * (isHovered ? 0.032 : 0.016) + g) *
-          (isHovered ? 3.8 : 1.6);
+          Math.sin(angle * 3 + frameCount * (isHovered ? 0.028 : 0.014) + g) *
+          (isHovered ? 3.2 : 1.4);
         const r = circle.r + wave;
 
         node.tx = circle.x + Math.cos(angle) * r;
-        node.ty = circle.y + Math.sin(angle) * r;
+        node.ty = Math.max(HEADER_SAFE_TOP, circle.y + Math.sin(angle) * r);
         return;
       }
 
-      // 1B. Intersection Swarms where circles overlap (Slots 70..119)
-      if (slot < 120) {
-        const localIdx = slot - 70;
-        const partnerIdx = localIdx % 2 === 0 ? (g + 1) % 3 : (g + 2) % 3;
-        const partner = circles[partnerIdx];
-        const isPairHovered = isHovered || hoveredCircleIdx === partnerIdx;
-
-        const lensX =
-          localIdx % 5 === 0
-            ? centerAllX
-            : circle.x * 0.54 + partner.x * 0.46;
-        const lensY =
-          localIdx % 5 === 0
-            ? centerAllY
-            : circle.y * 0.54 + partner.y * 0.46;
-
-        const speed = isPairHovered ? 0.0055 : 0.0025;
-        const angle = node.angleOffset + frameCount * speed + localIdx * 0.45;
-        const orbitR =
-          circle.r * (isPairHovered ? 0.28 : 0.22) * node.radiusMultiplier;
-
-        node.tx = lensX + Math.cos(angle) * orbitR;
-        node.ty = lensY + Math.sin(angle) * orbitR;
-        return;
-      }
-
-      // 1C. Organic Internal Currents (Slots 120..239)
-      const localIdx = slot - 120;
+      // 1B. Airy Internal & Overlap Field (Slots 80..239)
+      const localIdx = slot - 80;
       const speed =
-        (isHovered ? 0.0055 : 0.0024) * (localIdx % 2 === 0 ? 1 : -1);
+        (isHovered ? 0.0042 : 0.0018) * (localIdx % 2 === 0 ? 1 : -1);
       const orbitAngle =
-        node.angleOffset + frameCount * speed + localIdx * 0.31;
-      // Distributed smoothly from center out to 0.78*r
-      const band = 0.14 + 0.64 * node.radiusMultiplier;
+        node.angleOffset + frameCount * speed + localIdx * 0.37;
+      // Spread gently across the outer 0.35..0.88 band so the center isn't a dense blob
+      const band = 0.28 + 0.58 * node.radiusMultiplier;
       const pulse =
-        Math.sin(frameCount * (isHovered ? 0.03 : 0.016) + node.id * 0.5) *
-        (isHovered ? 5 : 2.2);
+        Math.sin(frameCount * 0.018 + node.id * 0.5) * (isHovered ? 3.5 : 1.5);
       const r = circle.r * band + pulse;
 
       node.tx = circle.x + Math.cos(orbitAngle) * r;
-      node.ty = circle.y + Math.sin(orbitAngle) * r;
+      node.ty = Math.max(HEADER_SAFE_TOP, circle.y + Math.sin(orbitAngle) * r);
       return;
     }
 
     // ─── STATE 2: IMMERSION IN SELECTED CIRCLE (2ND ANIMATION ON CLICK) ────
     if (isSelected) {
-      // 2A. Expanded Circle Membrane (Slots 0..79)
-      if (slot < 80) {
-        const baseAngle = (slot / 80) * TAU;
-        const angle = baseAngle + frameCount * 0.002;
-        const wave = Math.sin(frameCount * 0.018 + slot * 0.25) * 3.2;
+      // 2A. Expanded Circle Membrane (Slots 0..109) — majority of particles stay on the perimeter ring!
+      if (slot < 110) {
+        const baseAngle = (slot / 110) * TAU;
+        const angle = baseAngle + frameCount * 0.0015;
+        const wave = Math.sin(frameCount * 0.016 + slot * 0.25) * 2.8;
         node.tx = circle.x + Math.cos(angle) * (circle.r + wave);
-        node.ty = circle.y + Math.sin(angle) * (circle.r + wave);
+        node.ty = Math.max(
+          HEADER_SAFE_TOP,
+          circle.y + Math.sin(angle) * (circle.r + wave)
+        );
         return;
       }
 
-      // 2B. Central Core Nucleus (Slots 80..109)
-      if (slot < 110) {
-        const localIdx = slot - 80;
-        const speed = 0.005 * (localIdx % 2 === 0 ? 1 : -1);
+      // 2B. Subtle Central Hub (Slots 110..123 — only 14 particles so it's delicate)
+      if (slot < 124) {
+        const localIdx = slot - 110;
+        const speed = 0.004 * (localIdx % 2 === 0 ? 1 : -1);
         const angle = node.angleOffset + frameCount * speed;
-        const r = 10 + 18 * node.radiusMultiplier;
+        const r = 6 + 10 * node.radiusMultiplier;
         node.tx = circle.x + Math.cos(angle) * r;
         node.ty = circle.y + Math.sin(angle) * r;
         return;
       }
 
-      // 2C. Concept Satellite Halos around the floating concepts inside the circle (Slots 110..189)
+      // 2C. Delicate Perimeter Halos OUTSIDE each Sub-Concept text box (Slots 124..189)
       if (slot < 190 && conceptBoxes.length > 0) {
-        const localIdx = slot - 110;
-        const box = conceptBoxes[localIdx % conceptBoxes.length];
-        const localAngle =
-          node.angleOffset +
-          frameCount * 0.007 * (localIdx % 2 === 0 ? 1 : -1) +
-          localIdx * 0.4;
-        const rx = box.width * 0.5 + 5 + 10 * node.radiusMultiplier;
-        const ry = box.height * 0.5 + 4 + 8 * node.radiusMultiplier;
+        const localIdx = slot - 124;
+        const boxIdx = localIdx % conceptBoxes.length;
+        const box = conceptBoxes[boxIdx];
+        const clusterSlot = Math.floor(localIdx / conceptBoxes.length);
 
-        node.tx =
-          box.x +
-          Math.cos(localAngle) * rx +
-          Math.sin(frameCount * 0.01 + node.id) * 2;
-        node.ty =
-          box.y +
-          Math.sin(localAngle) * ry +
-          Math.cos(frameCount * 0.01 + node.id) * 2;
+        // Orbit strictly OUTSIDE the text box (padX >= 14px, padY >= 12px) so text is 100% clear!
+        const rx = box.width * 0.5 + 14 + (clusterSlot % 2) * 6;
+        const ry = box.height * 0.5 + 11 + (clusterSlot % 2) * 5;
+        const speed = 0.0038 * (boxIdx % 2 === 0 ? 1 : -1);
+        const angle =
+          (clusterSlot / 22) * TAU + frameCount * speed + node.angleOffset * 0.25;
+
+        node.tx = box.x + Math.cos(angle) * rx;
+        node.ty = Math.max(HEADER_SAFE_TOP, box.y + Math.sin(angle) * ry);
         return;
       }
 
-      // 2D. Flowing Energy Streams from Central Hub to Title & Concepts (Slots 190..239)
+      // 2D. If hovering a companion circle, send a gentle projection ring around `#venn-projection-anchor`
+      if (projectionBox && slot >= 210) {
+        const localIdx = slot - 210;
+        const rx = projectionBox.width * 0.5 + 16;
+        const ry = projectionBox.height * 0.5 + 14;
+        const angle =
+          (localIdx / 30) * TAU + frameCount * 0.0038 + node.angleOffset;
+        node.tx = projectionBox.x + Math.cos(angle) * rx;
+        node.ty = Math.max(
+          HEADER_SAFE_TOP,
+          projectionBox.y + Math.sin(angle) * ry
+        );
+        return;
+      }
+
+      // 2E. Gentle Streams from Hub to Sub-Concepts (Slots 190..239)
       const streamIdx = slot - 190;
       const targets: ScreenBox[] = [
         ...(titleBox ? [titleBox] : []),
@@ -301,75 +359,120 @@ export const setVennParticleTargets = (
       ];
       if (targets.length > 0) {
         const target = targets[streamIdx % targets.length];
-        const speed = 0.0032 + (streamIdx % 4) * 0.00045;
+        const speed = 0.0026 + (streamIdx % 4) * 0.00035;
         const t = (pseudoRandom(node.id * 2.13) + frameCount * speed) % 1;
 
+        // Stop short of the target text box so stream particles don't cross the letters
+        const maxT = 0.82;
+        const clampedT = t * maxT;
         const dx = target.x - circle.x;
         const dy = target.y - circle.y;
-        const perpX = -dy * 0.14;
-        const perpY = dx * 0.14;
-        const arch = Math.sin(t * Math.PI) * (streamIdx % 2 === 0 ? 1 : -1);
+        const perpX = -dy * 0.12;
+        const perpY = dx * 0.12;
+        const arch =
+          Math.sin(clampedT * Math.PI) * (streamIdx % 2 === 0 ? 1 : -1);
 
-        node.tx = circle.x + dx * t + perpX * arch;
-        node.ty = circle.y + dy * t + perpY * arch;
+        node.tx = circle.x + dx * clampedT + perpX * arch;
+        node.ty = Math.max(
+          HEADER_SAFE_TOP,
+          circle.y + dy * clampedT + perpY * arch
+        );
         return;
       }
 
-      const fallbackAngle = node.angleOffset + frameCount * 0.003;
-      node.tx = circle.x + Math.cos(fallbackAngle) * (circle.r * 0.45);
-      node.ty = circle.y + Math.sin(fallbackAngle) * (circle.r * 0.45);
+      const fallbackAngle = node.angleOffset + frameCount * 0.0025;
+      node.tx = circle.x + Math.cos(fallbackAngle) * (circle.r * 0.6);
+      node.ty = Math.max(
+        HEADER_SAFE_TOP,
+        circle.y + Math.sin(fallbackAngle) * (circle.r * 0.6)
+      );
       return;
     }
 
-    // ─── 2E. OVERLAPPING COMPANION CIRCLES (circleGroup !== selectedCircleIdx)
+    // ─── 2F. OVERLAPPING COMPANION CIRCLES (circleGroup !== selectedCircleIdx)
     const activeCircle = circles[selectedCircleIdx];
 
-    // Companion Boundary Ring (Slots 0..59)
-    if (slot < 60) {
-      const baseAngle = (slot / 60) * TAU;
-      const speed = (isHovered ? 0.004 : 0.002) * (g % 2 === 0 ? 1 : -1);
+    // Companion Boundary Ring (Slots 0..79)
+    if (slot < 80) {
+      const baseAngle = (slot / 80) * TAU;
+      const speed = (isHovered ? 0.0035 : 0.0018) * (g % 2 === 0 ? 1 : -1);
       const angle = baseAngle + frameCount * speed;
       const wave = isHovered
-        ? Math.sin(frameCount * 0.025 + slot * 0.2) * 2.5
+        ? Math.sin(frameCount * 0.025 + slot * 0.2) * 2.2
         : 0;
-      const r = circle.r * (isHovered ? 1.08 : 1.0) + wave;
+      const r = circle.r * (isHovered ? 1.06 : 1.0) + wave;
 
       node.tx = circle.x + Math.cos(angle) * r;
-      node.ty = circle.y + Math.sin(angle) * r;
+      node.ty = Math.max(HEADER_SAFE_TOP, circle.y + Math.sin(angle) * r);
       return;
     }
 
-    // Companion Overlap Bridge with Active Circle (Slots 60..139)
-    if (slot < 140) {
-      const localIdx = slot - 60;
-      // Overlap zone between companion center and active circle border
+    // HOVER PROJECTION: When this companion circle is hovered, form a clean halo
+    // around `#venn-projection-anchor` (strictly outside the text!)
+    if (isHovered && projectionBox && slot >= 80 && slot < 165) {
+      const localIdx = slot - 80;
+      const rx = projectionBox.width * 0.5 + 16 + (localIdx % 2) * 6;
+      const ry = projectionBox.height * 0.5 + 14 + (localIdx % 2) * 5;
+
+      if (localIdx < 54) {
+        const angle = (localIdx / 54) * TAU - frameCount * 0.0038;
+        node.tx = projectionBox.x + Math.cos(angle) * rx;
+        node.ty = Math.max(
+          HEADER_SAFE_TOP,
+          projectionBox.y + Math.sin(angle) * ry
+        );
+        return;
+      }
+
+      // Subtle stream from companion circle to the edge of the projected halo
+      const streamSlot = localIdx - 54;
+      const speed = 0.0032 + (streamSlot % 3) * 0.0004;
+      const t = ((pseudoRandom(node.id * 1.91) + frameCount * speed) % 1) * 0.84;
+      const dx = projectionBox.x - circle.x;
+      const dy = projectionBox.y - circle.y;
+      const perpX = -dy * 0.14;
+      const perpY = dx * 0.14;
+      const arch = Math.sin(t * Math.PI);
+
+      node.tx = circle.x + dx * t + perpX * arch;
+      node.ty = Math.max(
+        HEADER_SAFE_TOP,
+        circle.y + dy * t + perpY * arch
+      );
+      return;
+    }
+
+    // Companion Overlap Bridge with Active Circle (Slots 80..149)
+    if (slot < 150) {
+      const localIdx = slot - 80;
       const lensX = circle.x * 0.68 + activeCircle.x * 0.32;
       const lensY = circle.y * 0.68 + activeCircle.y * 0.32;
-      const speed = isHovered ? 0.0065 : 0.0032;
+      const speed = isHovered ? 0.005 : 0.0025;
       const angle = node.angleOffset + frameCount * speed + localIdx * 0.38;
-      const orbitR = circle.r * (isHovered ? 0.52 : 0.38) * node.radiusMultiplier;
+      const orbitR =
+        circle.r * (isHovered ? 0.48 : 0.35) * node.radiusMultiplier;
 
       node.tx = lensX + Math.cos(angle) * orbitR;
-      node.ty = lensY + Math.sin(angle) * orbitR;
+      node.ty = Math.max(HEADER_SAFE_TOP, lensY + Math.sin(angle) * orbitR);
       return;
     }
 
-    // Companion Inner Core Orbit (Slots 140..239)
+    // Companion Inner Core Orbit (Slots 150..239)
     const orbitAngle =
-      node.angleOffset + frameCount * (isHovered ? 0.0065 : 0.003);
+      node.angleOffset + frameCount * (isHovered ? 0.005 : 0.0024);
     const orbitRadius =
-      circle.r * (isHovered ? 0.65 : 0.48) * node.radiusMultiplier;
-    const vibration = isHovered
-      ? Math.sin(frameCount * 0.025 + node.id * 0.5) * 2
-      : 0;
+      circle.r * (isHovered ? 0.6 : 0.45) * node.radiusMultiplier;
 
-    node.tx = circle.x + Math.cos(orbitAngle) * (orbitRadius + vibration);
-    node.ty = circle.y + Math.sin(orbitAngle) * (orbitRadius + vibration);
+    node.tx = circle.x + Math.cos(orbitAngle) * orbitRadius;
+    node.ty = Math.max(
+      HEADER_SAFE_TOP,
+      circle.y + Math.sin(orbitAngle) * orbitRadius
+    );
   });
 };
 
 /**
- * Renders the 3 Venn circles, organic filaments, and all 720 particles.
+ * Renders the 3 Venn circles, delicate filaments, and readability-masked particles.
  */
 export const drawVennParticles = (
   ctx: CanvasRenderingContext2D,
@@ -388,6 +491,13 @@ export const drawVennParticles = (
       : [];
   const titleBox =
     selectedCircleIdx !== null ? readActiveTitleBox(selectedCircleIdx) : null;
+  const projectionBox =
+    selectedCircleIdx !== null &&
+    hoveredCircleIdx !== null &&
+    hoveredCircleIdx !== selectedCircleIdx
+      ? readProjectionAnchor()
+      : null;
+  const textZones = readTextZones();
 
   ctx.save();
 
@@ -399,29 +509,28 @@ export const drawVennParticles = (
 
     const cx = circle.x + globalDriftX;
     const cy = circle.y + globalDriftY;
-    const drawR =
-      isCompanion && isHovered ? circle.r * 1.08 : circle.r;
+    const drawR = isCompanion && isHovered ? circle.r * 1.06 : circle.r;
 
-    let fillAlpha = 0.025;
-    let strokeAlpha = 0.22;
-    let lineWidth = 1.25;
+    let fillAlpha = 0.02;
+    let strokeAlpha = 0.2;
+    let lineWidth = 1.2;
     let useDash = false;
 
     if (selectedCircleIdx !== null) {
       if (isSelected) {
-        fillAlpha = 0.02;
-        strokeAlpha = 0.36 + 0.1 * Math.sin(frameCount * 0.035);
-        lineWidth = 2.0;
+        fillAlpha = 0.016;
+        strokeAlpha = 0.34 + 0.08 * Math.sin(frameCount * 0.035);
+        lineWidth = 1.75;
       } else if (isCompanion) {
-        fillAlpha = isHovered ? 0.05 : 0.018;
-        strokeAlpha = isHovered ? 0.48 : 0.22;
-        lineWidth = isHovered ? 1.6 : 1.1;
+        fillAlpha = isHovered ? 0.045 : 0.015;
+        strokeAlpha = isHovered ? 0.46 : 0.2;
+        lineWidth = isHovered ? 1.5 : 1.05;
         useDash = true;
       }
     } else {
-      fillAlpha = isHovered ? 0.06 : 0.025;
-      strokeAlpha = isHovered ? 0.52 : 0.22;
-      lineWidth = isHovered ? 1.85 : 1.25;
+      fillAlpha = isHovered ? 0.05 : 0.02;
+      strokeAlpha = isHovered ? 0.45 : 0.2;
+      lineWidth = isHovered ? 1.65 : 1.2;
     }
 
     ctx.setLineDash(useDash ? [3.5, 4] : []);
@@ -441,7 +550,7 @@ export const drawVennParticles = (
 
   ctx.setLineDash([]);
 
-  // ─── 2. DRAW CURVED ENERGY FILAMENTS INSIDE IMMERSED CIRCLE ────────────────
+  // ─── 2. DRAW IMMERSED CURVED FILAMENTS (Stopping at edge of text boxes) ────
   if (selectedCircleIdx !== null) {
     const activeCircle = circles[selectedCircleIdx];
     const color = activeCircle.color;
@@ -449,85 +558,90 @@ export const drawVennParticles = (
     const hubY = activeCircle.y + globalDriftY;
 
     // Central pulsing core hub
-    const pulseRadius = 4 + Math.sin(frameCount * 0.05) * 0.9;
-    ctx.fillStyle = rgba(color, 0.85);
+    const pulseRadius = 3.6 + Math.sin(frameCount * 0.045) * 0.7;
+    ctx.fillStyle = rgba(color, 0.75);
     ctx.beginPath();
     ctx.arc(hubX, hubY, pulseRadius, 0, TAU);
     ctx.fill();
 
-    ctx.strokeStyle = rgba(color, 0.24);
-    ctx.lineWidth = 1.0;
-    ctx.beginPath();
-    ctx.arc(hubX, hubY, pulseRadius * 2.2, 0, TAU);
-    ctx.stroke();
-
-    // Soft curved filaments from hub to title & each floating concept
     const targets: ScreenBox[] = [
       ...(titleBox
-        ? [{ ...titleBox, y: titleBox.y + titleBox.height * 0.5 }]
+        ? [{ ...titleBox, y: titleBox.y + titleBox.height * 0.55 }]
         : []),
       ...conceptBoxes,
     ];
 
     targets.forEach((target, idx) => {
-      const tx = target.x + globalDriftX;
-      const ty = target.y + globalDriftY;
-      const dx = tx - hubX;
-      const dy = ty - hubY;
-      const ctrlX = hubX + dx * 0.5 - dy * 0.12 * (idx % 2 === 0 ? 1 : -1);
-      const ctrlY = hubY + dy * 0.5 + dx * 0.12 * (idx % 2 === 0 ? 1 : -1);
+      const fullDx = target.x + globalDriftX - hubX;
+      const fullDy = target.y + globalDriftY - hubY;
+      // Stop the filament at 80% of the distance so it doesn't cross through the text
+      const tx = hubX + fullDx * 0.8;
+      const ty = hubY + fullDy * 0.8;
+      const ctrlX =
+        hubX + fullDx * 0.42 - fullDy * 0.1 * (idx % 2 === 0 ? 1 : -1);
+      const ctrlY =
+        hubY + fullDy * 0.42 + fullDx * 0.1 * (idx % 2 === 0 ? 1 : -1);
 
-      // Soft outer glow
-      const gradGlow = ctx.createLinearGradient(hubX, hubY, tx, ty);
-      gradGlow.addColorStop(0, rgba(color, 0.12));
-      gradGlow.addColorStop(1, rgba(color, 0.28));
-
-      ctx.setLineDash([]);
-      ctx.strokeStyle = gradGlow;
-      ctx.lineWidth = 3.2;
-      ctx.beginPath();
-      ctx.moveTo(hubX, hubY);
-      ctx.quadraticCurveTo(ctrlX, ctrlY, tx, ty);
-      ctx.stroke();
-
-      // Dashed inner filament
       const gradCore = ctx.createLinearGradient(hubX, hubY, tx, ty);
-      gradCore.addColorStop(0, rgba(color, 0.28));
-      gradCore.addColorStop(1, rgba(color, 0.78));
+      gradCore.addColorStop(0, rgba(color, 0.22));
+      gradCore.addColorStop(1, rgba(color, 0.52));
 
-      ctx.setLineDash([2.5, 3.5]);
+      ctx.setLineDash([2.5, 4]);
       ctx.strokeStyle = gradCore;
-      ctx.lineWidth = 1.1;
+      ctx.lineWidth = 1.0;
       ctx.beginPath();
       ctx.moveTo(hubX, hubY);
       ctx.quadraticCurveTo(ctrlX, ctrlY, tx, ty);
       ctx.stroke();
 
-      // Travelling energy bead along quadratic curve
-      const t = (frameCount * 0.0045 + idx * 0.22) % 1;
+      // Travelling energy bead
+      const t = (frameCount * 0.004 + idx * 0.22) % 1;
       const u = 1 - t;
       const beadX = u * u * hubX + 2 * u * t * ctrlX + t * t * tx;
       const beadY = u * u * hubY + 2 * u * t * ctrlY + t * t * ty;
 
       ctx.setLineDash([]);
-      ctx.fillStyle = rgba(color, 0.9);
+      ctx.fillStyle = rgba(color, 0.78);
       ctx.beginPath();
-      ctx.arc(beadX, beadY, 2.4, 0, TAU);
+      ctx.arc(beadX, beadY, 2.0, 0, TAU);
       ctx.fill();
     });
+
+    // ─── 2B. DRAW COMPANION HOVER PROJECTION HALO & ARC ──────────────────────
+    if (
+      projectionBox &&
+      hoveredCircleIdx !== null &&
+      hoveredCircleIdx !== selectedCircleIdx
+    ) {
+      const compCircle = circles[hoveredCircleIdx];
+      const compColor = compCircle.color;
+      const px = projectionBox.x + globalDriftX;
+      const py = projectionBox.y + globalDriftY;
+      const rx = projectionBox.width * 0.5 + 16;
+      const ry = projectionBox.height * 0.5 + 14;
+
+      ctx.setLineDash([3, 3.5]);
+      ctx.strokeStyle = rgba(compColor, 0.34);
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.ellipse(px, py, rx, ry, 0, 0, TAU);
+      ctx.stroke();
+    }
 
     ctx.setLineDash([]);
   }
 
-  // ─── 3. DRAW PARTICLE WEB CONNECTIONS ──────────────────────────────────────
-  const maxConnections = Math.min(particles.length, 240);
-  const connectionDist = selectedCircleIdx !== null ? 95 : 88;
-  ctx.lineWidth = selectedCircleIdx !== null ? 0.7 : 0.55;
+  // ─── 3. DRAW DELICATE PARTICLE WEB CONNECTIONS (Masked around text) ────────
+  const maxConnections = Math.min(particles.length, 160);
+  const connectionDist = 66;
+  ctx.lineWidth = 0.5;
 
   for (let i = 0; i < maxConnections; i += 1) {
     const n1 = particles[i];
     const p1x = n1.x + globalDriftX;
     const p1y = n1.y + globalDriftY;
+    const m1 = getTextReadabilityMask(p1x, p1y, textZones);
+    if (m1 < 0.2) continue;
 
     for (let j = i + 1; j < maxConnections; j += 1) {
       const n2 = particles[j];
@@ -538,69 +652,69 @@ export const drawVennParticles = (
       const dist = Math.hypot(dx, dy);
       if (dist >= connectionDist) continue;
 
-      let alpha = (1 - dist / connectionDist) * 0.085;
-      if (mouse.active) {
-        const midX = (n1.x + n2.x) * 0.5;
-        const midY = (n1.y + n2.y) * 0.5;
-        const mDist = Math.hypot(mouse.x - midX, mouse.y - midY);
-        if (mDist < 120) {
-          alpha *= 1 + ((120 - mDist) / 120) * 1.4;
-        }
-      }
+      const p2x = n2.x + globalDriftX;
+      const p2y = n2.y + globalDriftY;
+      const m2 = getTextReadabilityMask(p2x, p2y, textZones);
+      const mask = Math.min(m1, m2);
+      if (mask < 0.2) continue;
 
-      if (
-        selectedCircleIdx !== null &&
-        n1.group !== selectedCircleIdx
-      ) {
-        alpha *= hoveredCircleIdx === n1.group ? 0.85 : 0.38;
+      let alpha = (1 - dist / connectionDist) * 0.055 * mask;
+      if (selectedCircleIdx !== null && n1.group !== selectedCircleIdx) {
+        alpha *= hoveredCircleIdx === n1.group ? 0.85 : 0.35;
       }
 
       const rgb = VENN_COLORS[n1.group % 3];
       ctx.strokeStyle = rgba(rgb, alpha);
       ctx.beginPath();
       ctx.moveTo(p1x, p1y);
-      ctx.lineTo(n2.x + globalDriftX, n2.y + globalDriftY);
+      ctx.lineTo(p2x, p2y);
       ctx.stroke();
     }
   }
 
-  // ─── 4. DRAW PARTICLES ─────────────────────────────────────────────────────
+  // ─── 4. DRAW PARTICLES (Calm density + Text Readability Mask) ──────────────
+  const drawGroupCounts = [0, 0, 0];
+
   particles.forEach((node) => {
+    const g = node.group % 3;
+    const slot = drawGroupCounts[g]++;
     const px = node.x + globalDriftX;
     const py = node.y + globalDriftY;
-    const g = node.group % 3;
+
+    const mask = getTextReadabilityMask(px, py, textZones);
+    if (mask <= 0.08) return;
+
     const isSelected = selectedCircleIdx === g;
     const isHovered = hoveredCircleIdx === g;
+    const isBoundary = selectedCircleIdx !== null ? slot < 110 : slot < 80;
 
-    let radius = node.baseRadius;
-    let alphaMultiplier = 1;
+    let radius = node.baseRadius * (isBoundary ? 1.05 : 0.82);
+    let alphaMultiplier = (isBoundary ? 1.15 : 0.58) * mask;
 
     if (selectedCircleIdx !== null) {
       if (isSelected) {
-        radius *= 1.25;
-        alphaMultiplier *= 1.55;
+        alphaMultiplier *= isBoundary ? 1.25 : 0.85;
       } else {
-        radius *= isHovered ? 1.15 : 0.9;
-        alphaMultiplier *= isHovered ? 1.45 : 0.82;
+        alphaMultiplier *= isHovered ? 1.15 : 0.55;
       }
     } else if (isHovered) {
-      radius *= 1.28;
-      alphaMultiplier *= 1.7;
+      radius *= 1.15;
+      alphaMultiplier *= 1.3;
     }
 
     if (mouse.active) {
       const mDist = Math.hypot(mouse.x - node.x, mouse.y - node.y);
-      const hoverRadius = 135;
+      const hoverRadius = 110;
       if (mDist < hoverRadius) {
         const ratio = (hoverRadius - mDist) / hoverRadius;
-        radius *= 1 + ratio * 0.75;
-        alphaMultiplier *= 1 + ratio * 1.65;
+        radius *= 1 + ratio * 0.45;
+        alphaMultiplier *= 1 + ratio * 0.9;
       }
     }
 
     const rgb = VENN_COLORS[g];
-    const outerAlpha = Math.min(0.45, 0.24 * alphaMultiplier);
-    const coreAlpha = Math.min(0.92, 0.58 * alphaMultiplier);
+    const outerAlpha = Math.min(0.32, 0.16 * alphaMultiplier);
+    const coreAlpha = Math.min(0.76, 0.44 * alphaMultiplier);
 
     ctx.fillStyle = rgba(rgb, outerAlpha);
     ctx.beginPath();
@@ -609,7 +723,7 @@ export const drawVennParticles = (
 
     ctx.fillStyle = rgba(rgb, coreAlpha);
     ctx.beginPath();
-    ctx.arc(px, py, radius * 0.42, 0, TAU);
+    ctx.arc(px, py, radius * 0.4, 0, TAU);
     ctx.fill();
   });
 

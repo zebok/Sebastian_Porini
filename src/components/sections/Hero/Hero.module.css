@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: clamp(0.75rem, 1.8vh, 1.25rem) var(--section-inline-gutter);
+  padding: clamp(0.5rem, 1.4vh, 1rem) var(--section-inline-gutter);
 }
 
 .hero::before {
@@ -26,19 +26,24 @@
   z-index: 1;
 }
 
-/* THE ROOT SOLUTION: CSS GRID */
+/* STABLE VIEWPORT GRID */
 .heroGrid {
   position: relative;
   width: 100%;
   max-width: var(--section-max-width);
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  grid-template-rows: 2fr auto auto;
-  align-items: stretch;
+  grid-template-columns: minmax(190px, 1fr) auto minmax(190px, 1fr);
+  grid-template-rows: minmax(115px, 21vh) minmax(0, 1fr);
+  align-items: center;
   justify-items: stretch;
   z-index: 2;
-  gap: 1.5rem;
+  gap: 0.5rem 1.25rem;
+  transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heroGridZoomed {
+  grid-template-rows: minmax(82px, 15vh) minmax(0, 1fr);
 }
 
 .gridCenter {
@@ -47,13 +52,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
   z-index: 10;
 }
 
 .vennSizing {
-  width: 100%;
-  max-width: 100vh;
-  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 /* GRID CONTENT ZONES */
@@ -66,6 +73,7 @@
   justify-content: center;
   text-align: center;
   z-index: 5;
+  padding: 0 1rem;
 }
 
 .gridBottomLeft {
@@ -77,7 +85,8 @@
   justify-content: center;
   text-align: center;
   z-index: 5;
-  padding: 1rem;
+  padding: 0.5rem;
+  min-width: 0;
 }
 
 .gridBottomRight {
@@ -89,7 +98,8 @@
   justify-content: center;
   text-align: center;
   z-index: 5;
-  padding: 1rem;
+  padding: 0.5rem;
+  min-width: 0;
 }
 
 .segmentContent {
@@ -109,48 +119,48 @@
 .name {
   font-family: var(--font-playfair), serif;
   font-weight: 900;
-  font-size: clamp(2.1rem, 5.5vw, 4.3rem);
+  font-size: clamp(2rem, 4.6vw, 3.6rem);
   color: var(--ink);
-  line-height: 1.08;
+  line-height: 1.06;
   letter-spacing: -0.02em;
 }
 
 .tagline {
   font-family: var(--font-mono), monospace;
   font-weight: 500;
-  font-size: clamp(0.82rem, 1.5vw, 1.05rem);
+  font-size: clamp(0.78rem, 1.25vw, 0.96rem);
   color: var(--ink);
-  line-height: 1.45;
-  margin-top: 0.45rem;
+  line-height: 1.4;
+  margin-top: 0.35rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .valueProp {
   font-family: var(--font-sans);
-  font-size: clamp(0.88rem, 1.3vw, 0.98rem);
-  line-height: 1.5;
+  font-size: clamp(0.86rem, 1.2vw, 0.96rem);
+  line-height: 1.45;
   color: var(--ink-muted);
-  max-width: 580px;
-  margin-top: 0.45rem;
+  max-width: 560px;
+  margin-top: 0.35rem;
 }
 
 .heroCtaWrapper {
-  margin-top: 0.95rem;
+  margin-top: 0.7rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.65rem;
 }
 
 .heroPrimaryBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.5rem 1.2rem;
+  padding: 0.46rem 1.15rem;
   font-family: var(--font-mono), monospace;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -182,9 +192,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.48rem 1rem;
+  padding: 0.44rem 0.95rem;
   font-family: var(--font-mono), monospace;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -202,10 +212,10 @@
 .heroCvBtn {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.48rem 1.15rem;
+  gap: 0.5rem;
+  padding: 0.44rem 1.1rem;
   font-family: var(--font-mono), monospace;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -255,73 +265,67 @@
 .handwrittenTitle {
   font-family: var(--font-playfair), serif;
   font-weight: 700;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.2;
-  margin-bottom: 0.35rem;
+  font-size: clamp(1.45rem, 2.5vw, 2.35rem);
+  line-height: 1.18;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* Minimalist Projected Companion Concept Circle (no white background) */
+.projectionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 100%;
+}
+
+/* In the top slot, place title and projected concept side-by-side so it never overflows vertically */
+.gridTop .projectionWrapper {
+  flex-direction: row;
+  justify-content: center;
+  gap: 2.25rem;
+}
+
+.projectedCircleNode {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  text-align: center;
+}
+
+.projectedIntersectionLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  line-height: 1.3;
   white-space: nowrap;
 }
 
-.hoverSubtitle {
-  font-family: var(--font-mono), monospace;
-  font-size: clamp(0.76rem, 1.1vw, 0.88rem);
-  color: var(--ink-muted);
-  letter-spacing: 0.03em;
-  margin-top: 0.15rem;
-}
-
-/* RESPONSIVE */
-@media (max-width: 992px) {
-  .hero {
-    height: auto;
-    min-height: 100%;
-  }
-
-  .heroGrid {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    min-height: 100%;
-    gap: 2rem;
-  }
-
-  .vennSizing {
-    max-width: 100%;
-    height: 50vh;
-    aspect-ratio: auto;
-  }
-
-  .gridTop,
-  .gridBottomLeft,
-  .gridBottomRight {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0;
-  }
-
-  .gridTop .segmentContent,
-  .gridBottomLeft .segmentContent,
-  .gridBottomRight .segmentContent {
-    align-items: center;
-    text-align: center;
-  }
-
-  .gridTop {
-    order: -1;
-  }
-}
-
+/* VENN ANCHOR & CIRCLES — Strictly contained inside the viewport */
 .vennAnchor {
   position: relative;
-  width: 62vh;
-  height: 62vh;
+  width: min(54vh, 46vw);
+  height: min(54vh, 46vw);
   margin: 0 auto;
+  transition: width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vennAnchor.zoomed {
+  width: min(62vh, 50vw);
+  height: min(62vh, 50vw);
 }
 
 .vennCirclePlaceholder {
   position: absolute;
-  width: 60%;
-  height: 60%;
+  width: 58%;
+  height: 58%;
   border-radius: 50%;
   cursor: pointer;
   background-color: transparent;
@@ -336,14 +340,14 @@
     height 0.72s cubic-bezier(0.16, 1, 0.3, 1),
     top 0.72s cubic-bezier(0.16, 1, 0.3, 1),
     left 0.72s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
   z-index: 10;
 }
 
-/* 1st Animation: smooth hover expansion without GSAP conflict */
+/* 1st Animation: smooth hover expansion */
 .vennAnchor:not(.zoomed) .vennCirclePlaceholder:hover {
-  transform: scale(1.14);
+  transform: scale(1.11);
 }
 
 .zoomed .vennCirclePlaceholder.active {
@@ -357,14 +361,14 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 18%;
+  padding-top: 16%;
   pointer-events: none;
   font-family: var(--font-playfair), serif;
   font-weight: 700;
-  font-size: clamp(1.5rem, 3.1vw, 2.5rem);
+  font-size: clamp(1.35rem, 2.5vw, 2.15rem);
   color: var(--ink);
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.18;
   transition: opacity 0.4s ease;
 }
 
@@ -374,29 +378,31 @@
 }
 
 .circle0 {
-  top: 1.5%;
-  left: 20%;
+  top: 4%;
+  left: 21%;
 }
 
 .circle1 {
-  top: 37.5%;
-  left: 2%;
+  top: 38%;
+  left: 4%;
 }
 
 .circle2 {
-  top: 37.5%;
+  top: 38%;
   left: 38%;
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-    Venn Zoom / Focus States (2nd Animation: Immersion + Overlapping Companions)
+    Venn Zoom / Focus States (2nd Animation)
+    Every circle has top >= 3% and top+height <= 97%, left >= 3% and left+width <= 97%
+    so nothing EVER goes behind the header or off the stage!
     ──────────────────────────────────────────────────────────────────────────── */
 
 .selected0 .circle0 {
-  width: 90%;
-  height: 90%;
-  top: -16%;
-  left: 5%;
+  width: 82%;
+  height: 82%;
+  top: 3%;
+  left: 9%;
   z-index: 12;
 }
 
@@ -404,7 +410,7 @@
   width: 28%;
   height: 28%;
   top: 68%;
-  left: 25%;
+  left: 22%;
   z-index: 13;
 }
 
@@ -412,183 +418,126 @@
   width: 28%;
   height: 28%;
   top: 68%;
-  left: 47%;
+  left: 50%;
   z-index: 13;
 }
 
 .selected1 .circle0 {
   width: 28%;
   height: 28%;
-  top: -4.5%;
-  left: 57.5%;
+  top: 6%;
+  left: 65%;
   z-index: 13;
 }
 
 .selected1 .circle1 {
-  width: 90%;
-  height: 90%;
-  top: -1%;
-  left: -17%;
+  width: 82%;
+  height: 82%;
+  top: 9%;
+  left: 3%;
   z-index: 12;
 }
 
 .selected1 .circle2 {
   width: 28%;
   height: 28%;
-  top: 20.5%;
-  left: 66.5%;
+  top: 36%;
+  left: 69%;
   z-index: 13;
 }
 
 .selected2 .circle0 {
   width: 28%;
   height: 28%;
-  top: -4.5%;
-  left: 14.5%;
+  top: 6%;
+  left: 7%;
   z-index: 13;
 }
 
 .selected2 .circle1 {
   width: 28%;
   height: 28%;
-  top: 20.5%;
-  left: 5.5%;
+  top: 36%;
+  left: 3%;
   z-index: 13;
 }
 
 .selected2 .circle2 {
-  width: 90%;
-  height: 90%;
-  top: -1%;
-  left: 27%;
+  width: 82%;
+  height: 82%;
+  top: 9%;
+  left: 15%;
   z-index: 12;
 }
 
-@media (max-width: 768px) {
-  .vennAnchor {
-    width: 380px;
-    height: 380px;
-  }
-
-  .vennCirclePlaceholder {
-    width: 210px;
-    height: 210px;
-  }
-
-  .circle0 {
-    top: 25px;
-    left: 85px;
-  }
-
-  .circle1 {
-    top: 125px;
-    left: 25px;
-  }
-
-  .circle2 {
-    top: 125px;
-    left: 145px;
-  }
-
-  .selected0 .circle0 {
-    width: 410px;
-    height: 410px;
-    top: -15px;
-    left: -15px;
-    z-index: 12;
-  }
-
-  .selected0 .circle1 {
-    width: 140px;
-    height: 140px;
-    top: 280px;
-    left: 75px;
-    z-index: 13;
-  }
-
-  .selected0 .circle2 {
-    width: 140px;
-    height: 140px;
-    top: 280px;
-    left: 165px;
-    z-index: 13;
-  }
-
-  .selected1 .circle0 {
-    width: 140px;
-    height: 140px;
-    top: -45px;
-    left: 195px;
-    z-index: 13;
-  }
-
-  .selected1 .circle1 {
-    width: 410px;
-    height: 410px;
-    top: 45px;
-    left: -45px;
-    z-index: 12;
-  }
-
-  .selected1 .circle2 {
-    width: 140px;
-    height: 140px;
-    top: 45px;
-    left: 235px;
-    z-index: 13;
-  }
-
-  .selected2 .circle0 {
-    width: 140px;
-    height: 140px;
-    top: -45px;
-    left: 45px;
-    z-index: 13;
-  }
-
-  .selected2 .circle1 {
-    width: 140px;
-    height: 140px;
-    top: 45px;
-    left: 5px;
-    z-index: 13;
-  }
-
-  .selected2 .circle2 {
-    width: 410px;
-    height: 410px;
-    top: 45px;
-    left: 15px;
-    z-index: 12;
-  }
-}
-
-/* Floating concept labels inside selected Venn circle */
-.attachedTag {
-  pointer-events: auto;
-  cursor: default;
+/* Minimalist sub-concept text inside the expanded circle (no white background, no border) */
+.subConceptNode {
   font-family: var(--font-mono), monospace;
-  font-size: clamp(0.72rem, 1.1vw, 0.82rem);
+  font-size: clamp(0.72rem, 1vw, 0.82rem);
   font-weight: 500;
   color: var(--ink);
-  background: rgba(249, 249, 247, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.38rem 0.9rem;
-  border-radius: 18px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: transparent;
+  border: none;
+  padding: 0.2rem 0.45rem;
   white-space: nowrap;
-  letter-spacing: 0.02em;
-  z-index: 15;
+  letter-spacing: 0.03em;
+  text-align: center;
 }
 
-@media (max-height: 850px) and (min-width: 993px) {
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .hero {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .heroGrid {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+    gap: 1.5rem;
+  }
+
+  .vennAnchor,
+  .vennAnchor.zoomed {
+    width: 350px;
+    height: 350px;
+  }
+
+  .gridTop,
+  .gridBottomLeft,
+  .gridBottomRight {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0;
+  }
+
+  .gridTop {
+    order: -1;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 993px) {
+  .heroGrid {
+    grid-template-rows: minmax(96px, 18vh) minmax(0, 1fr);
+  }
+
+  .heroGridZoomed {
+    grid-template-rows: minmax(70px, 13vh) minmax(0, 1fr);
+  }
+
   .name {
-    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-size: clamp(1.85rem, 3.8vw, 2.8rem);
   }
 
   .tagline {
-    font-size: clamp(0.85rem, 1.5vw, 1rem);
-    margin-top: 0.4rem;
+    font-size: clamp(0.76rem, 1.2vw, 0.9rem);
+    margin-top: 0.25rem;
+  }
+
+  .heroCtaWrapper {
+    margin-top: 0.5rem;
   }
 }

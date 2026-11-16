@@ -61,9 +61,9 @@ interface HeroProps {
 
 interface SegmentContentData {
   id: string;
-  type: "home" | "circle";
+  type: "home" | "circle" | "projection";
   title?: string;
-  subtitle?: string;
+  intersectionTitle?: string;
   colorVar?: string;
   name?: string;
   tagline?: string;
@@ -87,16 +87,17 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
   return (
     <motion.div
       className={styles.segmentContent}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
       {content.type === "home" ? (
         <div
           key="home-intro-inner"
           className={styles.segmentContent}
           style={{ width: "100%" }}
+          data-venn-text="true"
         >
           <h1 className={styles.name}>{content.name}</h1>
           <div className={styles.tagline}>{content.tagline}</div>
@@ -136,6 +137,37 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
             )}
           </div>
         </div>
+      ) : content.type === "projection" ? (
+        <div
+          key={`projection-inner-${content.id}`}
+          className={styles.projectionWrapper}
+        >
+          <motion.div
+            layoutId={`venn-title-${content.id}`}
+            className={styles.handwrittenTitle}
+            data-venn-text="true"
+            style={{
+              color: content.colorVar,
+              textShadow: `0 0 25px ${content.colorVar}35`,
+            }}
+          >
+            <AnimatedText text={content.title || ""} stagger={0.02} />
+          </motion.div>
+
+          {/* Minimalist Projected Particle Cluster Anchor (no white background) */}
+          <motion.div
+            id="venn-projection-anchor"
+            className={styles.projectedCircleNode}
+            data-venn-text="true"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className={styles.projectedIntersectionLabel}>
+              {content.intersectionTitle}
+            </span>
+          </motion.div>
+        </div>
       ) : (
         <div
           key={`circle-inner-${content.id}`}
@@ -149,6 +181,7 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
           <motion.div
             layoutId={`venn-title-${content.id}`}
             className={styles.handwrittenTitle}
+            data-venn-text="true"
             style={{
               color: content.colorVar,
               textShadow: `0 0 25px ${content.colorVar}35`,
@@ -162,16 +195,6 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
           >
             <AnimatedText text={content.title || ""} stagger={0.02} />
           </motion.div>
-          {content.subtitle && (
-            <motion.p
-              className={styles.hoverSubtitle}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.28 }}
-            >
-              {content.subtitle}
-            </motion.p>
-          )}
         </div>
       )}
     </motion.div>
@@ -210,25 +233,22 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
   const circles = [
     {
       title: focusData.circle1.title,
-      description: focusData.circle1.description,
       items: focusData.circle1.items,
-      tags: focusData.circle1.tags,
+      tags: focusData.circle1.tags ?? [],
       color: "var(--accent)",
       hex: "#2d5be3",
     },
     {
       title: focusData.circle2.title,
-      description: focusData.circle2.description,
       items: focusData.circle2.items,
-      tags: focusData.circle2.tags,
+      tags: focusData.circle2.tags ?? [],
       color: "var(--accent-2)",
       hex: "#7c3aed",
     },
     {
       title: focusData.circle3.title,
-      description: focusData.circle3.description,
       items: focusData.circle3.items,
-      tags: focusData.circle3.tags,
+      tags: focusData.circle3.tags ?? [],
       color: "var(--accent-3)",
       hex: "#059669",
     },
@@ -275,8 +295,6 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
   };
 
   const handleClickCircle = (id: number) => {
-    // Clicking the already-selected circle resets back to the 3-circle overview;
-    // clicking an overlapping companion circle glides directly into that companion!
     if (selectedSegment === id) {
       handleResetVenn();
       return;
@@ -296,28 +314,24 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
     slot: "top" | "left" | "right"
   ): SegmentContentData | null => {
     const showInSlot = (targetId: number): SegmentContentData | null => {
-      // When immersed in a circle, hovering one of its overlapping companions
-      // shows that companion's title + their shared intersection concept in the outer space
       if (selectedSegment !== null) {
         if (hoveredSegment === targetId && targetId !== selectedSegment) {
           return {
             id: `circle-${targetId}`,
-            type: "circle",
+            type: "projection",
             title: circles[targetId].title,
-            subtitle: `∩ ${getIntersectionTitle(selectedSegment, targetId)}`,
+            intersectionTitle: getIntersectionTitle(selectedSegment, targetId),
             colorVar: circles[targetId].color,
           };
         }
         return null;
       }
 
-      // 1st Animation (Hover in overview): Title appears in the available outer space
       if (hoveredSegment === targetId) {
         return {
           id: `circle-${targetId}`,
           type: "circle",
           title: circles[targetId].title,
-          subtitle: circles[targetId].description,
           colorVar: circles[targetId].color,
         };
       }
@@ -392,93 +406,59 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
   );
 
   const renderImmersedConcepts = (circleIdx: number) => {
-    const concepts = circles[circleIdx].items || [];
+    // Use the concise 1-2 word tags so they fit comfortably inside the circle
+    const tags = circles[circleIdx].tags || [];
 
-    // Symmetric positions inside the 1:1 circle around the central particle hub (50%, 50%)
-    const positions =
-      concepts.length === 3
-        ? [
-            { left: "26%", top: "48%" },
-            { left: "74%", top: "48%" },
-            { left: "50%", top: "75%" },
-          ]
-        : [
-            { left: "27%", top: "44%" },
-            { left: "73%", top: "44%" },
-            { left: "30%", top: "72%" },
-            { left: "70%", top: "72%" },
-          ];
+    // Symmetric triangle well inside the circle (radius 50%, center 50%, 50%)
+    const positions = [
+      { left: "29%", top: "48%" },
+      { left: "71%", top: "48%" },
+      { left: "50%", top: "73%" },
+    ];
 
     return (
       <>
-        {concepts.map((concept, idx) => {
-          const pos = positions[idx] ?? { left: "50%", top: "65%" };
+        {tags.slice(0, 3).map((tag, idx) => {
+          const pos = positions[idx] ?? { left: "50%", top: "68%" };
+
           return (
-            <motion.div
-              id={`venn-tag-${circleIdx}-${idx}`}
-              key={concept}
+            /* Static outer wrapper holds translate(-50%, -50%) so Framer Motion scale never shifts it */
+            <div
+              key={tag}
               style={{
                 position: "absolute",
-                transform: "translate(-50%, -50%)",
-                zIndex: 15,
-              }}
-              initial={{
-                left: "50%",
-                top: "50%",
-                scale: 0.4,
-                opacity: 0,
-              }}
-              animate={{
                 left: pos.left,
                 top: pos.top,
-                scale: 1,
-                opacity: 1,
-              }}
-              transition={{
-                left: {
-                  type: "spring",
-                  stiffness: 58,
-                  damping: 13,
-                  delay: 0.12 + idx * 0.08,
-                },
-                top: {
-                  type: "spring",
-                  stiffness: 58,
-                  damping: 13,
-                  delay: 0.12 + idx * 0.08,
-                },
-                scale: {
-                  type: "spring",
-                  stiffness: 58,
-                  damping: 13,
-                  delay: 0.12 + idx * 0.08,
-                },
-                opacity: { duration: 0.3, delay: 0.12 + idx * 0.08 },
+                transform: "translate(-50%, -50%)",
+                zIndex: 15,
+                pointerEvents: "none",
               }}
             >
               <motion.div
-                className={styles.attachedTag}
-                whileHover={{ scale: 1.05 }}
-                style={{
-                  borderColor: `${circles[circleIdx].hex}88`,
-                  boxShadow: `0 0 22px ${circles[circleIdx].hex}30, inset 0 0 8px ${circles[circleIdx].hex}18`,
-                }}
-                animate={{
-                  y: [0, -3.5, 0],
-                }}
+                id={`venn-tag-${circleIdx}-${idx}`}
+                className={styles.subConceptNode}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1, y: [0, -3, 0] }}
                 transition={{
+                  scale: {
+                    type: "spring",
+                    stiffness: 56,
+                    damping: 13,
+                    delay: 0.14 + idx * 0.08,
+                  },
+                  opacity: { duration: 0.28, delay: 0.14 + idx * 0.08 },
                   y: {
                     repeat: Infinity,
                     repeatType: "mirror",
-                    duration: 4.2 + idx * 0.7,
+                    duration: 4 + idx * 0.6,
                     ease: "easeInOut",
-                    delay: 0.6 + idx * 0.2,
+                    delay: 0.5 + idx * 0.2,
                   },
                 }}
               >
-                {concept}
+                {tag}
               </motion.div>
-            </motion.div>
+            </div>
           );
         })}
       </>
@@ -504,7 +484,11 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
         }
       }}
     >
-      <div className={styles.heroGrid}>
+      <div
+        className={`${styles.heroGrid} ${
+          selectedSegment !== null ? styles.heroGridZoomed : ""
+        }`}
+      >
         <div className={styles.gridTop}>
           <AnimatePresence mode="wait">
             {topContent && (
