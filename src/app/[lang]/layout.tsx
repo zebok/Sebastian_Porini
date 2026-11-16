@@ -35,7 +35,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = resolvedParams?.lang === "es" ? "es" : "en";
   const data = getLocalizedData(lang);
   const name = data.personal.name;
-  const description = data.personal.description;
+  const description =
+    data.personal.description || `${name} — ${data.personal.tagline}`;
   const localeString = lang === "es" ? "es_AR" : "en_US";
 
   return {
@@ -102,7 +103,8 @@ export default async function RootLayout({
     "name": data.personal.name,
     "url": SITE_URL,
     "jobTitle": data.personal.tagline,
-    "description": data.personal.description,
+    "description":
+      data.personal.description || `${data.personal.name} — ${data.personal.tagline}`,
     "sameAs": [
       data.personal.contactDetails.github,
       data.personal.contactDetails.linkedin,

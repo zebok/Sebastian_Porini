@@ -2,12 +2,12 @@
   "personal": {
     "name": "Sebastián Porini",
     "tagline": {
-      "en": "Data & Analytics Engineer | BI & Data Modeling",
-      "es": "Data & Analytics Engineer | BI & Data Modeling"
+      "en": "Data & Systems | Quality, Security & Governance",
+      "es": "Data & Systems | Calidad, Seguridad y Gobernanza"
     },
     "description": {
-      "es": "Lic. en Gestión de TI y Técnico Químico enfocado en Data & Analytics. Especializado en transformar datos transaccionales en modelos dimensionales, pipelines ELT cloud y tableros de BI para fundamentar la toma de decisiones y comprender la realidad del negocio.",
-      "en": "B.S. in IT Management & Chemical Technician focused on Data & Analytics. Specialized in transforming transactional data into dimensional models, cloud ELT pipelines, and BI dashboards to ground decision-making and understand business reality."
+      "es": "",
+      "en": ""
     },
     "focus": {
       "circle1": {
@@ -926,8 +926,8 @@
   "careerRepository": {
     "name": "career-repository",
     "headIdentity": {
-      "en": "Data & Analytics Engineer | BI & Data Modeling",
-      "es": "Data & Analytics Engineer | BI & Data Modeling"
+      "en": "Data & Systems | Quality, Security & Governance",
+      "es": "Data & Systems | Calidad, Seguridad y Gobernanza"
     },
     "branches": [
       {
@@ -1446,11 +1446,11 @@
         },
         "details": {
           "en": [
-            "HEAD identity: Data & Analytics Engineer | BI & Data Modeling.",
+            "HEAD identity: Data & Systems | Quality, Security & Governance.",
             "Reduced monthly cloud operating costs by 73% through serverless architecture changes."
           ],
           "es": [
-            "Identidad en HEAD: Data & Analytics Engineer | BI & Data Modeling.",
+            "Identidad en HEAD: Data & Systems | Calidad, Seguridad y Gobernanza.",
             "Reduje el costo operativo cloud mensual en un 73% mediante cambios de arquitectura serverless."
           ]
         }

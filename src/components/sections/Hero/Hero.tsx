@@ -95,9 +95,9 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
         <div key="home-intro-inner" className={styles.segmentContent} style={{ width: "100%" }}>
           <h1 className={styles.name}>{content.name}</h1>
           <div className={styles.tagline}>{content.tagline}</div>
-          {content.valueProp && (
+          {content.valueProp ? (
             <p className={styles.valueProp}>{content.valueProp}</p>
-          )}
+          ) : null}
           <div className={styles.heroCtaWrapper}>
             {onViewProjects && (
               <button

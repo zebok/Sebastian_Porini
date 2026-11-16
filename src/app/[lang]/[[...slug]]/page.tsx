@@ -42,7 +42,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const name = data.personal.name;
 
   let title = `${name} — ${data.personal.tagline}`;
-  let description = data.personal.description;
+  let description =
+    data.personal.description || `${name} — ${data.personal.tagline}`;
 
   if (slug && slug.length > 0) {
     switch (section) {
