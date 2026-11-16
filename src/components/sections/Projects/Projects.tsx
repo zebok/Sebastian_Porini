@@ -1,460 +1,430 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, ChevronDown, Filter } from "lucide-react";
-import { Dictionary } from "@/lib/i18n";
-import { LocalizedProject } from "@/lib/data";
+import { Lock, ArrowUpRight, ExternalLink, X } from "lucide-react";
+import type { Dictionary } from "@/lib/i18n";
+import type { LocalizedProject } from "@/lib/data";
+import { useReducedMotionPreference } from "@/hooks/useReducedMotionPreference";
+import {
+  getProjectCategoryStyle,
+  type ProjectsRuntime,
+} from "@/components/visualizations/Projects.runtime";
 import styles from "./Projects.module.css";
-import { CategoryVisual } from "./CategoryVisual";
-import { FilterGroupOptions } from "./FilterGroupOptions";
-import { ProjectDetailsModal } from "./ProjectDetailsModal";
 
 interface ProjectsProps {
   dict: Dictionary;
   projects: LocalizedProject[];
+  projectsRuntime?: ProjectsRuntime;
+  isActive?: boolean;
+  lang?: string;
 }
 
-export default function Projects({ dict, projects }: ProjectsProps) {
-  // Filter States
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
-  const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
+export default function Projects({
+  dict,
+  projects,
+  projectsRuntime,
+  isActive = true,
+  lang = "es",
+}: ProjectsProps) {
+  const prefersReducedMotion = useReducedMotionPreference();
+  const isEs = lang === "es";
 
-  // Desktop Dropdown Open State: "type" | "area" | "tech" | null
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeProjectId, setActiveProjectId] = useState<string>(
+    projects[0]?.id ?? "geological-data-platform"
+  );
+  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [hoveredTag, setHoveredTag] = useState<string | null>(null);
 
-  // Accordion Collapse States (for mobile drawer only)
-  const [typeExpanded, setTypeExpanded] = useState<boolean>(true);
-  const [areaExpanded, setAreaExpanded] = useState<boolean>(true);
-  const [techExpanded, setTechExpanded] = useState<boolean>(true);
+  const focusTag = hoveredTag ?? selectedTag;
 
-  // Mobile Drawer State
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
+  const activeProject = useMemo(
+    () => projects.find((p) => p.id === activeProjectId) ?? projects[0],
+    [projects, activeProjectId]
+  );
 
-  // Details Modal State
-  const [selectedProject, setSelectedProject] = useState<LocalizedProject | null>(null);
+  // Count how many projects share each tag
+  const tagCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    projects.forEach((p) => {
+      p.tags.forEach((t) => {
+        map.set(t, (map.get(t) ?? 0) + 1);
+      });
+    });
+    return map;
+  }, [projects]);
 
-  // Consolidated Ref for Click Outside Detection (Faceted Dropdowns selector bar)
-  const filterBarRef = useRef<HTMLDivElement>(null);
+  // Sync state with shared canvas particle runtime
+  const syncRuntime = useCallback(() => {
+    if (!projectsRuntime) return;
+    projectsRuntime.stateRef.current = {
+      enabled: isActive,
+      activeProjectId: activeProject?.id ?? "",
+      hoveredProjectId,
+      selectedTag,
+      hoveredTag,
+      projects: projects.map((p) => ({
+        id: p.id,
+        category: p.category,
+        projectType: p.projectType,
+        tags: p.tags,
+      })),
+      reducedMotion: prefersReducedMotion,
+    };
+    projectsRuntime.requestRenderRef.current();
+  }, [
+    projectsRuntime,
+    isActive,
+    activeProject,
+    hoveredProjectId,
+    selectedTag,
+    hoveredTag,
+    projects,
+    prefersReducedMotion,
+  ]);
 
-  // Technologies List (Prominent tags from content)
-  const filterTechs = [
-    "Python",
-    "SQL",
-    "PostgreSQL",
-    "AWS SAM",
-    "AWS Lambda",
-    "TypeScript",
-    "Next.js",
-    "CI/CD"
-  ];
-
-  // Close dropdowns on clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (filterBarRef.current && !filterBarRef.current.contains(target)) {
-        setActiveDropdown(null);
+    syncRuntime();
+  }, [syncRuntime]);
+
+  // Clear transient hover/tag states when leaving section
+  useEffect(() => {
+    if (!isActive) {
+      setHoveredProjectId(null);
+      setHoveredTag(null);
+    }
+  }, [isActive]);
+
+  const handleSelectProject = useCallback(
+    (proj: LocalizedProject) => {
+      setActiveProjectId(proj.id);
+      if (selectedTag && !proj.tags.includes(selectedTag)) {
+        setSelectedTag(null);
+      }
+    },
+    [selectedTag]
+  );
+
+  const handleToggleTag = useCallback((tag: string) => {
+    setSelectedTag((prev) => (prev === tag ? null : tag));
+  }, []);
+
+  // Keyboard navigation (Up/Down to switch projects, Escape to clear selected tag)
+  useEffect(() => {
+    if (!isActive) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.key === "Escape" && selectedTag !== null) {
+        e.preventDefault();
+        setSelectedTag(null);
+        return;
+      }
+
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const currentIdx = projects.findIndex(
+          (p) => p.id === activeProject?.id
+        );
+        if (currentIdx === -1) return;
+        const delta = e.key === "ArrowDown" ? 1 : -1;
+        const nextIdx =
+          (currentIdx + delta + projects.length) % projects.length;
+        handleSelectProject(projects[nextIdx]);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isActive, selectedTag, projects, activeProject, handleSelectProject]);
 
-  // Filtering Logic: OR within groups, AND across groups
-  const filteredProjects = projects.filter(p => {
-    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(p.projectType);
-    const matchesArea = selectedAreas.length === 0 || selectedAreas.includes(p.category);
-    const matchesTech = selectedTechs.length === 0 || p.tags.some(t => selectedTechs.includes(t));
-    return matchesType && matchesArea && matchesTech;
-  });
+  if (!activeProject) return null;
 
-  // Dynamic count helpers showing intersection quantity
-  const getCountForType = (type: string) => {
-    return projects.filter(p => {
-      const matchesArea = selectedAreas.length === 0 || selectedAreas.includes(p.category);
-      const matchesTech = selectedTechs.length === 0 || p.tags.some(t => selectedTechs.includes(t));
-      return p.projectType === type && matchesArea && matchesTech;
-    }).length;
-  };
+  const activeStyle = getProjectCategoryStyle(activeProject.category);
+  const categoryLabel =
+    dict.projects.categories[
+      activeProject.category as keyof typeof dict.projects.categories
+    ] || activeProject.category;
 
-  const getCountForArea = (area: string) => {
-    return projects.filter(p => {
-      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(p.projectType);
-      const matchesTech = selectedTechs.length === 0 || p.tags.some(t => selectedTechs.includes(t));
-      return p.category === area && matchesType && matchesTech;
-    }).length;
-  };
-
-  const getCountForTech = (tech: string) => {
-    return projects.filter(p => {
-      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(p.projectType);
-      const matchesArea = selectedAreas.length === 0 || selectedAreas.includes(p.category);
-      return p.tags.includes(tech) && matchesType && matchesArea;
-    }).length;
-  };
-
-  // Toggle handlers
-  const handleToggleType = (type: string) => {
-    setSelectedTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-    );
-  };
-
-  const handleToggleArea = (area: string) => {
-    setSelectedAreas(prev =>
-      prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
-    );
-  };
-
-  const handleToggleTech = (tech: string) => {
-    setSelectedTechs(prev =>
-      prev.includes(tech) ? prev.filter(t => t !== tech) : [...prev, tech]
-    );
-  };
-
-  const filterProps = {
-    selectedTypes,
-    selectedAreas,
-    selectedTechs,
-    filterTechs,
-    dict,
-    getCountForType,
-    getCountForArea,
-    getCountForTech,
-    handleToggleType,
-    handleToggleArea,
-    handleToggleTech,
-  };
-
-  const handleClearFilters = () => {
-    setSelectedTypes([]);
-    setSelectedAreas([]);
-    setSelectedTechs([]);
-    setActiveDropdown(null);
-  };
-
-  const isAnyFilterActive = selectedTypes.length > 0 || selectedAreas.length > 0 || selectedTechs.length > 0;
-
-  // Results Text singular/plural
-  const resultsCountText = filteredProjects.length === 1
-    ? dict.projects.resultsCountOne
-    : dict.projects.resultsCountMany.replace("{count}", filteredProjects.length.toString());
-
-  // Variants for Grid and Cards
-  const gridVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  } as const;
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.45,
-        ease: "easeOut" as const,
-      },
-    },
-  } as const;
-
-  // Dropdown fade animation variants
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: 8 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.15, ease: "easeOut" as const }
-    },
-    exit: {
-      opacity: 0,
-      y: 8,
-      transition: { duration: 0.1, ease: "easeIn" as const }
-    }
-  } as const;
+  const privateLabel = isEs
+    ? "Trabajo Profesional · Código Privado"
+    : "Professional Work · Private Code";
+  const publicShortLabel = "GitHub";
+  const privateShortLabel = isEs ? "Privado" : "Private";
 
   return (
-    <section className={styles.section}>
-      <div className={styles.container}>
-        {/* Title and Subtitle */}
-        <div className={styles.header}>
-          <h1 className={styles.title}>{dict.projects.title}</h1>
-          <p className={styles.subtitle}>{dict.projects.subtitle}</p>
-        </div>
+    <section className={styles.section} aria-label={dict.projects.title}>
+      <div className={styles.stage}>
+        {/* ─── LEFT COLUMN: EDITORIAL INDEX ─────────────────────────────── */}
+        <nav
+          className={styles.indexCol}
+          aria-label={isEs ? "Índice de proyectos" : "Projects index"}
+        >
+          {projects.map((proj, idx) => {
+            const style = getProjectCategoryStyle(proj.category);
+            const isSelected = proj.id === activeProject.id;
+            const isTagMatch =
+              focusTag !== null && proj.tags.includes(focusTag);
+            const isDimmed = focusTag !== null && !isTagMatch;
+            const projCategoryLabel =
+              dict.projects.categories[
+                proj.category as keyof typeof dict.projects.categories
+              ] || proj.category;
+            const isPublic = Boolean(proj.codeUrl);
 
-        {/* Faceted Top Dropdowns selector bar */}
-        <div className={styles.filterBar} ref={filterBarRef}>
-          {/* Project Type Dropdown */}
-          <div className={styles.dropdownContainer}>
-            <button
-              className={`${styles.dropdownBtn} ${activeDropdown === "type" ? styles.dropdownBtnActive : ""}`}
-              onClick={() => setActiveDropdown(activeDropdown === "type" ? null : "type")}
-            >
-              <span>
-                {dict.projects.filterGroups.type}
-                {selectedTypes.length > 0 && ` (${selectedTypes.length})`}
-              </span>
-              <ChevronDown size={14} className={`${styles.chevron} ${activeDropdown === "type" ? styles.chevronRotated : ""}`} />
-            </button>
-            <AnimatePresence>
-              {activeDropdown === "type" && (
-                <motion.div
-                  className={styles.dropdownMenu}
-                  variants={dropdownVariants}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
+            return (
+              <button
+                key={proj.id}
+                type="button"
+                className={`${styles.indexItem} ${
+                  isSelected ? styles.indexItemActive : ""
+                } ${isTagMatch ? styles.indexItemTagMatch : ""} ${
+                  isDimmed ? styles.indexItemDimmed : ""
+                }`}
+                onClick={() => handleSelectProject(proj)}
+                onMouseEnter={() => setHoveredProjectId(proj.id)}
+                onMouseLeave={() => setHoveredProjectId(null)}
+                onFocus={() => setHoveredProjectId(proj.id)}
+                onBlur={() => setHoveredProjectId(null)}
+                aria-current={isSelected ? "true" : undefined}
+              >
+                <div
+                  className={styles.indexTextBlock}
+                  data-projects-readability-zone="true"
                 >
-                  <FilterGroupOptions type="type" {...filterProps} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Project Area Dropdown */}
-          <div className={styles.dropdownContainer}>
-            <button
-              className={`${styles.dropdownBtn} ${activeDropdown === "area" ? styles.dropdownBtnActive : ""}`}
-              onClick={() => setActiveDropdown(activeDropdown === "area" ? null : "area")}
-            >
-              <span>
-                {dict.projects.filterGroups.area}
-                {selectedAreas.length > 0 && ` (${selectedAreas.length})`}
-              </span>
-              <ChevronDown size={14} className={`${styles.chevron} ${activeDropdown === "area" ? styles.chevronRotated : ""}`} />
-            </button>
-            <AnimatePresence>
-              {activeDropdown === "area" && (
-                <motion.div
-                  className={styles.dropdownMenu}
-                  variants={dropdownVariants}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
-                >
-                  <FilterGroupOptions type="area" {...filterProps} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Project Technology Dropdown */}
-          <div className={styles.dropdownContainer}>
-            <button
-              className={`${styles.dropdownBtn} ${activeDropdown === "tech" ? styles.dropdownBtnActive : ""}`}
-              onClick={() => setActiveDropdown(activeDropdown === "tech" ? null : "tech")}
-            >
-              <span>
-                {dict.projects.filterGroups.tech}
-                {selectedTechs.length > 0 && ` (${selectedTechs.length})`}
-              </span>
-              <ChevronDown size={14} className={`${styles.chevron} ${activeDropdown === "tech" ? styles.chevronRotated : ""}`} />
-            </button>
-            <AnimatePresence>
-              {activeDropdown === "tech" && (
-                <motion.div
-                  className={styles.dropdownMenu}
-                  variants={dropdownVariants}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
-                >
-                  <FilterGroupOptions type="tech" {...filterProps} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Results Bar */}
-        <div className={styles.resultsBar}>
-          <span className={styles.resultsCount}>
-            {resultsCountText}
-          </span>
-          {isAnyFilterActive && (
-            <button className={styles.clearAllBtn} onClick={handleClearFilters}>
-              {dict.projects.clearAll}
-            </button>
-          )}
-        </div>
-
-        {/* Cards Grid */}
-        <AnimatePresence mode="wait">
-          {filteredProjects.length > 0 ? (
-            <motion.div
-              key={`${selectedTypes.join("-")}-${selectedAreas.join("-")}-${selectedTechs.join("-")}`}
-              className={styles.grid}
-              variants={gridVariants}
-              initial="hidden"
-              animate="show"
-              exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            >
-              {filteredProjects.map((project) => (
-                <motion.article
-                  key={project.id}
-                  className={styles.card}
-                  variants={cardVariants}
-                  layout
-                >
-                  <div className={styles.cardVisual}>
-                    <CategoryVisual category={project.category} />
-                  </div>
-
-                  <div className={styles.cardBody}>
-                    <div className={styles.cardMeta}>
-                      <span className={styles.typeBadge}>
-                        {project.projectType === "work" ? dict.projects.types.work : dict.projects.types.personal}
-                      </span>
-                      <span className={styles.cardCategory}>
-                        {dict.projects.categories[project.category as keyof typeof dict.projects.categories] || project.category}
-                      </span>
-                    </div>
-                    <h3 className={styles.cardTitle}>{project.title}</h3>
-                    <p className={styles.cardDesc}>{project.description}</p>
-
-                    <div className={styles.cardFooter}>
-                      <span className={styles.tagPreview}>
-                        {project.tags.slice(0, 3).join(" • ")}
-                      </span>
-                      <button
-                        type="button"
-                        className={styles.moreInfoBtn}
-                        onClick={() => setSelectedProject(project)}
+                  <div className={styles.indexMetaRow}>
+                    <span className={styles.indexNumber}>
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={styles.indexCategory}
+                      style={{ color: style.inkColor }}
+                    >
+                      {projCategoryLabel}
+                    </span>
+                    <span className={styles.metaSep} aria-hidden="true">
+                      ·
+                    </span>
+                    <span className={styles.indexNature}>
+                      {isPublic ? (
+                        <>
+                          <ArrowUpRight size={11} />
+                          <span>{publicShortLabel}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={10} />
+                          <span>{privateShortLabel}</span>
+                        </>
+                      )}
+                    </span>
+                    {isTagMatch && (
+                      <span
+                        className={styles.indexMatchedTag}
+                        style={{
+                          borderColor: `${style.color}66`,
+                          color: style.inkColor,
+                          backgroundColor: `${style.color}12`,
+                        }}
                       >
-                        {dict.projects.moreDetails} <ArrowRight size={13} />
-                      </button>
-                    </div>
+                        {focusTag}
+                      </span>
+                    )}
                   </div>
-                </motion.article>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="empty"
-              className={styles.noProjects}
-              initial={{ opacity: 0, y: 10 }}
+
+                  <span className={styles.indexTitle}>{proj.title}</span>
+                </div>
+
+                {/* Node marker on the inner channel edge where canvas particles orbit */}
+                <span
+                  id={`project-node-${proj.id}`}
+                  className={`${styles.nodeMarker} ${
+                    isSelected || isTagMatch ? styles.nodeMarkerActive : ""
+                  }`}
+                  style={{
+                    borderColor: style.color,
+                    color: style.color,
+                  }}
+                  aria-hidden="true"
+                >
+                  <span
+                    className={styles.nodeInnerCore}
+                    style={{ backgroundColor: style.color }}
+                  />
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* ─── RIGHT COLUMN: ACTIVE PROJECT STAGE ───────────────────────── */}
+        <div className={styles.detailCol}>
+          <AnimatePresence mode="wait">
+            <motion.article
+              key={activeProject.id}
+              className={styles.detailArticle}
+              initial={
+                prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }
+              }
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              exit={
+                prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }
+              }
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             >
-              <p>{dict.projects.noProjects}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              {/* Meta & Nature Row */}
+              <div
+                className={styles.detailHeader}
+                data-projects-readability-zone="true"
+              >
+                <div className={styles.detailMetaRow}>
+                  <span className={styles.categoryIndicator}>
+                    <span
+                      className={styles.categoryDot}
+                      style={{ backgroundColor: activeStyle.color }}
+                    />
+                    <span style={{ color: activeStyle.inkColor }}>
+                      {categoryLabel}
+                    </span>
+                  </span>
+
+                  {activeProject.codeUrl ? (
+                    <a
+                      href={activeProject.codeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.repoLinkPill}
+                      style={{
+                        borderColor: `${activeStyle.color}55`,
+                      }}
+                    >
+                      <span>GitHub · {dict.projects.viewCode}</span>
+                      <ArrowUpRight size={13} />
+                    </a>
+                  ) : (
+                    <span className={styles.privateBadge}>
+                      <Lock size={11} />
+                      <span>{privateLabel}</span>
+                    </span>
+                  )}
+
+                  {activeProject.demoUrl && activeProject.demoUrl !== "#" && (
+                    <a
+                      href={activeProject.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.repoLinkPill}
+                    >
+                      <span>{dict.projects.viewDemo}</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
+                </div>
+
+                <h2 className={styles.detailTitle}>{activeProject.title}</h2>
+                <p className={styles.detailDesc}>{activeProject.description}</p>
+              </div>
+
+              {/* 3 Concise Architectural Highlights receiving particle filaments */}
+              <ul className={styles.highlightsList}>
+                {activeProject.highlights.map((highlight, idx) => (
+                  <li key={idx} className={styles.highlightItem}>
+                    <span
+                      id={`project-highlight-${idx}`}
+                      className={styles.highlightDot}
+                      style={{
+                        borderColor: activeStyle.color,
+                        backgroundColor: `${activeStyle.color}22`,
+                      }}
+                      aria-hidden="true"
+                    />
+                    <span
+                      className={styles.highlightText}
+                      data-projects-readability-zone="true"
+                    >
+                      {highlight}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Interactive Stack Tags (click or hover to illuminate shared projects) */}
+              <div className={styles.tagsSection}>
+                <div className={styles.tagsRow}>
+                  {activeProject.tags.map((tag, idx) => {
+                    const isPinned = selectedTag === tag;
+                    const isFocused = focusTag === tag;
+                    const sharedCount = tagCounts.get(tag) ?? 1;
+
+                    return (
+                      <button
+                        key={tag}
+                        id={`project-tag-${idx}`}
+                        type="button"
+                        data-project-tag={tag}
+                        className={`${styles.tagPill} ${
+                          isFocused ? styles.tagPillActive : ""
+                        }`}
+                        style={
+                          isFocused
+                            ? {
+                                borderColor: activeStyle.color,
+                                color: activeStyle.inkColor,
+                                boxShadow: `0 0 18px ${activeStyle.color}30`,
+                              }
+                            : undefined
+                        }
+                        onClick={() => handleToggleTag(tag)}
+                        onMouseEnter={() => setHoveredTag(tag)}
+                        onMouseLeave={() => setHoveredTag(null)}
+                        onFocus={() => setHoveredTag(tag)}
+                        onBlur={() => setHoveredTag(null)}
+                        aria-pressed={isPinned}
+                      >
+                        <span>{tag}</span>
+                        {sharedCount > 1 && (
+                          <span
+                            className={styles.tagSharedCount}
+                            style={
+                              isFocused
+                                ? {
+                                    backgroundColor: activeStyle.color,
+                                    color: "#ffffff",
+                                  }
+                                : undefined
+                            }
+                            title={
+                              isEs
+                                ? `Compartido en ${sharedCount} proyectos`
+                                : `Shared across ${sharedCount} projects`
+                            }
+                          >
+                            {sharedCount}
+                          </span>
+                        )}
+                        {isPinned && (
+                          <X
+                            size={11}
+                            className={styles.tagClearIcon}
+                            aria-hidden="true"
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.article>
+          </AnimatePresence>
+        </div>
       </div>
-
-      {/* Floating mobile filter button */}
-      <button className={styles.mobileFiltersBtn} onClick={() => setIsMobileDrawerOpen(true)}>
-        <Filter size={16} />
-        {dict.projects.showFilters} {isAnyFilterActive && `(${selectedTypes.length + selectedAreas.length + selectedTechs.length})`}
-      </button>
-
-      {/* Mobile Drawer Overlay and Panel */}
-      <AnimatePresence>
-        {isMobileDrawerOpen && (
-          <>
-            <motion.div
-              className={styles.drawerOverlay}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileDrawerOpen(false)}
-            />
-            <motion.div
-              className={styles.drawerContent}
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 220 }}
-            >
-              <div className={styles.drawerHeader}>
-                <h3 className={styles.drawerTitle}>{dict.projects.title}</h3>
-                <button className={styles.drawerCloseBtn} onClick={() => setIsMobileDrawerOpen(false)}>
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className={styles.drawerBody}>
-                {/* Mobile accordion filters */}
-                <div className={styles.mobileFilterGroup}>
-                  <button className={styles.mobileGroupHeader} onClick={() => setTypeExpanded(!typeExpanded)}>
-                    <span className={styles.mobileGroupTitle}>{dict.projects.filterGroups.type}</span>
-                    <ChevronDown size={15} className={`${styles.chevron} ${typeExpanded ? styles.chevronRotated : ""}`} />
-                  </button>
-                  <motion.div
-                    initial={false}
-                    animate={{ height: typeExpanded ? "auto" : 0, opacity: typeExpanded ? 1 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={styles.mobileGroupOptions}
-                    style={{ pointerEvents: typeExpanded ? "auto" : "none" }}
-                  >
-                    <FilterGroupOptions type="type" {...filterProps} />
-                  </motion.div>
-                </div>
-
-                <div className={styles.mobileFilterGroup}>
-                  <button className={styles.mobileGroupHeader} onClick={() => setAreaExpanded(!areaExpanded)}>
-                    <span className={styles.mobileGroupTitle}>{dict.projects.filterGroups.area}</span>
-                    <ChevronDown size={15} className={`${styles.chevron} ${areaExpanded ? styles.chevronRotated : ""}`} />
-                  </button>
-                  <motion.div
-                    initial={false}
-                    animate={{ height: areaExpanded ? "auto" : 0, opacity: areaExpanded ? 1 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={styles.mobileGroupOptions}
-                    style={{ pointerEvents: areaExpanded ? "auto" : "none" }}
-                  >
-                    <FilterGroupOptions type="area" {...filterProps} />
-                  </motion.div>
-                </div>
-
-                <div className={styles.mobileFilterGroup}>
-                  <button className={styles.mobileGroupHeader} onClick={() => setTechExpanded(!techExpanded)}>
-                    <span className={styles.mobileGroupTitle}>{dict.projects.filterGroups.tech}</span>
-                    <ChevronDown size={15} className={`${styles.chevron} ${techExpanded ? styles.chevronRotated : ""}`} />
-                  </button>
-                  <motion.div
-                    initial={false}
-                    animate={{ height: techExpanded ? "auto" : 0, opacity: techExpanded ? 1 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={styles.mobileGroupOptions}
-                    style={{ pointerEvents: techExpanded ? "auto" : "none" }}
-                  >
-                    <FilterGroupOptions type="tech" {...filterProps} />
-                  </motion.div>
-                </div>
-              </div>
-
-              <div className={styles.drawerFooter}>
-                {isAnyFilterActive && (
-                  <button className={styles.secondaryBtn} onClick={handleClearFilters}>
-                    {dict.projects.clearAll}
-                  </button>
-                )}
-                <button className={styles.primaryBtn} onClick={() => setIsMobileDrawerOpen(false)}>
-                  OK ({filteredProjects.length})
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>      {/* Project Details Modal Pop-up */}
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectDetailsModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-            dict={dict}
-          />
-        )}
-      </AnimatePresence>
     </section>
   );
 }

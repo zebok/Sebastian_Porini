@@ -35,6 +35,12 @@ import {
   getTimelineGroupColor,
   setTimelineParticleTargets,
 } from "./renderers/TimelineParticleRenderer";
+import type { ProjectsRuntime } from "../visualizations/Projects.runtime";
+import {
+  drawProjectsParticles,
+  getProjectsGroupColor,
+  setProjectsParticleTargets,
+} from "./renderers/ProjectsParticleRenderer";
 
 interface NetworkNode extends BrainRendererNode {
   vx: number;
@@ -52,6 +58,7 @@ interface InteractiveNetworkProps {
   brainConcepts: BrainConceptViewModel[];
   brainRuntime: BrainRuntime;
   timelineRuntime: TimelineRuntime;
+  projectsRuntime: ProjectsRuntime;
 }
 
 // Centralized Theme Colors config
@@ -65,9 +72,16 @@ const getRGBA = (color: { r: number; g: number; b: number }, alpha: number) => {
   return `rgba(${Math.round(color.r)}, ${Math.round(color.g)}, ${Math.round(color.b)}, ${alpha})`;
 };
 
-const getGroupColor = (group: number, section?: SectionType) => {
+const getGroupColor = (
+  group: number,
+  section?: SectionType,
+  projectsRuntime?: ProjectsRuntime
+) => {
   if (section === "timeline") {
     return getTimelineGroupColor(group);
+  }
+  if (section === "projects") {
+    return getProjectsGroupColor(group, projectsRuntime);
   }
   if (group === 0) return THEME_COLORS.accent;
   if (group === 1) return THEME_COLORS.accent2;
@@ -174,23 +188,6 @@ const setVennTargets = (
         node.ty = circle.y + Math.sin(orbitAngle) * (coreR + vibration);
       }
     }
-  });
-};
-
-const setProjectsTargets = (
-  nodes: NetworkNode[],
-  w: number,
-  h: number,
-  frameCount: number
-) => {
-  nodes.forEach((node, i) => {
-    const seed = i * 223.7;
-    const baseX = ((seed * 71) % (w - 120)) + 60;
-    const baseY = ((seed * 37) % (h - 120)) + 60;
-    const driftX = Math.sin(frameCount * 0.003 + seed) * 30;
-    const driftY = Math.cos(frameCount * 0.003 + seed * 1.3) * 30;
-    node.tx = baseX + driftX;
-    node.ty = baseY + driftY;
   });
 };
 
@@ -490,6 +487,7 @@ export default function InteractiveNetwork({
   brainConcepts,
   brainRuntime,
   timelineRuntime,
+  projectsRuntime,
 }: InteractiveNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spa = useSPA();
@@ -781,7 +779,7 @@ export default function InteractiveNetwork({
           break;
         }
         case "projects": {
-          setProjectsTargets(nodes, w, h, frameCount);
+          setProjectsParticleTargets(nodes, w, h, frameCount, projectsRuntime);
           break;
         }
         default:
@@ -857,7 +855,7 @@ export default function InteractiveNetwork({
 
       // Update positions and smooth RGB transitions
       nodes.forEach((node, i) => {
-        const targetColor = getGroupColor(node.group, section);
+        const targetColor = getGroupColor(node.group, section, projectsRuntime);
         if (!renderPolicy.animateContinuously) {
           node.x = node.tx;
           node.y = node.ty;
@@ -916,6 +914,21 @@ export default function InteractiveNetwork({
               const force = (limitDist - dist) / limitDist;
               node.x -= dx * force * 0.04;
               node.y -= dy * force * 0.04;
+            }
+          }
+        } else if (section === "projects") {
+          node.x += (node.tx - node.x) * 0.08;
+          node.y += (node.ty - node.y) * 0.08;
+
+          if (mouse.active) {
+            const dx = mouse.x - node.x;
+            const dy = mouse.y - node.y;
+            const dist = Math.hypot(dx, dy);
+            const limitDist = 56;
+            if (dist > 0.001 && dist < limitDist) {
+              const force = (limitDist - dist) / limitDist;
+              node.x -= dx * force * 0.035;
+              node.y -= dy * force * 0.035;
             }
           }
         } else {
@@ -1039,7 +1052,7 @@ export default function InteractiveNetwork({
       const selectedSet = currentSpa?.selectedVennCircle ?? null;
       const connectionDist = (section === "about" && selectedSet !== null) ? (w < 768 ? 130 : 170) : (w < 768 ? 85 : 120);
       const connectionNodeCount =
-        section === "skills" || section === "timeline"
+        section === "skills" || section === "timeline" || section === "projects"
           ? 0
           : Math.min(nodes.length, 200);
       ctx.lineWidth = selectedSet !== null ? 0.75 : 0.5;
@@ -1111,6 +1124,16 @@ export default function InteractiveNetwork({
           mouse,
           globalDriftX,
           globalDriftY
+        );
+      } else if (section === "projects") {
+        drawProjectsParticles(
+          ctx,
+          nodes,
+          projectsRuntime,
+          mouse,
+          globalDriftX,
+          globalDriftY,
+          frameCount
         );
       } else if (section === "skills") {
         if (
@@ -1388,6 +1411,7 @@ export default function InteractiveNetwork({
     document.body.addEventListener("mouseleave", handleMouseLeave);
     brainRuntime.requestRenderRef.current = requestRender;
     timelineRuntime.requestRenderRef.current = requestRender;
+    projectsRuntime.requestRenderRef.current = requestRender;
 
     resizeCanvas();
 
@@ -1404,8 +1428,11 @@ export default function InteractiveNetwork({
       if (timelineRuntime.requestRenderRef.current === requestRender) {
         timelineRuntime.requestRenderRef.current = () => undefined;
       }
+      if (projectsRuntime.requestRenderRef.current === requestRender) {
+        projectsRuntime.requestRenderRef.current = () => undefined;
+      }
     };
-  }, [brainConcepts, brainRuntime, prefersReducedMotion, timelineRuntime]);
+  }, [brainConcepts, brainRuntime, prefersReducedMotion, timelineRuntime, projectsRuntime]);
 
   return (
     <canvas

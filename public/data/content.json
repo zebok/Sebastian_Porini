@@ -1555,32 +1555,32 @@
       "id": "geological-data-platform",
       "title": {
         "en": "Geological Data & Serverless Platform",
-        "es": "Plataforma de Datos Geológicos & Backend Serverless"
+        "es": "Plataforma de Datos Geológicos & Serverless"
       },
       "description": {
-        "en": "Relational schema in PostgreSQL (AWS RDS) with decoupled AWS Lambda ingestion and least-privilege IAM isolation within a private VPC.",
-        "es": "Diseño de un esquema relacional en PostgreSQL (AWS RDS) con ingesta desacoplada vía AWS Lambda y aislamiento estricto de accesos vía IAM en VPC privada."
+        "en": "Relational PostgreSQL schema on AWS RDS with decoupled Lambda ingestion and Zero-Trust VPC isolation.",
+        "es": "Esquema relacional en PostgreSQL (AWS RDS) con ingesta serverless en Lambda y aislamiento Zero-Trust en VPC privada."
       },
       "category": "data",
       "projectType": "work",
       "tags": [
+        "AWS",
         "PostgreSQL",
-        "AWS RDS",
-        "AWS Lambda",
-        "Zero-Trust",
-        "IAM",
-        "SQL"
+        "Python",
+        "SQL",
+        "Zero-Trust / VPC",
+        "ETL"
       ],
       "highlights": {
         "en": [
-          "Centralized geological drilling data into a unified PostgreSQL single source of truth.",
-          "Architected decoupled serverless ingestion pipelines on AWS Lambda.",
-          "Enforced least-privilege IAM policies and private VPC database isolation."
+          "Single source of truth in PostgreSQL for field drilling data.",
+          "Decoupled serverless ingestion pipelines on AWS Lambda.",
+          "Private VPC isolation and least-privilege IAM policies."
         ],
         "es": [
-          "Centralización de datos geológicos de campo como única fuente de verdad en PostgreSQL.",
-          "Diseño de arquitectura de ingesta desacoplada y serverless sobre AWS Lambda.",
-          "Aislamiento estricto de base de datos en VPC privada y políticas IAM de menor privilegio."
+          "Fuente única de verdad en PostgreSQL para datos de perforación.",
+          "Pipelines de ingesta desacoplados y serverless sobre AWS Lambda.",
+          "Aislamiento en VPC privada y políticas IAM de mínimo privilegio."
         ]
       },
       "featured": true
@@ -1592,28 +1592,28 @@
         "es": "Pipeline de Ingesta & Resolución de Identidades"
       },
       "description": {
-        "en": "Modular Python pipeline for ingesting, normalizing, and deduplicating public legal professional records, with human-in-the-loop review for ambiguous matches.",
-        "es": "Pipeline modular en Python para ingesta, normalización y deduplicación de registros legales públicos, con interfaz de revisión para casos con margen de ambigüedad."
+        "en": "Modular Python pipeline normalizing and deduplicating public records with human-in-the-loop review.",
+        "es": "Pipeline modular en Python para normalizar y deduplicar registros públicos con revisión human-in-the-loop."
       },
       "category": "data",
       "projectType": "personal",
       "tags": [
         "Python",
-        "Data Cleaning",
-        "Entity Resolution",
-        "Human-in-the-Loop",
-        "ETL"
+        "SQL",
+        "ETL",
+        "Data Modeling",
+        "Entity Resolution"
       ],
       "highlights": {
         "en": [
-          "Ingested and normalized thousands of public professional records across disjoint sources.",
-          "Built rule-based similarity deduplication logic to resolve ambiguous identity matches.",
-          "Integrated human-in-the-loop review interface to inspect edge cases and maximize precision."
+          "Extraction and normalization of thousands of disjoint public records.",
+          "Rule-based similarity engine resolving ambiguous identity matches.",
+          "Human-in-the-loop review workflow to validate edge cases."
         ],
         "es": [
-          "Ingesta y normalización de miles de registros profesionales de fuentes públicas dispersas.",
-          "Lógica de resolución de identidades y reglas de similitud para conciliar duplicados.",
-          "Instancia de revisión humana (human-in-the-loop) para casos ambiguos, maximizando precisión."
+          "Extracción y normalización de miles de registros públicos dispersos.",
+          "Motor de similitud y reglas para conciliar identidades duplicadas.",
+          "Flujo de revisión humana (human-in-the-loop) para casos ambiguos."
         ]
       },
       "featured": true,
@@ -1626,29 +1626,28 @@
         "es": "Infraestructura como Código (IaC) & Hardening Cloud"
       },
       "description": {
-        "en": "100% automated AWS provisioning using SAM and CloudFormation, subnet segregation, and auditable CI/CD pipelines with semantic versioning.",
-        "es": "Aprovisionamiento 100% automatizado en AWS con SAM y CloudFormation, segmentación de subredes públicas/privadas y pipelines de CI/CD con migraciones auditables."
+        "en": "Automated AWS provisioning with SAM & CloudFormation, network segmentation, and auditable CI/CD pipelines.",
+        "es": "Aprovisionamiento automatizado en AWS con SAM y CloudFormation, red segmentada y despliegues CI/CD auditables."
       },
       "category": "software",
       "projectType": "work",
       "tags": [
-        "AWS SAM",
-        "CloudFormation",
-        "VPC Hardening",
+        "AWS",
+        "PostgreSQL",
+        "Zero-Trust / VPC",
         "CI/CD",
-        "GitHub Actions",
-        "FinOps"
+        "AWS SAM"
       ],
       "highlights": {
         "en": [
-          "Automated zero-touch, fully reproducible cloud deployments with AWS SAM & CloudFormation.",
-          "Hardened VPC network topology, segregating public and private subnets with a secure NAT instance.",
-          "Automated database schema migrations and semantic release versioning in GitHub Actions."
+          "100% reproducible cloud deployments with AWS SAM & CloudFormation.",
+          "Hardened VPC topology with isolated subnets and secure NAT.",
+          "Auditable database migrations and semantic releases in GitHub Actions."
         ],
         "es": [
-          "Aprovisionamiento 100% automatizado y reproducible de infraestructura cloud con AWS SAM.",
-          "Hardening de topología de red VPC, aislando subredes y optimizando salida segura con NAT instance.",
-          "Migraciones de base de datos auditables y versionado semántico automatizado en CI/CD."
+          "Infraestructura cloud 100% reproducible con AWS SAM y CloudFormation.",
+          "Hardening de red VPC aislando subredes públicas y privadas.",
+          "Migraciones auditables y versionado semántico en GitHub Actions."
         ]
       },
       "featured": true
@@ -1656,33 +1655,32 @@
     {
       "id": "portfolio-cv-engine",
       "title": {
-        "en": "Portfolio Web & Multi-Profile Engine",
-        "es": "Portfolio Web & Multi-Profile Engine"
+        "en": "Interactive Portfolio & Multi-Profile CV Engine",
+        "es": "Portfolio Interactivo & Multi-Profile CV Engine"
       },
       "description": {
-        "en": "Interactive Single Page Application with decoupled single-source-of-truth data architecture, driving both the web interface and tailored PDF resumes.",
-        "es": "Aplicación web interactiva con arquitectura Single Source of Truth, que alimenta tanto la interfaz web como la compilación automatizada de CVs en PDF."
+        "en": "Single-source-of-truth SPA driving both interactive particle visualizations and automated PDF resumes.",
+        "es": "SPA con arquitectura Single Source of Truth que alimenta las visualizaciones interactivas y compila CVs en PDF."
       },
       "category": "product",
       "projectType": "personal",
       "tags": [
-        "Next.js",
-        "TypeScript",
-        "UI/UX",
         "Data Modeling",
-        "Puppeteer",
+        "CI/CD",
+        "TypeScript",
+        "Next.js",
         "GSAP"
       ],
       "highlights": {
         "en": [
-          "Ideation, UX design, and development of responsive interactive data visualizations with GSAP & Framer Motion.",
-          "Decoupled JSON data model driving bilingual presentation (EN, ES) across all sections.",
-          "Automated Node.js build pipeline compiling role-tailored PDF resumes without redundancy."
+          "Interactive Canvas 2D particle visualizations with GSAP & Framer Motion.",
+          "Decoupled bilingual JSON model as single source of truth.",
+          "Automated Node.js build pipeline compiling role-tailored PDF resumes."
         ],
         "es": [
-          "Ideación, diseño UX y desarrollo de visualizaciones interactivas con GSAP y Framer Motion.",
-          "Modelo de datos JSON desacoplado que gobierna contenidos en inglés y español en todas las secciones.",
-          "Pipeline automatizado en Node.js que compila variantes de CV en PDF sin duplicación de datos."
+          "Visualizaciones interactivas de partículas en Canvas 2D, GSAP y Framer Motion.",
+          "Modelo de datos JSON bilingüe desacoplado como única fuente de verdad.",
+          "Pipeline automatizado en Node.js que compila variantes de CV en PDF."
         ]
       },
       "featured": true,

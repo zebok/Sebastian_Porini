@@ -17,6 +17,10 @@ import {
   createTimelineRuntime,
   type TimelineRuntime,
 } from "../visualizations/Timeline.runtime";
+import {
+  createProjectsRuntime,
+  type ProjectsRuntime,
+} from "../visualizations/Projects.runtime";
 
 // Import Section Components
 import Hero from "../sections/Hero/Hero";
@@ -57,6 +61,11 @@ export default function SPALayout({
     timelineRuntimeRef.current = createTimelineRuntime();
   }
   const timelineRuntime = timelineRuntimeRef.current;
+  const projectsRuntimeRef = useRef<ProjectsRuntime | null>(null);
+  if (projectsRuntimeRef.current === null) {
+    projectsRuntimeRef.current = createProjectsRuntime();
+  }
+  const projectsRuntime = projectsRuntimeRef.current;
   const [activeSection, setActiveSection] = useState<SectionType>(initialSection);
   const [nextSection, setNextSection] = useState<SectionType | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -208,6 +217,7 @@ export default function SPALayout({
         brainConcepts={data.brain.concepts}
         brainRuntime={brainRuntime}
         timelineRuntime={timelineRuntime}
+        projectsRuntime={projectsRuntime}
       />
 
       <main id="main-content" className={layoutStyles.main}>
@@ -256,7 +266,13 @@ export default function SPALayout({
             className={layoutStyles.sectionLayer}
             style={getSectionStyle("projects")}
           >
-            <Projects dict={dict} projects={data.projects} />
+            <Projects
+              dict={dict}
+              projects={data.projects}
+              projectsRuntime={projectsRuntime}
+              isActive={activeSection === "projects" || nextSection === "projects"}
+              lang={lang}
+            />
           </div>
         </div>
       </main>
