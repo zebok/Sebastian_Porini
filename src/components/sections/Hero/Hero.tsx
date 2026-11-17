@@ -4,11 +4,9 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, FileDown, Mail } from "lucide-react";
 import { useSPA } from "@/components/layout/SPAContext";
-import { LocalizedPersonalInfo } from "@/lib/data";
-import { Dictionary } from "@/lib/i18n";
-import { getCvDownloadInfo } from "@/lib/cv";
+import type { LocalizedPersonalInfo } from "@/lib/data";
+import type { Dictionary } from "@/lib/i18n";
 import styles from "./Hero.module.css";
 
 const AnimatedText = ({
@@ -68,20 +66,13 @@ interface SegmentContentData {
   name?: string;
   tagline?: string;
   valueProp?: string;
-  email?: string;
-  ctaProjectsLabel?: string;
-  ctaContactLabel?: string;
-  cvUrl?: string;
-  downloadFilename?: string;
-  downloadLabel?: string;
 }
 
 interface SegmentContentProps {
   content: SegmentContentData | null;
-  onViewProjects?: () => void;
 }
 
-const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
+const SegmentContent = ({ content }: SegmentContentProps) => {
   if (!content) return null;
 
   return (
@@ -104,38 +95,6 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
           {content.valueProp ? (
             <p className={styles.valueProp}>{content.valueProp}</p>
           ) : null}
-          <div className={styles.heroCtaWrapper}>
-            {onViewProjects && (
-              <button
-                type="button"
-                onClick={onViewProjects}
-                className={styles.heroPrimaryBtn}
-              >
-                <span>{content.ctaProjectsLabel}</span>
-                <ArrowRight size={14} className={styles.heroBtnArrow} />
-              </button>
-            )}
-            {content.cvUrl && (
-              <a
-                href={content.cvUrl}
-                download={content.downloadFilename}
-                className={styles.heroCvBtn}
-              >
-                <FileDown size={14} className={styles.heroCvIcon} />
-                <span>{content.downloadLabel}</span>
-                <span className={styles.heroPdfBadge}>PDF</span>
-              </a>
-            )}
-            {content.email && (
-              <a
-                href={`mailto:${content.email}`}
-                className={styles.heroContactLink}
-              >
-                <Mail size={14} />
-                <span>{content.ctaContactLabel}</span>
-              </a>
-            )}
-          </div>
         </div>
       ) : content.type === "projection" ? (
         <div
@@ -201,7 +160,7 @@ const SegmentContent = ({ content, onViewProjects }: SegmentContentProps) => {
   );
 };
 
-export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
+export default function Hero({ personal }: HeroProps) {
   const spa = useSPA();
 
   const [localActive, setLocalActive] = useState<number[]>([]);
@@ -344,27 +303,12 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
 
       if (hasInteraction) return null;
 
-      const { url: activeCvUrl, filename: downloadFilename } =
-        getCvDownloadInfo(personal.contactDetails.cvPath, lang);
-
       return {
         id: "home-intro",
         type: "home",
         name: personal.name,
         tagline: personal.tagline,
         valueProp: personal.description,
-        email: personal.contactDetails.email,
-        ctaProjectsLabel:
-          dict?.hero?.ctaProjects ||
-          (lang === "es" ? "Ver Proyectos" : "View Projects"),
-        ctaContactLabel:
-          dict?.hero?.ctaContact ||
-          (lang === "es" ? "Contactar" : "Get in Touch"),
-        cvUrl: activeCvUrl,
-        downloadFilename,
-        downloadLabel:
-          dict?.contact?.downloadCv ||
-          (lang === "es" ? "Descargar CV" : "Download CV"),
       };
     }
     if (slot === "left") {
@@ -495,9 +439,6 @@ export default function Hero({ personal, dict, lang = "en" }: HeroProps) {
               <SegmentContent
                 key={topContent.id}
                 content={topContent}
-                onViewProjects={
-                  spa ? () => spa.setActiveSection("projects") : undefined
-                }
               />
             )}
           </AnimatePresence>
