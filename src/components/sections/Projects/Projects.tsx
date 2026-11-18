@@ -35,6 +35,7 @@ export default function Projects({
   const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [hoveredTag, setHoveredTag] = useState<string | null>(null);
+  const [gustoVariant, setGustoVariant] = useState<"scoop" | "radar" | "matrix">("scoop");
 
   const focusTag = hoveredTag ?? selectedTag;
 
@@ -83,6 +84,7 @@ export default function Projects({
         tags: p.tags,
       })),
       reducedMotion: prefersReducedMotion,
+      gustoVariant,
     };
     projectsRuntime.requestRenderRef.current();
   }, [
@@ -94,6 +96,7 @@ export default function Projects({
     hoveredTag,
     projects,
     prefersReducedMotion,
+    gustoVariant,
   ]);
 
   useEffect(() => {
@@ -342,6 +345,62 @@ export default function Projects({
                         <span>{dict.projects.viewDemo}</span>
                         <ExternalLink size={13} />
                       </a>
+                    )}
+
+                    {activeProject.id === "gusto-helado" && (
+                      <div className={styles.gustoVariantGroup}>
+                        <span className={styles.gustoVariantLabel}>
+                          {isEs ? "Partículas:" : "Particles:"}
+                        </span>
+                        <button
+                          type="button"
+                          className={`${styles.gustoVariantBtn} ${
+                            gustoVariant === "scoop"
+                              ? styles.gustoVariantBtnActive
+                              : ""
+                          }`}
+                          onClick={() => setGustoVariant("scoop")}
+                          title={
+                            isEs
+                              ? "Bocha & Cono de Ingesta"
+                              : "Scoop & Ingestion Cone"
+                          }
+                        >
+                          🍨 {isEs ? "Bocha & Cono" : "Scoop & Cone"}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.gustoVariantBtn} ${
+                            gustoVariant === "radar"
+                              ? styles.gustoVariantBtnActive
+                              : ""
+                          }`}
+                          onClick={() => setGustoVariant("radar")}
+                          title={
+                            isEs
+                              ? "Radar Geoespacial & Haversine"
+                              : "Geospatial Radar & Haversine"
+                          }
+                        >
+                          📡 {isEs ? "Radar Espacial" : "Spatial Radar"}
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.gustoVariantBtn} ${
+                            gustoVariant === "matrix"
+                              ? styles.gustoVariantBtnActive
+                              : ""
+                          }`}
+                          onClick={() => setGustoVariant("matrix")}
+                          title={
+                            isEs
+                              ? "Matriz Polar de Sabores"
+                              : "Flavor Polar Matrix"
+                          }
+                        >
+                          🧭 {isEs ? "Matriz Sabores" : "Flavor Matrix"}
+                        </button>
+                      </div>
                     )}
                   </div>
                 </motion.div>
