@@ -366,7 +366,7 @@ export default function Projects({
                               : "Scoop & Ingestion Cone"
                           }
                         >
-                          🍨 {isEs ? "Bocha & Cono" : "Scoop & Cone"}
+                          🍨 {isEs ? "Doble Bocha" : "Double Scoop"}
                         </button>
                         <button
                           type="button"
