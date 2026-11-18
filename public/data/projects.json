@@ -99,5 +99,41 @@
       ]
     },
     "featured": true
+  },
+  {
+    "id": "gusto-helado",
+    "title": {
+      "en": "GustoHelado — Log & Spatial Recommender",
+      "es": "GustoHelado — Bitácora & Recomendador Espacial"
+    },
+    "description": {
+      "en": "Personal tasting journal and geospatial recommendation engine ranking Buenos Aires ice cream shops using a custom Blend Score.",
+      "es": "Bitácora personal y motor de recomendación geoespacial que rankea heladerías en Buenos Aires mediante un Blend Score propio."
+    },
+    "category": "data",
+    "projectType": "personal",
+    "tags": [
+      "Python",
+      "ETL",
+      "Data Modeling",
+      "React",
+      "TypeScript",
+      "CI/CD"
+    ],
+    "highlights": {
+      "en": [
+        "Automated ETL pipeline in Python & Pandas scheduled via GitHub Actions.",
+        "Real-time geospatial scoring using Haversine distance and personal ratings.",
+        "Zero-cost static serverless architecture with live map and interactive KPIs."
+      ],
+      "es": [
+        "Pipeline ETL automatizado en Python y Pandas orquestado con GitHub Actions.",
+        "Algoritmo de scoring geoespacial en tiempo real con fórmula de Haversine.",
+        "Arquitectura estática serverless de costo cero con mapa en vivo y KPIs interactivos."
+      ]
+    },
+    "featured": true,
+    "demoUrl": "https://zebok.github.io/GUSTOHELADO/",
+    "codeUrl": "https://github.com/zebok/GUSTOHELADO"
   }
 ]
