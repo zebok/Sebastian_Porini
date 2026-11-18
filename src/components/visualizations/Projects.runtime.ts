@@ -54,7 +54,6 @@ export interface ProjectsRuntimeState {
   hoveredTag: string | null;
   projects: ProjectsRuntimeItem[];
   reducedMotion: boolean;
-  gustoVariant?: "scoop" | "radar" | "matrix";
 }
 
 export interface ProjectsRuntime {

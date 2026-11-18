@@ -469,11 +469,14 @@ const setPortfolioConceptTargets = (
 };
 
 /**
- * ─── CONCEPT 4A (GUSTOHELADO): DOBLE BOCHA ARTESANAL & CUCURUCHO ─────────────
- * Stage A: Flujo de Ingesta en Cucurucho (Cono Waffle Crocante / Ámbar)
- * Stage B: Bocha 1 Inferior (Dulce de Leche / Chocolate Artesanal)
- * Stage C: Bocha 2 Superior (Frambuesa Silvestre / Fruto Rojo Vivo)
- * Stage D: Toppings de Pistacho, Chips y Destellos Aromáticos
+ * ─── CONCEPT 4 (GUSTOHELADO): DOBLE BOCHA ARTESANAL & CUCURUCHO ──────────────
+ * Stage A1: Contorno del Cucurucho (Bordes en V del cono waffle crocante)
+ * Stage A2: Flujo Interno Liviano (Ingesta desaturada y espaciada desde la punta)
+ * Stage B1: Contorno Exterior de Bocha 1 (Arco perimetral de Dulce de Leche)
+ * Stage B2: Volumen Interior de Bocha 1 (Masa cremosa rotativa)
+ * Stage C1: Contorno Exterior de Bocha 2 (Cúpula perimetral de Frambuesa)
+ * Stage C2: Volumen Interior de Bocha 2 (Masa cremosa superior)
+ * Stage D:  Toppings de Pistacho, Maracuyá y Destellos Aromáticos
  */
 const setGustoHeladoScoopTargets = (
   particles: ProjectsRendererParticle[],
@@ -482,220 +485,129 @@ const setGustoHeladoScoopTargets = (
 ) => {
   const { cx, cy, scale } = stage;
   const total = particles.length;
-  const stageAEnd = Math.floor(total * 0.26);
-  const stageBEnd = Math.floor(total * 0.62);
-  const stageCEnd = Math.floor(total * 0.88);
+
+  const endA1 = Math.floor(total * 0.1);  // Contorno cono
+  const endA2 = Math.floor(total * 0.18); // Flujo interno liviano
+  const endB1 = Math.floor(total * 0.32); // Contorno bocha 1
+  const endB2 = Math.floor(total * 0.56); // Volumen bocha 1
+  const endC1 = Math.floor(total * 0.7);  // Contorno bocha 2
+  const endC2 = Math.floor(total * 0.9);  // Volumen bocha 2
+  // Restante (> 0.9): Toppings y aroma
 
   const coneTipY = cy + 124 * scale;
   const coneTopY = cy + 30 * scale;
   const coneHalfW = 44 * scale;
 
+  const scoop1X = cx - 2 * scale;
   const scoop1Y = cy + 6 * scale;
   const scoop1R = 48 * scale;
 
+  const scoop2X = cx + 3 * scale;
   const scoop2Y = cy - 46 * scale;
   const scoop2R = 40 * scale;
 
   particles.forEach((p, idx) => {
-    // Stage A: Upward Data Stream inside the Waffle Cone (Waffle Amber)
-    if (idx < stageAEnd) {
-      const speed = 0.0018 + (idx % 3) * 0.00025;
-      const progress = (pseudoRandom(p.id * 1.5) + frameCount * speed) % 1;
-      const currentHw = coneHalfW * (1 - progress);
-      const lateralFactor = (pseudoRandom(p.id * 3.7) - 0.5) * 1.7;
-      const xOffset = lateralFactor * currentHw;
+    // ─── 1. CONO: CONTORNO EXTERIOR (Bordes en V del Cucurucho) ─────────────
+    if (idx < endA1) {
+      const isLeft = idx % 2 === 0;
+      const speed = 0.0016 + (idx % 2) * 0.0003;
+      const progress = (pseudoRandom(p.id * 1.7) + frameCount * speed) % 1;
+
+      if (isLeft) {
+        p.tx = cx - coneHalfW * (1 - progress);
+        p.ty = coneTopY + (coneTipY - coneTopY) * progress;
+      } else {
+        p.tx = cx + coneHalfW * progress;
+        p.ty = coneTipY - (coneTipY - coneTopY) * progress;
+      }
+      return;
+    }
+
+    // ─── 2. CONO: FLUJO INTERNO LIVIANO (Desaturado y espaciado) ────────────
+    if (idx < endA2) {
+      const slot = idx - endA1;
+      const speed = 0.0014 + (slot % 2) * 0.0002;
+      const progress = (pseudoRandom(p.id * 2.1) + frameCount * speed) % 1;
+      const currentHw = coneHalfW * (1 - progress) * 0.65;
+      const lateral = ((slot % 3) - 1) * currentHw * 0.6;
       const py = coneTopY + (coneTipY - coneTopY) * progress;
-      const jitter = Math.sin(frameCount * 0.035 + p.id) * 1.4 * scale;
+      const jitter = Math.sin(frameCount * 0.028 + p.id) * 1.0 * scale;
 
-      p.tx = cx + xOffset + jitter;
+      p.tx = cx + lateral + jitter;
       p.ty = py;
       return;
     }
 
-    // Stage B: Bocha 1 (Inferior: Dulce de Leche Artesanal)
-    if (idx < stageBEnd) {
-      const slot = idx - stageAEnd;
-      const countB = stageBEnd - stageAEnd;
-      const normalizedSlot = slot / countB;
-      const latAngle = Math.PI * 0.12 + normalizedSlot * Math.PI * 0.76;
-      const speed = 0.0028 * (slot % 2 === 0 ? 1 : -0.85);
-      const angle = p.angleOffset + frameCount * speed;
-      const breathing =
-        Math.sin(frameCount * 0.026 + slot * 0.22) * 2.2 * scale;
-      const radius = scoop1R + breathing + ((slot % 3) - 1) * 3 * scale;
-
-      const px =
-        cx - 2 * scale + Math.cos(angle) * Math.sin(latAngle) * radius;
-      const py = scoop1Y - Math.cos(latAngle) * (radius * 0.9);
+    // ─── 3. BOCHA 1: CONTORNO EXTERIOR (Dulce de Leche) ─────────────────────
+    if (idx < endB1) {
+      const speed = 0.0022;
+      const progress = (pseudoRandom(p.id * 1.4) + frameCount * speed) % 1;
+      const arcAngle = Math.PI * 0.95 - progress * Math.PI * 0.9;
+      const px = scoop1X + Math.cos(arcAngle) * scoop1R;
+      const py = scoop1Y - Math.sin(arcAngle) * (scoop1R * 0.92);
 
       p.tx = px;
       p.ty = py;
       return;
     }
 
-    // Stage C: Bocha 2 (Superior: Frambuesa Silvestre)
-    if (idx < stageCEnd) {
-      const slot = idx - stageBEnd;
-      const countC = stageCEnd - stageBEnd;
-      const normalizedSlot = slot / countC;
-      const latAngle = Math.PI * 0.08 + normalizedSlot * Math.PI * 0.8;
-      const speed = 0.0034 * (slot % 2 === 0 ? -1 : 0.9);
+    // ─── 4. BOCHA 1: VOLUMEN INTERNO (Dulce de Leche) ───────────────────────
+    if (idx < endB2) {
+      const slot = idx - endB1;
+      const count = endB2 - endB1;
+      const normalized = slot / count;
+      const latAngle = Math.PI * 0.15 + normalized * Math.PI * 0.7;
+      const speed = 0.0026 * (slot % 2 === 0 ? 1 : -0.85);
       const angle = p.angleOffset + frameCount * speed;
       const breathing =
-        Math.sin(frameCount * 0.032 + slot * 0.28) * 1.8 * scale;
-      const radius = scoop2R + breathing + ((slot % 3) - 1) * 2.5 * scale;
+        Math.sin(frameCount * 0.024 + slot * 0.25) * 2.0 * scale;
+      const radius = scoop1R * 0.82 + breathing;
 
-      const px =
-        cx + 3 * scale + Math.cos(angle) * Math.sin(latAngle) * radius;
-      const py = scoop2Y - Math.cos(latAngle) * (radius * 0.92);
+      p.tx = scoop1X + Math.cos(angle) * Math.sin(latAngle) * radius;
+      p.ty = scoop1Y - Math.cos(latAngle) * (radius * 0.88);
+      return;
+    }
+
+    // ─── 5. BOCHA 2: CONTORNO EXTERIOR (Frambuesa Silvestre) ────────────────
+    if (idx < endC1) {
+      const speed = 0.0024;
+      const progress = (pseudoRandom(p.id * 1.9) + frameCount * speed) % 1;
+      const domeAngle = Math.PI - progress * Math.PI;
+      const px = scoop2X + Math.cos(domeAngle) * scoop2R;
+      const py = scoop2Y - Math.sin(domeAngle) * (scoop2R * 0.96);
 
       p.tx = px;
       p.ty = py;
       return;
     }
 
-    // Stage D: Toppings (Pistacho & Oro) and sweet aroma sparkles
-    const slot = idx - stageCEnd;
-    const speed = 0.0016 + (slot % 3) * 0.0002;
+    // ─── 6. BOCHA 2: VOLUMEN INTERNO (Frambuesa Silvestre) ──────────────────
+    if (idx < endC2) {
+      const slot = idx - endC1;
+      const count = endC2 - endC1;
+      const normalized = slot / count;
+      const latAngle = Math.PI * 0.12 + normalized * Math.PI * 0.76;
+      const speed = 0.003 * (slot % 2 === 0 ? -1 : 0.85);
+      const angle = p.angleOffset + frameCount * speed;
+      const breathing = Math.sin(frameCount * 0.03 + slot * 0.3) * 1.6 * scale;
+      const radius = scoop2R * 0.82 + breathing;
+
+      p.tx = scoop2X + Math.cos(angle) * Math.sin(latAngle) * radius;
+      p.ty = scoop2Y - Math.cos(latAngle) * (radius * 0.9);
+      return;
+    }
+
+    // ─── 7. TOPPINGS (Pistacho & Oro) & DESTELLOS AROMÁTICOS ────────────────
+    const slot = idx - endC2;
+    const speed = 0.0016 + (slot % 2) * 0.0003;
     const progress = (pseudoRandom(p.id * 4.2) + frameCount * speed) % 1;
     const angle = p.angleOffset + frameCount * 0.005;
-    const spreadX = Math.cos(angle) * (26 + (slot % 4) * 7) * scale;
-    const floatY = scoop2Y - scoop2R - 8 * scale - progress * 44 * scale;
-    const wobble = Math.sin(frameCount * 0.04 + p.id) * 3 * scale;
+    const spreadX = Math.cos(angle) * (24 + (slot % 3) * 6) * scale;
+    const floatY = scoop2Y - scoop2R - 6 * scale - progress * 42 * scale;
+    const wobble = Math.sin(frameCount * 0.04 + p.id) * 2.5 * scale;
 
-    p.tx = cx + 3 * scale + spreadX + wobble;
+    p.tx = scoop2X + spreadX + wobble;
     p.ty = floatY;
-  });
-};
-
-/**
- * ─── CONCEPT 4B (GUSTOHELADO): RADAR POLAR GEOESPACIAL & HAVERSINE ───────────
- * Stage A: Concentric Haversine Sonar Wave Pulse (Walk radius scan)
- * Stage B: Ranked Gelateria POIs in Buenos Aires (Polar Clusters)
- * Stage C: Optimal Walking Vector (Blend Score Stream)
- */
-const setGustoHeladoRadarTargets = (
-  particles: ProjectsRendererParticle[],
-  stage: StageBounds,
-  frameCount: number
-) => {
-  const { cx, cy, scale } = stage;
-  const total = particles.length;
-  const stageAEnd = Math.floor(total * 0.35);
-  const stageBEnd = Math.floor(total * 0.8);
-
-  const shops = [
-    { angle: -Math.PI * 0.22, radius: 82 * scale },
-    { angle: Math.PI * 0.15, radius: 55 * scale },
-    { angle: Math.PI * 0.65, radius: 95 * scale },
-    { angle: Math.PI * 0.95, radius: 70 * scale },
-    { angle: -Math.PI * 0.75, radius: 110 * scale },
-    { angle: -Math.PI * 0.5, radius: 42 * scale },
-  ];
-
-  particles.forEach((p, idx) => {
-    // Stage A: Expanding Haversine Sonar Wave Rings
-    if (idx < stageAEnd) {
-      const ringLane = idx % 3;
-      const speed = 0.0015 + ringLane * 0.0003;
-      const progress = (pseudoRandom(p.id * 1.8) + frameCount * speed) % 1;
-      const r = progress * 128 * scale;
-      const angle = (idx / stageAEnd) * TAU + frameCount * 0.002;
-      const jitter = Math.sin(frameCount * 0.03 + p.id) * 1.5 * scale;
-
-      p.tx = cx + Math.cos(angle) * (r + jitter);
-      p.ty = cy + Math.sin(angle) * (r * 0.85 + jitter);
-      return;
-    }
-
-    // Stage B: Clustered Gelaterias in Buenos Aires
-    if (idx < stageBEnd) {
-      const slot = idx - stageAEnd;
-      const targetShop = shops[slot % shops.length];
-      const miniOrbitR = (6 + (slot % 3) * 4) * scale;
-      const miniAngle = p.angleOffset + frameCount * 0.008;
-
-      const shopCenterX = cx + Math.cos(targetShop.angle) * targetShop.radius;
-      const shopCenterY =
-        cy + Math.sin(targetShop.angle) * (targetShop.radius * 0.85);
-
-      p.tx = shopCenterX + Math.cos(miniAngle) * miniOrbitR;
-      p.ty = shopCenterY + Math.sin(miniAngle) * miniOrbitR;
-      return;
-    }
-
-    // Stage C: Blend Score Walk Path (Direct Vector to #1 shop)
-    const slot = idx - stageBEnd;
-    const speed = 0.0035 + (slot % 3) * 0.0006;
-    const progress = (pseudoRandom(p.id * 2.7) + frameCount * speed) % 1;
-    const targetShop = shops[0];
-    const endX = cx + Math.cos(targetShop.angle) * targetShop.radius;
-    const endY = cy + Math.sin(targetShop.angle) * (targetShop.radius * 0.85);
-
-    p.tx = cx + (endX - cx) * progress;
-    p.ty = cy + (endY - cy) * progress;
-  });
-};
-
-/**
- * ─── CONCEPT 4C (GUSTOHELADO): MATRIZ POLAR DE PERFIL DE SABORES ─────────────
- * Stage A: Polygon perimeter traversal (Chocolates, DDL, Cremas, Frutas, Autor)
- * Stage B: Flavor Axis Anchor Nodes
- * Stage C: Centroid Sensory Resonance Pulse
- */
-const setGustoHeladoMatrixTargets = (
-  particles: ProjectsRendererParticle[],
-  stage: StageBounds,
-  frameCount: number
-) => {
-  const { cx, cy, scale } = stage;
-  const total = particles.length;
-  const stageAEnd = Math.floor(total * 0.6);
-  const stageBEnd = Math.floor(total * 0.85);
-
-  const scores = [0.92, 0.96, 0.8, 0.72, 0.86];
-  const maxR = 105 * scale;
-  const vertices = scores.map((sc, i) => {
-    const angle = -Math.PI * 0.5 + (i * TAU) / 5;
-    const r = sc * maxR;
-    return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
-  });
-
-  particles.forEach((p, idx) => {
-    // Stage A: Perimeter circulation along flavor polygon
-    if (idx < stageAEnd) {
-      const speed = 0.0022 + (idx % 3) * 0.0003;
-      const progress = (pseudoRandom(p.id * 1.9) + frameCount * speed) % 1;
-      const edgeIndex = Math.floor(progress * 5) % 5;
-      const nextEdge = (edgeIndex + 1) % 5;
-      const t = (progress * 5) % 1;
-      const v1 = vertices[edgeIndex];
-      const v2 = vertices[nextEdge];
-
-      p.tx = v1.x + (v2.x - v1.x) * t;
-      p.ty = v1.y + (v2.y - v1.y) * t;
-      return;
-    }
-
-    // Stage B: Anchor Nodes on Vertices
-    if (idx < stageBEnd) {
-      const slot = idx - stageAEnd;
-      const v = vertices[slot % 5];
-      const orbitR = (7 + (slot % 3) * 3) * scale;
-      const angle = p.angleOffset + frameCount * 0.006;
-
-      p.tx = v.x + Math.cos(angle) * orbitR;
-      p.ty = v.y + Math.sin(angle) * orbitR;
-      return;
-    }
-
-    // Stage C: Centroid Sensory Resonance Pulse
-    const slot = idx - stageBEnd;
-    const angle = p.angleOffset + frameCount * 0.003;
-    const pulseR = (16 + Math.sin(frameCount * 0.03 + slot) * 6) * scale;
-
-    p.tx = cx + Math.cos(angle) * pulseR;
-    p.ty = cy + Math.sin(angle) * pulseR;
   });
 };
 
@@ -733,17 +645,9 @@ export const setProjectsParticleTargets = (
     case "cloud-iac-hardening":
       setCloudIacConceptTargets(particles, stage, frameCount);
       break;
-    case "gusto-helado": {
-      const variant = state.gustoVariant ?? "scoop";
-      if (variant === "radar") {
-        setGustoHeladoRadarTargets(particles, stage, frameCount);
-      } else if (variant === "matrix") {
-        setGustoHeladoMatrixTargets(particles, stage, frameCount);
-      } else {
-        setGustoHeladoScoopTargets(particles, stage, frameCount);
-      }
+    case "gusto-helado":
+      setGustoHeladoScoopTargets(particles, stage, frameCount);
       break;
-    }
     case "portfolio-cv-engine":
     default:
       setPortfolioConceptTargets(particles, stage, frameCount);
@@ -865,107 +769,11 @@ const drawGustoScoopGuides = (
   ctx.stroke();
 };
 
-const drawGustoRadarGuides = (
-  ctx: CanvasRenderingContext2D,
-  stage: StageBounds,
-  color: ProjectsRgb
-) => {
-  const { cx, cy, scale } = stage;
-
-  ctx.strokeStyle = rgba(color, 0.22);
-  ctx.lineWidth = 1.1;
-
-  // 1. Concentric walk-distance rings
-  [38, 76, 120].forEach((r, idx) => {
-    ctx.setLineDash([2.5 + idx, 3.5]);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, r * scale, r * 0.85 * scale, 0, 0, TAU);
-    ctx.stroke();
-  });
-
-  // 2. Center Crosshairs
-  ctx.setLineDash([]);
-  ctx.strokeStyle = rgba(color, 0.28);
-  ctx.beginPath();
-  ctx.moveTo(cx - 14 * scale, cy);
-  ctx.lineTo(cx + 14 * scale, cy);
-  ctx.moveTo(cx, cy - 14 * scale);
-  ctx.lineTo(cx, cy + 14 * scale);
-  ctx.stroke();
-
-  // 3. Five flavor axes
-  ctx.setLineDash([2, 5]);
-  ctx.strokeStyle = rgba(color, 0.15);
-  for (let i = 0; i < 5; i++) {
-    const angle = -Math.PI * 0.5 + (i * TAU) / 5;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * 125 * scale, cy + Math.sin(angle) * 106 * scale);
-    ctx.stroke();
-  }
-
-  // 4. Vector to top recommendation
-  const topAngle = -Math.PI * 0.22;
-  const topR = 82 * scale;
-  const targetX = cx + Math.cos(topAngle) * topR;
-  const targetY = cy + Math.sin(topAngle) * (topR * 0.85);
-
-  ctx.setLineDash([3, 3]);
-  ctx.strokeStyle = rgba(color, 0.38);
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.lineTo(targetX, targetY);
-  ctx.stroke();
-
-  ctx.setLineDash([]);
-  ctx.beginPath();
-  ctx.arc(targetX, targetY, 8 * scale, 0, TAU);
-  ctx.stroke();
-};
-
-const drawGustoMatrixGuides = (
-  ctx: CanvasRenderingContext2D,
-  stage: StageBounds,
-  color: ProjectsRgb
-) => {
-  const { cx, cy, scale } = stage;
-  const maxR = 105 * scale;
-
-  ctx.strokeStyle = rgba(color, 0.18);
-  ctx.lineWidth = 1.1;
-
-  // Concentric pentagon rings (at 0.4, 0.7, 1.0)
-  [0.4, 0.7, 1.0].forEach((ratio) => {
-    ctx.setLineDash(ratio < 1 ? [2.5, 3.5] : []);
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const angle = -Math.PI * 0.5 + (i * TAU) / 5;
-      const x = cx + Math.cos(angle) * maxR * ratio;
-      const y = cy + Math.sin(angle) * maxR * ratio;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.stroke();
-  });
-
-  // 5 Radial axes from center to vertices
-  ctx.setLineDash([2, 4]);
-  for (let i = 0; i < 5; i++) {
-    const angle = -Math.PI * 0.5 + (i * TAU) / 5;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
-    ctx.stroke();
-  }
-};
-
 const drawConceptGuides = (
   ctx: CanvasRenderingContext2D,
   stage: StageBounds,
   projectId: string,
-  color: ProjectsRgb,
-  gustoVariant?: "scoop" | "radar" | "matrix"
+  color: ProjectsRgb
 ) => {
   const { cx, cy, scale } = stage;
   ctx.save();
@@ -1047,17 +855,9 @@ const drawConceptGuides = (
       break;
     }
 
-    case "gusto-helado": {
-      const variant = gustoVariant ?? "scoop";
-      if (variant === "radar") {
-        drawGustoRadarGuides(ctx, stage, color);
-      } else if (variant === "matrix") {
-        drawGustoMatrixGuides(ctx, stage, color);
-      } else {
-        drawGustoScoopGuides(ctx, stage);
-      }
+    case "gusto-helado":
+      drawGustoScoopGuides(ctx, stage);
       break;
-    }
 
     case "portfolio-cv-engine":
     default: {
@@ -1092,58 +892,26 @@ const getProjectsParticleDrawRgb = (
   total: number
 ): ProjectsRgb => {
   if (state.activeProjectId === "gusto-helado") {
-    const variant = state.gustoVariant ?? "scoop";
-    if (variant === "scoop") {
-      const coneEnd = Math.floor(total * 0.26);
-      const scoop1End = Math.floor(total * 0.62);
-      const scoop2End = Math.floor(total * 0.88);
+    const endCone = Math.floor(total * 0.18);
+    const endBocha1 = Math.floor(total * 0.56);
+    const endBocha2 = Math.floor(total * 0.9);
 
-      if (idx < coneEnd) {
-        // Cono Waffle: Ámbar tostado / Dorado crocante
-        return { r: 218, g: 142, b: 58 };
-      }
-      if (idx < scoop1End) {
-        // Bocha 1 (Inferior): Dulce de Leche artesanal / Caramelo
-        return { r: 204, g: 108, b: 38 };
-      }
-      if (idx < scoop2End) {
-        // Bocha 2 (Superior): Frambuesa silvestre viva
-        return { r: 235, g: 54, b: 102 };
-      }
-      // Toppings: Pistacho verde & Maracuyá dorado
-      return idx % 2 === 0
-        ? { r: 40, g: 198, b: 124 }
-        : { r: 245, g: 195, b: 65 };
+    if (idx < endCone) {
+      // Cono Waffle crocante (Ámbar tostado)
+      return { r: 218, g: 142, b: 58 };
     }
-    if (variant === "radar") {
-      const stageAEnd = Math.floor(total * 0.35);
-      const stageBEnd = Math.floor(total * 0.8);
-      if (idx < stageAEnd) {
-        return { r: 45, g: 130, b: 240 };
-      }
-      if (idx < stageBEnd) {
-        const flavorColors = [
-          { r: 235, g: 54, b: 102 },
-          { r: 204, g: 108, b: 38 },
-          { r: 124, g: 58, b: 237 },
-          { r: 40, g: 198, b: 124 },
-          { r: 245, g: 195, b: 65 },
-          { r: 218, g: 142, b: 58 },
-        ];
-        return flavorColors[idx % flavorColors.length];
-      }
+    if (idx < endBocha1) {
+      // Bocha 1 (Inferior): Dulce de Leche artesanal / Caramelo
+      return { r: 204, g: 108, b: 38 };
+    }
+    if (idx < endBocha2) {
+      // Bocha 2 (Superior): Frambuesa silvestre viva
       return { r: 235, g: 54, b: 102 };
     }
-    if (variant === "matrix") {
-      const flavorColors = [
-        { r: 140, g: 70, b: 35 },
-        { r: 204, g: 108, b: 38 },
-        { r: 240, g: 205, b: 120 },
-        { r: 235, g: 54, b: 102 },
-        { r: 124, g: 58, b: 237 },
-      ];
-      return flavorColors[idx % 5];
-    }
+    // Toppings: Pistacho verde & Maracuyá dorado
+    return idx % 2 === 0
+      ? { r: 40, g: 198, b: 124 }
+      : { r: 245, g: 195, b: 65 };
   }
   return fallbackRgb;
 };
@@ -1190,8 +958,7 @@ export const drawProjectsParticles = (
         cy: stage.cy + globalDriftY,
       },
       state.activeProjectId,
-      activeColor,
-      state.gustoVariant
+      activeColor
     );
   }
 
