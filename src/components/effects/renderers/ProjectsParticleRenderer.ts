@@ -2,6 +2,7 @@ import {
   getProjectCategoryStyle,
   type ProjectsRgb,
   type ProjectsRuntime,
+  type ProjectsRuntimeState,
 } from "../../visualizations/Projects.runtime";
 
 export interface ProjectsRendererParticle {
@@ -468,10 +469,11 @@ const setPortfolioConceptTargets = (
 };
 
 /**
- * ─── CONCEPT 4A (GUSTOHELADO): LA BOCHA GEODÉSICA & CONO DE INGESTA ─────────
- * Stage A: Ingestion Funnel Stream (Cone: Google Form -> Sheets -> Pandas)
- * Stage B: Rotating Gelato Scoop (Spherical shell with harmonic creaminess)
- * Stage C: Floating Tasting Insights & Sparkles
+ * ─── CONCEPT 4A (GUSTOHELADO): DOBLE BOCHA ARTESANAL & CUCURUCHO ─────────────
+ * Stage A: Flujo de Ingesta en Cucurucho (Cono Waffle Crocante / Ámbar)
+ * Stage B: Bocha 1 Inferior (Dulce de Leche / Chocolate Artesanal)
+ * Stage C: Bocha 2 Superior (Frambuesa Silvestre / Fruto Rojo Vivo)
+ * Stage D: Toppings de Pistacho, Chips y Destellos Aromáticos
  */
 const setGustoHeladoScoopTargets = (
   particles: ProjectsRendererParticle[],
@@ -480,17 +482,22 @@ const setGustoHeladoScoopTargets = (
 ) => {
   const { cx, cy, scale } = stage;
   const total = particles.length;
-  const stageAEnd = Math.floor(total * 0.32);
-  const stageBEnd = Math.floor(total * 0.85);
+  const stageAEnd = Math.floor(total * 0.26);
+  const stageBEnd = Math.floor(total * 0.62);
+  const stageCEnd = Math.floor(total * 0.88);
 
-  const coneTipY = cy + 104 * scale;
-  const coneTopY = cy + 12 * scale;
+  const coneTipY = cy + 124 * scale;
+  const coneTopY = cy + 30 * scale;
   const coneHalfW = 44 * scale;
-  const scoopCenterY = cy - 24 * scale;
-  const scoopR = 52 * scale;
+
+  const scoop1Y = cy + 6 * scale;
+  const scoop1R = 48 * scale;
+
+  const scoop2Y = cy - 46 * scale;
+  const scoop2R = 40 * scale;
 
   particles.forEach((p, idx) => {
-    // Stage A: Upward Data Stream inside the Waffle Cone
+    // Stage A: Upward Data Stream inside the Waffle Cone (Waffle Amber)
     if (idx < stageAEnd) {
       const speed = 0.0018 + (idx % 3) * 0.00025;
       const progress = (pseudoRandom(p.id * 1.5) + frameCount * speed) % 1;
@@ -505,36 +512,58 @@ const setGustoHeladoScoopTargets = (
       return;
     }
 
-    // Stage B: 3D Gelato Scoop Sphere with Creamy Breathing
+    // Stage B: Bocha 1 (Inferior: Dulce de Leche Artesanal)
     if (idx < stageBEnd) {
       const slot = idx - stageAEnd;
       const countB = stageBEnd - stageAEnd;
       const normalizedSlot = slot / countB;
-      const latAngle = Math.PI * 0.08 + normalizedSlot * Math.PI * 0.72;
-      const speed = 0.0032 * (slot % 2 === 0 ? 1 : -0.85);
+      const latAngle = Math.PI * 0.12 + normalizedSlot * Math.PI * 0.76;
+      const speed = 0.0028 * (slot % 2 === 0 ? 1 : -0.85);
       const angle = p.angleOffset + frameCount * speed;
       const breathing =
-        Math.sin(frameCount * 0.028 + slot * 0.25) * 2.2 * scale;
-      const radius = scoopR + breathing + ((slot % 3) - 1) * 3 * scale;
+        Math.sin(frameCount * 0.026 + slot * 0.22) * 2.2 * scale;
+      const radius = scoop1R + breathing + ((slot % 3) - 1) * 3 * scale;
 
-      const px = cx + Math.cos(angle) * Math.sin(latAngle) * radius;
-      const py = scoopCenterY - Math.cos(latAngle) * (radius * 0.92);
+      const px =
+        cx - 2 * scale + Math.cos(angle) * Math.sin(latAngle) * radius;
+      const py = scoop1Y - Math.cos(latAngle) * (radius * 0.9);
 
       p.tx = px;
       p.ty = py;
       return;
     }
 
-    // Stage C: Flavor Sparkles / Floating Sensory Notes above the scoop
-    const slot = idx - stageBEnd;
+    // Stage C: Bocha 2 (Superior: Frambuesa Silvestre)
+    if (idx < stageCEnd) {
+      const slot = idx - stageBEnd;
+      const countC = stageCEnd - stageBEnd;
+      const normalizedSlot = slot / countC;
+      const latAngle = Math.PI * 0.08 + normalizedSlot * Math.PI * 0.8;
+      const speed = 0.0034 * (slot % 2 === 0 ? -1 : 0.9);
+      const angle = p.angleOffset + frameCount * speed;
+      const breathing =
+        Math.sin(frameCount * 0.032 + slot * 0.28) * 1.8 * scale;
+      const radius = scoop2R + breathing + ((slot % 3) - 1) * 2.5 * scale;
+
+      const px =
+        cx + 3 * scale + Math.cos(angle) * Math.sin(latAngle) * radius;
+      const py = scoop2Y - Math.cos(latAngle) * (radius * 0.92);
+
+      p.tx = px;
+      p.ty = py;
+      return;
+    }
+
+    // Stage D: Toppings (Pistacho & Oro) and sweet aroma sparkles
+    const slot = idx - stageCEnd;
     const speed = 0.0016 + (slot % 3) * 0.0002;
     const progress = (pseudoRandom(p.id * 4.2) + frameCount * speed) % 1;
-    const angle = p.angleOffset + frameCount * 0.004;
-    const spreadX = Math.cos(angle) * (36 + (slot % 4) * 8) * scale;
-    const floatY = cy - 80 * scale - progress * 48 * scale;
+    const angle = p.angleOffset + frameCount * 0.005;
+    const spreadX = Math.cos(angle) * (26 + (slot % 4) * 7) * scale;
+    const floatY = scoop2Y - scoop2R - 8 * scale - progress * 44 * scale;
     const wobble = Math.sin(frameCount * 0.04 + p.id) * 3 * scale;
 
-    p.tx = cx + spreadX + wobble;
+    p.tx = cx + 3 * scale + spreadX + wobble;
     p.ty = floatY;
   });
 };
@@ -727,58 +756,112 @@ export const setProjectsParticleTargets = (
  */
 const drawGustoScoopGuides = (
   ctx: CanvasRenderingContext2D,
-  stage: StageBounds,
-  color: ProjectsRgb
+  stage: StageBounds
 ) => {
   const { cx, cy, scale } = stage;
-  const coneTopY = cy + 14 * scale;
-  const coneTipY = cy + 104 * scale;
+  const coneTipY = cy + 124 * scale;
+  const coneTopY = cy + 30 * scale;
   const coneHalfW = 44 * scale;
-  const scoopCenterY = cy - 24 * scale;
-  const scoopR = 52 * scale;
 
-  ctx.strokeStyle = rgba(color, 0.22);
-  ctx.lineWidth = 1.1;
+  const scoop1Y = cy + 6 * scale;
+  const scoop1R = 48 * scale;
 
-  // 1. Cone triangle outline
+  const scoop2Y = cy - 46 * scale;
+  const scoop2R = 40 * scale;
+
+  ctx.lineWidth = 1.15;
+
+  // 1. Waffle Cone (Cucurucho Waffle Ámbar / Dorado tostado)
+  const coneColor: ProjectsRgb = { r: 218, g: 142, b: 58 };
+  ctx.strokeStyle = rgba(coneColor, 0.32);
   ctx.beginPath();
   ctx.moveTo(cx - coneHalfW, coneTopY);
   ctx.lineTo(cx, coneTipY);
   ctx.lineTo(cx + coneHalfW, coneTopY);
   ctx.stroke();
 
-  // 2. Waffle grid cross-hatch inside cone
+  // Waffle grid cross-hatch inside cone
   ctx.setLineDash([2.5, 4]);
-  ctx.strokeStyle = rgba(color, 0.16);
+  ctx.strokeStyle = rgba(coneColor, 0.22);
   ctx.beginPath();
   for (let i = 1; i <= 3; i++) {
     const t = i / 4;
     const y = coneTopY + (coneTipY - coneTopY) * t;
     const hw = coneHalfW * (1 - t);
     ctx.moveTo(cx - hw, y);
-    ctx.lineTo(cx + hw * 0.35, y + 20 * scale);
+    ctx.lineTo(cx + hw * 0.4, y + 24 * scale);
     ctx.moveTo(cx + hw, y);
-    ctx.lineTo(cx - hw * 0.35, y + 20 * scale);
+    ctx.lineTo(cx - hw * 0.4, y + 24 * scale);
   }
   ctx.stroke();
 
-  // 3. Scoop rim / base ellipse
+  // Rim ellipse at the cone mouth
   ctx.setLineDash([]);
-  ctx.strokeStyle = rgba(color, 0.26);
+  ctx.strokeStyle = rgba(coneColor, 0.35);
   ctx.beginPath();
-  ctx.ellipse(cx, coneTopY, 50 * scale, 11 * scale, 0, 0, TAU);
+  ctx.ellipse(cx, coneTopY, 46 * scale, 11 * scale, 0, 0, TAU);
   ctx.stroke();
 
-  // 4. Gelato Dome arc
+  // 2. Bocha 1 (Inferior: Dulce de Leche Artesanal)
+  const ddlColor: ProjectsRgb = { r: 204, g: 108, b: 38 };
+  ctx.strokeStyle = rgba(ddlColor, 0.35);
   ctx.beginPath();
-  ctx.arc(cx, scoopCenterY, scoopR, Math.PI, 0, false);
+  ctx.arc(
+    cx - 2 * scale,
+    scoop1Y,
+    scoop1R,
+    Math.PI * 0.95,
+    -Math.PI * 0.05,
+    false
+  );
   ctx.stroke();
 
-  // 5. Latitude ring on dome
+  // Subtle latitude on Bocha 1
   ctx.setLineDash([3, 4]);
-  ctx.strokeStyle = rgba(color, 0.18);
+  ctx.strokeStyle = rgba(ddlColor, 0.2);
   ctx.beginPath();
-  ctx.ellipse(cx, scoopCenterY - 12 * scale, 40 * scale, 9 * scale, 0, 0, TAU);
+  ctx.ellipse(
+    cx - 2 * scale,
+    scoop1Y - 10 * scale,
+    38 * scale,
+    9 * scale,
+    0,
+    0,
+    TAU
+  );
+  ctx.stroke();
+
+  // 3. Bocha 2 (Superior: Frambuesa Silvestre)
+  const berryColor: ProjectsRgb = { r: 235, g: 54, b: 102 };
+  ctx.setLineDash([]);
+  ctx.strokeStyle = rgba(berryColor, 0.38);
+  ctx.beginPath();
+  ctx.arc(cx + 3 * scale, scoop2Y, scoop2R, Math.PI, 0, false);
+  ctx.stroke();
+
+  // Subtle latitude on Bocha 2
+  ctx.setLineDash([3, 4]);
+  ctx.strokeStyle = rgba(berryColor, 0.22);
+  ctx.beginPath();
+  ctx.ellipse(
+    cx + 3 * scale,
+    scoop2Y - 12 * scale,
+    30 * scale,
+    7 * scale,
+    0,
+    0,
+    TAU
+  );
+  ctx.stroke();
+
+  // 4. Little topping accent / cherry sparkle on top
+  const topX = cx + 3 * scale;
+  const topY = scoop2Y - scoop2R - 6 * scale;
+  const pistacchioColor: ProjectsRgb = { r: 40, g: 198, b: 124 };
+  ctx.setLineDash([]);
+  ctx.strokeStyle = rgba(pistacchioColor, 0.5);
+  ctx.beginPath();
+  ctx.arc(topX, topY, 4.5 * scale, 0, TAU);
   ctx.stroke();
 };
 
@@ -971,7 +1054,7 @@ const drawConceptGuides = (
       } else if (variant === "matrix") {
         drawGustoMatrixGuides(ctx, stage, color);
       } else {
-        drawGustoScoopGuides(ctx, stage, color);
+        drawGustoScoopGuides(ctx, stage);
       }
       break;
     }
@@ -996,6 +1079,73 @@ const drawConceptGuides = (
   }
 
   ctx.restore();
+};
+
+/**
+ * Resolves the display RGB for a particle based on active project and custom palette roles.
+ */
+const getProjectsParticleDrawRgb = (
+  node: ProjectsRendererParticle,
+  state: ProjectsRuntimeState,
+  fallbackRgb: ProjectsRgb,
+  idx: number,
+  total: number
+): ProjectsRgb => {
+  if (state.activeProjectId === "gusto-helado") {
+    const variant = state.gustoVariant ?? "scoop";
+    if (variant === "scoop") {
+      const coneEnd = Math.floor(total * 0.26);
+      const scoop1End = Math.floor(total * 0.62);
+      const scoop2End = Math.floor(total * 0.88);
+
+      if (idx < coneEnd) {
+        // Cono Waffle: Ámbar tostado / Dorado crocante
+        return { r: 218, g: 142, b: 58 };
+      }
+      if (idx < scoop1End) {
+        // Bocha 1 (Inferior): Dulce de Leche artesanal / Caramelo
+        return { r: 204, g: 108, b: 38 };
+      }
+      if (idx < scoop2End) {
+        // Bocha 2 (Superior): Frambuesa silvestre viva
+        return { r: 235, g: 54, b: 102 };
+      }
+      // Toppings: Pistacho verde & Maracuyá dorado
+      return idx % 2 === 0
+        ? { r: 40, g: 198, b: 124 }
+        : { r: 245, g: 195, b: 65 };
+    }
+    if (variant === "radar") {
+      const stageAEnd = Math.floor(total * 0.35);
+      const stageBEnd = Math.floor(total * 0.8);
+      if (idx < stageAEnd) {
+        return { r: 45, g: 130, b: 240 };
+      }
+      if (idx < stageBEnd) {
+        const flavorColors = [
+          { r: 235, g: 54, b: 102 },
+          { r: 204, g: 108, b: 38 },
+          { r: 124, g: 58, b: 237 },
+          { r: 40, g: 198, b: 124 },
+          { r: 245, g: 195, b: 65 },
+          { r: 218, g: 142, b: 58 },
+        ];
+        return flavorColors[idx % flavorColors.length];
+      }
+      return { r: 235, g: 54, b: 102 };
+    }
+    if (variant === "matrix") {
+      const flavorColors = [
+        { r: 140, g: 70, b: 35 },
+        { r: 204, g: 108, b: 38 },
+        { r: 240, g: 205, b: 120 },
+        { r: 235, g: 54, b: 102 },
+        { r: 124, g: 58, b: 237 },
+      ];
+      return flavorColors[idx % 5];
+    }
+  }
+  return fallbackRgb;
 };
 
 /**
@@ -1064,9 +1214,16 @@ export const drawProjectsParticles = (
 
       const alpha =
         (1 - dist / connectionDist) * (state.activeProjectId ? 0.11 : 0.085);
-      const rgb = state.activeProjectId
+      const baseRgb = state.activeProjectId
         ? activeColor
         : { r: n1.r, g: n1.g, b: n1.b };
+      const rgb = getProjectsParticleDrawRgb(
+        n1,
+        state,
+        baseRgb,
+        i,
+        particles.length
+      );
 
       ctx.strokeStyle = rgba(rgb, alpha);
       ctx.beginPath();
@@ -1077,7 +1234,7 @@ export const drawProjectsParticles = (
   }
 
   // 3. Draw particles
-  particles.forEach((node) => {
+  particles.forEach((node, idx) => {
     const px = node.x + globalDriftX;
     const py = node.y + globalDriftY;
     const mask = getReadabilityMask(px, py, readabilityZones);
@@ -1095,7 +1252,16 @@ export const drawProjectsParticles = (
       }
     }
 
-    const rgb = focusProj ? activeColor : { r: node.r, g: node.g, b: node.b };
+    const fallback = focusProj
+      ? activeColor
+      : { r: node.r, g: node.g, b: node.b };
+    const rgb = getProjectsParticleDrawRgb(
+      node,
+      state,
+      fallback,
+      idx,
+      particles.length
+    );
     const outerAlpha = Math.min(0.4, 0.19 * alphaMultiplier);
     const coreAlpha = Math.min(0.92, 0.66 * alphaMultiplier);
 
