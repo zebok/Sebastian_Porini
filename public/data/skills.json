@@ -1,0 +1,233 @@
+{
+  "hard": [
+    {
+      "id": "software-engineering",
+      "name": {
+        "en": "Software Engineering",
+        "es": "Software Engineering"
+      },
+      "subSkills": [
+        {
+          "name": {
+            "en": "React & Node",
+            "es": "React y Node"
+          }
+        },
+        {
+          "name": {
+            "en": "TypeScript",
+            "es": "TypeScript"
+          }
+        },
+        {
+          "name": {
+            "en": "AWS Serverless",
+            "es": "AWS Serverless"
+          }
+        }
+      ]
+    },
+    {
+      "id": "data-analytics",
+      "name": {
+        "en": "Data & Analytics",
+        "es": "Datos y Analítica"
+      },
+      "subSkills": [
+        {
+          "name": {
+            "en": "SQL & NoSQL",
+            "es": "SQL y NoSQL"
+          }
+        },
+        {
+          "name": {
+            "en": "Power BI",
+            "es": "Power BI"
+          }
+        },
+        {
+          "name": {
+            "en": "Data Pipelines",
+            "es": "Data Pipelines"
+          }
+        }
+      ]
+    },
+    {
+      "id": "devops",
+      "name": {
+        "en": "DevOps",
+        "es": "DevOps"
+      },
+      "subSkills": [
+        {
+          "name": {
+            "en": "CI / CD",
+            "es": "CI / CD"
+          }
+        },
+        {
+          "name": {
+            "en": "IaC (SAM)",
+            "es": "IaC (SAM)"
+          }
+        },
+        {
+          "name": {
+            "en": "Git",
+            "es": "Git"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-management",
+      "name": {
+        "en": "Product Management",
+        "es": "Gestión de Producto"
+      },
+      "subSkills": [
+        {
+          "name": {
+            "en": "Agile / Scrum",
+            "es": "Agile / Scrum"
+          }
+        },
+        {
+          "name": {
+            "en": "Product Discovery",
+            "es": "Product Discovery"
+          }
+        },
+        {
+          "name": {
+            "en": "Tech Docs",
+            "es": "Tech Docs"
+          }
+        }
+      ]
+    }
+  ],
+  "soft": [
+    {
+      "id": "empathy",
+      "name": {
+        "en": "EMPATHY",
+        "es": "EMPATÍA"
+      },
+      "subSkills": [
+        {
+          "en": "Active Listening",
+          "es": "Escucha Activa"
+        },
+        {
+          "en": "UX Empathy",
+          "es": "Empatía UX"
+        },
+        {
+          "en": "Feedback",
+          "es": "Feedback"
+        }
+      ]
+    },
+    {
+      "id": "communication",
+      "name": {
+        "en": "COMMUNICATION",
+        "es": "COMUNICACIÓN"
+      },
+      "subSkills": [
+        {
+          "en": "Tech Translation",
+          "es": "Traducción Técnica"
+        },
+        {
+          "en": "Public Speaking",
+          "es": "Oratoria"
+        },
+        {
+          "en": "Storytelling",
+          "es": "Storytelling"
+        }
+      ]
+    },
+    {
+      "id": "adaptability",
+      "name": {
+        "en": "ADAPTABILITY",
+        "es": "ADAPTABILIDAD"
+      },
+      "subSkills": [
+        {
+          "en": "Fast Learning",
+          "es": "Aprendizaje Rápido"
+        },
+        {
+          "en": "Resilience",
+          "es": "Resiliencia"
+        },
+        {
+          "en": "Flexibility",
+          "es": "Flexibilidad"
+        }
+      ]
+    },
+    {
+      "id": "leadership",
+      "name": {
+        "en": "LEADERSHIP",
+        "es": "LIDERAZGO"
+      },
+      "subSkills": [
+        {
+          "en": "Mentoring",
+          "es": "Mentoría"
+        },
+        {
+          "en": "Decision Making",
+          "es": "Toma de Decisiones"
+        },
+        {
+          "en": "Ownership",
+          "es": "Ownership"
+        }
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "id": "spanish",
+      "name": {
+        "en": "SPANISH",
+        "es": "ESPAÑOL"
+      },
+      "level": {
+        "en": "Native",
+        "es": "Nativo"
+      }
+    },
+    {
+      "id": "english",
+      "name": {
+        "en": "ENGLISH",
+        "es": "INGLÉS"
+      },
+      "level": {
+        "en": "B2 Upper Intermediate",
+        "es": "B2 Intermedio Alto"
+      }
+    },
+    {
+      "id": "german",
+      "name": {
+        "en": "GERMAN",
+        "es": "ALEMÁN"
+      },
+      "level": {
+        "en": "A2 Beginner",
+        "es": "A2 Principiante"
+      }
+    }
+  ]
+}

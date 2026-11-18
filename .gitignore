@@ -38,3 +38,11 @@ next-env.d.ts
 # agent skills
 .agents/
 skills-lock.json
+
+# Private local resources (zero trace in GitHub)
+/cv-engine/
+/resumes/
+/cover-letters/
+*.pdf
+!public/*.pdf
+

@@ -20,9 +20,17 @@ import type {
 } from "@/types/content";
 
 // Hoisted static file reading at module level
-const rawPortfolioData: unknown = JSON.parse(
-  fs.readFileSync(path.join(process.cwd(), "public/data/content.json"), "utf-8")
-);
+const readData = (file: string): unknown =>
+  JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/data", file), "utf-8"));
+
+const rawPortfolioData: unknown = {
+  personal: readData("personal.json"),
+  ui: readData("ui.json"),
+  skills: readData("skills.json"),
+  brain: readData("brain.json"),
+  careerRepository: readData("career.json"),
+  projects: readData("projects.json"),
+};
 
 assertValidBrainReferences(rawPortfolioData, {
   positions: BRAIN_SKILL_POSITIONS,

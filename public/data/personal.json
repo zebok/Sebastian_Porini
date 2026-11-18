@@ -1,0 +1,210 @@
+{
+  "name": "Sebastián Porini",
+  "tagline": {
+    "en": "Data & Systems | Quality, Security & Governance",
+    "es": "Data & Systems | Calidad, Seguridad y Gobernanza"
+  },
+  "description": {
+    "es": "",
+    "en": ""
+  },
+  "focus": {
+    "circle1": {
+      "title": {
+        "en": "Product Vision",
+        "es": "Visión de Producto"
+      },
+      "description": {
+        "en": "Focus on real needs and impact",
+        "es": "Foco en necesidades reales e impacto"
+      },
+      "items": [
+        {
+          "en": "Focus on real needs",
+          "es": "Foco en necesidades reales"
+        },
+        {
+          "en": "Simplicity over complexity",
+          "es": "Simplicidad sobre complejidad innecesaria"
+        },
+        {
+          "en": "Technical and business viability",
+          "es": "Viabilidad técnica y negocio"
+        }
+      ],
+      "tags": [
+        {
+          "en": "Common Sense",
+          "es": "Sentido común"
+        },
+        {
+          "en": "Pragmatism",
+          "es": "Pragmatismo"
+        },
+        {
+          "en": "Real Impact",
+          "es": "Impacto real"
+        }
+      ]
+    },
+    "circle2": {
+      "title": {
+        "en": "Data Rigor",
+        "es": "Rigor de Datos"
+      },
+      "description": {
+        "en": "Structure, pipelines and security",
+        "es": "Estructura, pipelines y seguridad"
+      },
+      "items": [
+        {
+          "en": "Structure against chaos",
+          "es": "Estructura frente al caos"
+        },
+        {
+          "en": "Consistent relational modeling",
+          "es": "Modelado relacional consistente"
+        },
+        {
+          "en": "Serverless pipelines and automation",
+          "es": "Pipelines y automatización serverless"
+        },
+        {
+          "en": "Security by design",
+          "es": "Seguridad IT por diseño"
+        }
+      ],
+      "tags": [
+        {
+          "en": "Traceability",
+          "es": "Trazabilidad"
+        },
+        {
+          "en": "Reliability",
+          "es": "Confiabilidad"
+        },
+        {
+          "en": "Zero-Trust",
+          "es": "Zero-Trust"
+        }
+      ]
+    },
+    "circle3": {
+      "title": {
+        "en": "Scientific Curiosity",
+        "es": "Curiosidad Científica"
+      },
+      "description": {
+        "en": "Analytical roots and continuous learning",
+        "es": "Raíces analíticas y aprendizaje continuo"
+      },
+      "items": [
+        {
+          "en": "Exact sciences foundations",
+          "es": "Raíces en ciencias exactas"
+        },
+        {
+          "en": "Analytical method and mindset",
+          "es": "Método y pensamiento analítico"
+        },
+        {
+          "en": "Systematic pattern detection",
+          "es": "Detección de patrones sistemáticos"
+        },
+        {
+          "en": "Path to applied statistics",
+          "es": "Rumbo a estadística aplicada"
+        }
+      ],
+      "tags": [
+        {
+          "en": "Experimentation",
+          "es": "Experimentación"
+        },
+        {
+          "en": "Logical Rigor",
+          "es": "Rigor lógico"
+        },
+        {
+          "en": "Exact Sciences",
+          "es": "Exactas"
+        }
+      ]
+    },
+    "intersection01": {
+      "title": {
+        "en": "Evidence-Based Decisions",
+        "es": "Decisiones con Evidencia"
+      },
+      "items": [
+        {
+          "en": "Data-driven prioritization",
+          "es": "Priorización guiada por datos"
+        },
+        {
+          "en": "Metrics with concrete returns",
+          "es": "Métricas con retorno concreto"
+        }
+      ]
+    },
+    "intersection02": {
+      "title": {
+        "en": "Pragmatic Innovation",
+        "es": "Innovación Pragmática"
+      },
+      "items": [
+        {
+          "en": "Curiosity applied to business",
+          "es": "Curiosidad aplicada al negocio"
+        },
+        {
+          "en": "First-principles reasoning",
+          "es": "Razonamiento por primeros principios"
+        }
+      ]
+    },
+    "intersection12": {
+      "title": {
+        "en": "Rigorous Modeling",
+        "es": "Modelado Riguroso"
+      },
+      "items": [
+        {
+          "en": "Clean and unbiased data",
+          "es": "Información limpia sin sesgos"
+        },
+        {
+          "en": "Solid analytical foundations",
+          "es": "Fundamentos analíticos sólidos"
+        }
+      ]
+    },
+    "intersectionAll": {
+      "title": {
+        "en": "The Point of Impact",
+        "es": "El Punto de Impacto"
+      },
+      "items": [
+        {
+          "en": "Science, data and product",
+          "es": "Ciencia, datos y producto"
+        },
+        {
+          "en": "Tangible real-world solutions",
+          "es": "Soluciones con impacto tangible"
+        }
+      ]
+    }
+  },
+  "contactDetails": {
+    "fullName": "Sebastián Porini",
+    "location": "Buenos Aires, Argentina",
+    "email": "sebastian.porini.work@gmail.com",
+    "github": "https://github.com/zebok",
+    "linkedin": "https://linkedin.com/in/sebastian-porini",
+    "cvPath": {
+      "en": "/SebastianPorini_English.pdf",
+      "es": "/SebastianPorini_Espanol.pdf"
+    }
+  }
+}

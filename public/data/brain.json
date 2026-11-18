@@ -1,0 +1,207 @@
+{
+  "intro": {
+    "ariaLabel": {
+      "en": "Introduction to my {count} concepts",
+      "es": "Introducción a mis {count} conceptos"
+    },
+    "title": {
+      "en": "{count}\npillars\nBehind my approach",
+      "es": "{count}\npilares\nDe mi enfoque"
+    },
+    "instruction": {
+      "en": "Explore to discover · click to go deeper",
+      "es": "Recorré para descubrir · hacé clic para profundizar"
+    },
+    "skip": {
+      "en": "Skip intro",
+      "es": "Omitir"
+    },
+    "play": {
+      "en": "Repeat intro",
+      "es": "Repetir intro"
+    }
+  },
+  "ui": {
+    "mapAriaLabel": {
+      "en": "Brain map of discovered concepts",
+      "es": "Mapa cerebral de conceptos descubiertos"
+    },
+    "undiscoveredConcept": {
+      "en": "Concept not discovered yet",
+      "es": "Concepto todavía no descubierto"
+    },
+    "backToMapAriaLabel": {
+      "en": "Back to brain map",
+      "es": "Volver al mapa cerebral"
+    },
+    "back": {
+      "en": "BACK",
+      "es": "VOLVER"
+    },
+    "connectedIdeas": {
+      "en": "connected ideas",
+      "es": "ideas conectadas"
+    },
+    "expandedNetwork": {
+      "en": "expanded neural network",
+      "es": "red neuronal ampliada"
+    }
+  },
+  "cores": [
+    {
+      "id": "read-complexity",
+      "title": {
+        "en": "Deconstructing complexity",
+        "es": "Descomponer la complejidad"
+      },
+      "subtitles": [
+        {
+          "en": "Patterns",
+          "es": "Patrones"
+        },
+        {
+          "en": "Root cause",
+          "es": "Causa raíz"
+        },
+        {
+          "en": "Logical analysis",
+          "es": "Análisis lógico"
+        },
+        {
+          "en": "Curiosity",
+          "es": "Curiosidad"
+        }
+      ]
+    },
+    {
+      "id": "language-context",
+      "title": {
+        "en": "Open communication",
+        "es": "Comunicación abierta"
+      },
+      "subtitles": [
+        {
+          "en": "Spanish",
+          "es": "Español"
+        },
+        {
+          "en": "English",
+          "es": "Inglés"
+        },
+        {
+          "en": "German",
+          "es": "Alemán"
+        }
+      ]
+    },
+    {
+      "id": "connect-people",
+      "title": {
+        "en": "Aligning purpose",
+        "es": "Alinear propósitos"
+      },
+      "subtitles": [
+        {
+          "en": "Empathy",
+          "es": "Empatía"
+        },
+        {
+          "en": "Effort",
+          "es": "Esfuerzo"
+        },
+        {
+          "en": "Consensus",
+          "es": "Consenso"
+        }
+      ]
+    },
+    {
+      "id": "shape-product",
+      "title": {
+        "en": "Product strategy",
+        "es": "Estrategia de producto"
+      },
+      "subtitles": [
+        {
+          "en": "Disruption",
+          "es": "Disrupción"
+        },
+        {
+          "en": "Methodology",
+          "es": "Metodología"
+        },
+        {
+          "en": "Innovation",
+          "es": "Innovación"
+        },
+        {
+          "en": "Wonder",
+          "es": "Asombro"
+        }
+      ]
+    },
+    {
+      "id": "build-systems",
+      "title": {
+        "en": "Materializing solutions",
+        "es": "Materializar soluciones"
+      },
+      "subtitles": [
+        {
+          "en": "Architecture",
+          "es": "Arquitectura"
+        },
+        {
+          "en": "Commitment",
+          "es": "Compromiso"
+        },
+        {
+          "en": "Pragmatism",
+          "es": "Pragmatismo"
+        }
+      ]
+    },
+    {
+      "id": "adapt-lead",
+      "title": {
+        "en": "Dynamic leadership",
+        "es": "Liderazgo dinámico"
+      },
+      "subtitles": [
+        {
+          "en": "Adaptability",
+          "es": "Adaptabilidad"
+        },
+        {
+          "en": "Trust",
+          "es": "Confianza"
+        },
+        {
+          "en": "Synergy",
+          "es": "Sinergia"
+        }
+      ]
+    },
+    {
+      "id": "sustain-evolve",
+      "title": {
+        "en": "Presence & growth",
+        "es": "Presencia y crecimiento"
+      },
+      "subtitles": [
+        {
+          "en": "Learning",
+          "es": "Aprendizaje"
+        },
+        {
+          "en": "Rigor",
+          "es": "Rigurosidad"
+        },
+        {
+          "en": "Vitality",
+          "es": "Vitalidad"
+        }
+      ]
+    }
+  ]
+}

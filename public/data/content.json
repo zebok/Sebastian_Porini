@@ -1651,40 +1651,6 @@
         ]
       },
       "featured": true
-    },
-    {
-      "id": "portfolio-cv-engine",
-      "title": {
-        "en": "Interactive Portfolio & Multi-Profile CV Engine",
-        "es": "Portfolio Interactivo & Multi-Profile CV Engine"
-      },
-      "description": {
-        "en": "Single-source-of-truth SPA driving both interactive particle visualizations and automated PDF resumes.",
-        "es": "SPA con arquitectura Single Source of Truth que alimenta las visualizaciones interactivas y compila CVs en PDF."
-      },
-      "category": "product",
-      "projectType": "personal",
-      "tags": [
-        "Data Modeling",
-        "CI/CD",
-        "TypeScript",
-        "Next.js",
-        "GSAP"
-      ],
-      "highlights": {
-        "en": [
-          "Interactive Canvas 2D particle visualizations with GSAP & Framer Motion.",
-          "Decoupled bilingual JSON model as single source of truth.",
-          "Automated Node.js build pipeline compiling role-tailored PDF resumes."
-        ],
-        "es": [
-          "Visualizaciones interactivas de partículas en Canvas 2D, GSAP y Framer Motion.",
-          "Modelo de datos JSON bilingüe desacoplado como única fuente de verdad.",
-          "Pipeline automatizado en Node.js que compila variantes de CV en PDF."
-        ]
-      },
-      "featured": true,
-      "codeUrl": "https://github.com/zebok/Sebastian_Porini"
     }
   ]
 }

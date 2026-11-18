@@ -1,0 +1,274 @@
+{
+  "nav": {
+    "whoAmI": {
+      "en": "About",
+      "es": "Sobre mí"
+    },
+    "skills": {
+      "en": "Skills",
+      "es": "Habilidades"
+    },
+    "timeline": {
+      "en": "Timeline",
+      "es": "Trayectoria"
+    },
+    "projects": {
+      "en": "Projects",
+      "es": "Proyectos"
+    }
+  },
+  "hero": {
+    "greeting": {
+      "en": "Hi, I'm",
+      "es": "Hola, soy"
+    },
+    "ctaProjects": {
+      "en": "View Projects",
+      "es": "Ver Proyectos"
+    },
+    "ctaContact": {
+      "en": "Get in Touch",
+      "es": "Contactar"
+    }
+  },
+  "footer": {
+    "tagline": {
+      "en": "Logic, mathematics, and creativity.",
+      "es": "Lógica, matemática y creatividad."
+    }
+  },
+  "skills": {
+    "title": {
+      "en": "Skills",
+      "es": "Habilidades"
+    },
+    "subtitle": {
+      "en": "My skill architecture: a balanced neural network of technical and soft skills.",
+      "es": "Mi arquitectura de habilidades: una red neuronal equilibrada de skills técnicas y blandas."
+    }
+  },
+  "whoAmI": {
+    "title": {
+      "en": "About",
+      "es": "Sobre mí"
+    },
+    "subtitle": {
+      "en": "Data systems, product clarity, and execution",
+      "es": "Sistemas de datos, claridad de producto y ejecución"
+    }
+  },
+  "timeline": {
+    "title": {
+      "en": "Career & Engineering Timeline",
+      "es": "Trayectoria e Ingeniería"
+    },
+    "subtitle": {
+      "en": "A visual timeline of the education, roles, and experiences that shaped how I build data systems and products.",
+      "es": "Una línea temporal de la formación, los roles y las experiencias que dieron forma a cómo construyo sistemas de datos y productos."
+    },
+    "repositoryLabel": {
+      "en": "career-repository",
+      "es": "career-repository"
+    },
+    "commitLabel": {
+      "en": "commit",
+      "es": "commit"
+    },
+    "mergeLabel": {
+      "en": "merge",
+      "es": "merge"
+    },
+    "branchLabel": {
+      "en": "branch",
+      "es": "branch"
+    },
+    "headLabel": {
+      "en": "HEAD",
+      "es": "HEAD"
+    },
+    "wipLabel": {
+      "en": "WIP",
+      "es": "WIP"
+    },
+    "forecastLabel": {
+      "en": "forecast",
+      "es": "forecast"
+    },
+    "historyLabel": {
+      "en": "Timeline history",
+      "es": "Recorrido temporal"
+    },
+    "stagingLabel": {
+      "en": "Staging area",
+      "es": "Área de staging"
+    },
+    "scrollHint": {
+      "en": "Scroll or drag the timeline · filter by branch to explore each path",
+      "es": "Recorré o arrastrá la línea temporal · filtrá por rama para explorar cada recorrido"
+    },
+    "branches": {
+      "education": {
+        "en": "Education",
+        "es": "Estudio"
+      },
+      "work": {
+        "en": "Work",
+        "es": "Trabajo"
+      },
+      "experiences": {
+        "en": "Experiences",
+        "es": "Experiencias"
+      }
+    },
+    "allBranches": {
+      "en": "All",
+      "es": "Todas"
+    },
+    "today": {
+      "en": "Today",
+      "es": "Hoy"
+    },
+    "ageUnit": {
+      "en": "yrs",
+      "es": "años"
+    },
+    "minimapLabel": {
+      "en": "Timeline overview scrubber",
+      "es": "Mapa de recorrido temporal"
+    },
+    "branchFilterGroupLabel": {
+      "en": "Filter by branch",
+      "es": "Filtrar por rama"
+    },
+    "futureNodes": {
+      "education": {
+        "title": {
+          "en": "Postgraduate & deep AI/data specialization",
+          "es": "Especialización y posgrado en datos e IA"
+        }
+      },
+      "work": {
+        "title": {
+          "en": "Data & Analytics Architecture at scale",
+          "es": "Data & Analytics Architecture a escala"
+        }
+      },
+      "experiences": {
+        "title": {
+          "en": "New global chapters & cultural exchanges",
+          "es": "Nuevos destinos e intercambios globales"
+        }
+      }
+    }
+  },
+  "contact": {
+    "downloadCv": {
+      "en": "Download CV",
+      "es": "Descargar CV"
+    }
+  },
+  "projects": {
+    "title": {
+      "en": "Projects Catalog",
+      "es": "Catálogo de Proyectos"
+    },
+    "subtitle": {
+      "en": "Explore my work across software engineering, data analytics, and product strategy.",
+      "es": "Explora mi trabajo en ingeniería de software, analítica de datos y estrategia de producto."
+    },
+    "metaDescription": {
+      "en": "Software, data, and AI projects built with React, Next.js, Python, and more.",
+      "es": "Proyectos de software, datos e IA construidos con React, Next.js, Python y más."
+    },
+    "all": {
+      "en": "All Projects",
+      "es": "Todos"
+    },
+    "categories": {
+      "software": {
+        "en": "Software Development",
+        "es": "Desarrollo de Software"
+      },
+      "data": {
+        "en": "Data & Analytics",
+        "es": "Datos y Analítica"
+      },
+      "ai": {
+        "en": "AI & Automation",
+        "es": "IA y Automatización"
+      },
+      "product": {
+        "en": "Product & Ops",
+        "es": "Producto y Ops"
+      }
+    },
+    "filterGroups": {
+      "type": {
+        "en": "Project Type",
+        "es": "Tipo de Proyecto"
+      },
+      "area": {
+        "en": "Area",
+        "es": "Área"
+      },
+      "tech": {
+        "en": "Technologies",
+        "es": "Tecnologías"
+      }
+    },
+    "types": {
+      "work": {
+        "en": "Professional Work",
+        "es": "Trabajo Profesional"
+      },
+      "personal": {
+        "en": "Personal Project",
+        "es": "Proyecto Personal"
+      }
+    },
+    "clearAll": {
+      "en": "Clear Filters",
+      "es": "Limpiar Filtros"
+    },
+    "showFilters": {
+      "en": "Show Filters",
+      "es": "Mostrar Filtros"
+    },
+    "hideFilters": {
+      "en": "Hide Filters",
+      "es": "Ocultar Filtros"
+    },
+    "resultsCountOne": {
+      "en": "1 project found",
+      "es": "1 proyecto encontrado"
+    },
+    "resultsCountMany": {
+      "en": "{count} projects found",
+      "es": "{count} proyectos encontrados"
+    },
+    "viewDemo": {
+      "en": "Live Preview",
+      "es": "Vista Previa"
+    },
+    "viewCode": {
+      "en": "Source Code",
+      "es": "Código Fuente"
+    },
+    "moreDetails": {
+      "en": "More Info",
+      "es": "Más Info"
+    },
+    "closeDetails": {
+      "en": "Close Details",
+      "es": "Cerrar Detalles"
+    },
+    "keyHighlights": {
+      "en": "Key Achievements & Technical Stack",
+      "es": "Logros Clave y Stack Tecnológico"
+    },
+    "noProjects": {
+      "en": "No projects found matching the selected filters.",
+      "es": "No se encontraron proyectos con los filtros seleccionados."
+    }
+  }
+}

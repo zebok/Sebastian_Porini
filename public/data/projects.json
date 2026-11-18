@@ -1,0 +1,103 @@
+[
+  {
+    "id": "geological-data-platform",
+    "title": {
+      "en": "Geological Data & Serverless Platform",
+      "es": "Plataforma de Datos Geológicos & Serverless"
+    },
+    "description": {
+      "en": "Relational PostgreSQL schema on AWS RDS with decoupled Lambda ingestion and Zero-Trust VPC isolation.",
+      "es": "Esquema relacional en PostgreSQL (AWS RDS) con ingesta serverless en Lambda y aislamiento Zero-Trust en VPC privada."
+    },
+    "category": "data",
+    "projectType": "work",
+    "tags": [
+      "AWS",
+      "PostgreSQL",
+      "Python",
+      "SQL",
+      "Zero-Trust / VPC",
+      "ETL"
+    ],
+    "highlights": {
+      "en": [
+        "Single source of truth in PostgreSQL for field drilling data.",
+        "Decoupled serverless ingestion pipelines on AWS Lambda.",
+        "Private VPC isolation and least-privilege IAM policies."
+      ],
+      "es": [
+        "Fuente única de verdad en PostgreSQL para datos de perforación.",
+        "Pipelines de ingesta desacoplados y serverless sobre AWS Lambda.",
+        "Aislamiento en VPC privada y políticas IAM de mínimo privilegio."
+      ]
+    },
+    "featured": true
+  },
+  {
+    "id": "attorney-scrapper",
+    "title": {
+      "en": "Ingestion Pipeline & Entity Resolution",
+      "es": "Pipeline de Ingesta & Resolución de Identidades"
+    },
+    "description": {
+      "en": "Modular Python pipeline normalizing and deduplicating public records with human-in-the-loop review.",
+      "es": "Pipeline modular en Python para normalizar y deduplicar registros públicos con revisión human-in-the-loop."
+    },
+    "category": "data",
+    "projectType": "personal",
+    "tags": [
+      "Python",
+      "SQL",
+      "ETL",
+      "Data Modeling",
+      "Entity Resolution"
+    ],
+    "highlights": {
+      "en": [
+        "Extraction and normalization of thousands of disjoint public records.",
+        "Rule-based similarity engine resolving ambiguous identity matches.",
+        "Human-in-the-loop review workflow to validate edge cases."
+      ],
+      "es": [
+        "Extracción y normalización de miles de registros públicos dispersos.",
+        "Motor de similitud y reglas para conciliar identidades duplicadas.",
+        "Flujo de revisión humana (human-in-the-loop) para casos ambiguos."
+      ]
+    },
+    "featured": true,
+    "codeUrl": "https://github.com/zebok/attorney-scrapper"
+  },
+  {
+    "id": "cloud-iac-hardening",
+    "title": {
+      "en": "Cloud Infrastructure as Code & Hardening",
+      "es": "Infraestructura como Código (IaC) & Hardening Cloud"
+    },
+    "description": {
+      "en": "Automated AWS provisioning with SAM & CloudFormation, network segmentation, and auditable CI/CD pipelines.",
+      "es": "Aprovisionamiento automatizado en AWS con SAM y CloudFormation, red segmentada y despliegues CI/CD auditables."
+    },
+    "category": "software",
+    "projectType": "work",
+    "tags": [
+      "AWS",
+      "PostgreSQL",
+      "Zero-Trust / VPC",
+      "CI/CD",
+      "AWS SAM"
+    ],
+    "highlights": {
+      "en": [
+        "100% reproducible cloud deployments with AWS SAM & CloudFormation.",
+        "Hardened VPC topology with isolated subnets and secure NAT.",
+        "Auditable database migrations and semantic releases in GitHub Actions."
+      ],
+      "es": [
+        "Infraestructura cloud 100% reproducible con AWS SAM y CloudFormation.",
+        "Hardening de red VPC aislando subredes públicas y privadas.",
+        "Migraciones auditables y versionado semántico en GitHub Actions."
+      ]
+    },
+    "featured": true
+  }
+]
