@@ -135,5 +135,42 @@
     "featured": true,
     "demoUrl": "https://zebok.github.io/GUSTOHELADO/",
     "codeUrl": "https://github.com/zebok/GUSTOHELADO"
+  },
+  {
+    "id": "price-radar-ar",
+    "title": {
+      "en": "Price Radar AR — Price Comparison",
+      "es": "Price Radar AR — Comparador de Precios"
+    },
+    "description": {
+      "en": "Medallion ETL with Polars and Parquet, SQL analytics with DuckDB, and an offline-first PWA for comparing prices across six Argentine supermarket chains.",
+      "es": "ETL Medallion con Polars y Parquet, analítica SQL con DuckDB y PWA offline-first para comparar precios en seis cadenas de supermercados argentinas."
+    },
+    "category": "data",
+    "projectType": "personal",
+    "tags": [
+      "Python",
+      "Polars",
+      "DuckDB",
+      "SQL",
+      "FastAPI",
+      "PWA",
+      "Terraform"
+    ],
+    "highlights": {
+      "en": [
+        "Medallion data pipeline transforming raw supermarket prices into analytics-ready datasets.",
+        "DuckDB SQL analytics to compare products across six Argentine supermarket chains.",
+        "Offline-first PWA that makes current price comparisons available on any device."
+      ],
+      "es": [
+        "Pipeline de datos Medallion que transforma precios crudos de supermercados en datasets listos para análisis.",
+        "Analítica SQL con DuckDB para comparar productos entre seis cadenas de supermercados argentinas.",
+        "PWA offline-first que permite consultar comparaciones de precios actualizadas desde cualquier dispositivo."
+      ]
+    },
+    "featured": true,
+    "demoUrl": "https://zebok.github.io/price-radar-ar/",
+    "codeUrl": "https://github.com/zebok/price-radar-ar"
   }
 ]

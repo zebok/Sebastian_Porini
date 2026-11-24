@@ -612,6 +612,81 @@ const setGustoHeladoScoopTargets = (
 };
 
 /**
+ * ─── CONCEPT 6: PRICE RADAR AR ──────────────────────────────────────────────
+ * Stage A: Six supermarket source beacons around the market perimeter
+ * Stage B: Live ETL readings converging on the analytical core
+ * Stage C: Bronze, Silver and Gold medallion rings
+ */
+const setPriceRadarTargets = (
+  particles: ProjectsRendererParticle[],
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const total = particles.length;
+  const endSources = Math.floor(total * 0.18);
+  const endStreams = Math.floor(total * 0.5);
+  const endBronze = Math.floor(total * 0.66);
+  const endSilver = Math.floor(total * 0.82);
+  const sourceRadiusX = 148 * scale;
+  const sourceRadiusY = 106 * scale;
+
+  particles.forEach((p, idx) => {
+    if (idx < endSources) {
+      const source = idx % 6;
+      const sourceAngle = -Math.PI * 0.5 + (source / 6) * TAU;
+      const pulse = Math.sin(frameCount * 0.024 + source * 1.7) * 3 * scale;
+      const orbit = p.angleOffset + frameCount * 0.004;
+      const clusterRadius = (7 + (idx % 3) * 3) * scale + pulse;
+
+      p.tx =
+        cx +
+        Math.cos(sourceAngle) * sourceRadiusX +
+        Math.cos(orbit) * clusterRadius;
+      p.ty =
+        cy +
+        Math.sin(sourceAngle) * sourceRadiusY +
+        Math.sin(orbit) * clusterRadius * 0.8;
+      return;
+    }
+
+    if (idx < endStreams) {
+      const slot = idx - endSources;
+      const source = slot % 6;
+      const sourceAngle = -Math.PI * 0.5 + (source / 6) * TAU;
+      const progress =
+        (pseudoRandom(p.id * 2.37) + frameCount * (0.00135 + (slot % 3) * 0.00017)) %
+        1;
+      const outerX = cx + Math.cos(sourceAngle) * sourceRadiusX;
+      const outerY = cy + Math.sin(sourceAngle) * sourceRadiusY;
+      const radialX = outerX + (cx - outerX) * progress;
+      const radialY = outerY + (cy - outerY) * progress;
+      const lateral = Math.sin(progress * Math.PI) * ((slot % 3) - 1) * 7 * scale;
+
+      p.tx = radialX + Math.cos(sourceAngle + Math.PI * 0.5) * lateral;
+      p.ty = radialY + Math.sin(sourceAngle + Math.PI * 0.5) * lateral;
+      return;
+    }
+
+    const slot = idx - endStreams;
+    const ringIndex = idx < endBronze ? 0 : idx < endSilver ? 1 : 2;
+    const ringStart = ringIndex === 0 ? endStreams : ringIndex === 1 ? endBronze : endSilver;
+    const ringEnd = ringIndex === 0 ? endBronze : ringIndex === 1 ? endSilver : total;
+    const ringCount = Math.max(1, ringEnd - ringStart);
+    const ringSlot = slot - (ringStart - endStreams);
+    const angle =
+      (ringSlot / ringCount) * TAU +
+      p.angleOffset * 0.12 +
+      frameCount * (0.0018 + ringIndex * 0.00035);
+    const ringRadius = (38 + ringIndex * 23) * scale;
+    const breathing = Math.sin(frameCount * 0.018 + ringSlot * 0.3) * 1.5 * scale;
+
+    p.tx = cx + Math.cos(angle) * (ringRadius + breathing);
+    p.ty = cy + Math.sin(angle) * (ringRadius + breathing);
+  });
+};
+
+/**
  * Computes deterministic target coordinates for all shared InteractiveNetwork
  * particles while the Projects section is active.
  */
@@ -647,6 +722,9 @@ export const setProjectsParticleTargets = (
       break;
     case "gusto-helado":
       setGustoHeladoScoopTargets(particles, stage, frameCount);
+      break;
+    case "price-radar-ar":
+      setPriceRadarTargets(particles, stage, frameCount);
       break;
     case "portfolio-cv-engine":
     default:
@@ -769,11 +847,65 @@ const drawGustoScoopGuides = (
   ctx.stroke();
 };
 
+const drawPriceRadarGuides = (
+  ctx: CanvasRenderingContext2D,
+  stage: StageBounds,
+  frameCount: number
+) => {
+  const { cx, cy, scale } = stage;
+  const sourceRadiusX = 148 * scale;
+  const sourceRadiusY = 106 * scale;
+  const bronze: ProjectsRgb = { r: 183, g: 121, b: 63 };
+  const silver: ProjectsRgb = { r: 130, g: 162, b: 179 };
+  const gold: ProjectsRgb = { r: 212, g: 175, b: 55 };
+
+  ctx.lineWidth = 1.05;
+  ctx.setLineDash([2.5, 4]);
+  ctx.strokeStyle = rgba({ r: 66, g: 153, b: 225 }, 0.28);
+  ctx.beginPath();
+  for (let source = 0; source < 6; source += 1) {
+    const angle = -Math.PI * 0.5 + (source / 6) * TAU;
+    ctx.moveTo(
+      cx + Math.cos(angle) * sourceRadiusX,
+      cy + Math.sin(angle) * sourceRadiusY
+    );
+    ctx.lineTo(cx, cy);
+  }
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  [bronze, silver, gold].forEach((color, index) => {
+    ctx.strokeStyle = rgba(color, 0.32 + index * 0.035);
+    ctx.beginPath();
+    ctx.arc(cx, cy, (38 + index * 23) * scale, 0, TAU);
+    ctx.stroke();
+  });
+
+  const sweepAngle = frameCount * 0.0048 - Math.PI * 0.5;
+  const sweepRadius = 87 * scale;
+  ctx.strokeStyle = rgba(gold, 0.46);
+  ctx.lineWidth = 1.35;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(
+    cx + Math.cos(sweepAngle) * sweepRadius,
+    cy + Math.sin(sweepAngle) * sweepRadius
+  );
+  ctx.stroke();
+
+  ctx.strokeStyle = rgba(gold, 0.2);
+  ctx.lineWidth = 3.5 * scale;
+  ctx.beginPath();
+  ctx.arc(cx, cy, sweepRadius, sweepAngle - 0.16, sweepAngle + 0.02);
+  ctx.stroke();
+};
+
 const drawConceptGuides = (
   ctx: CanvasRenderingContext2D,
   stage: StageBounds,
   projectId: string,
-  color: ProjectsRgb
+  color: ProjectsRgb,
+  frameCount: number
 ) => {
   const { cx, cy, scale } = stage;
   ctx.save();
@@ -859,6 +991,10 @@ const drawConceptGuides = (
       drawGustoScoopGuides(ctx, stage);
       break;
 
+    case "price-radar-ar":
+      drawPriceRadarGuides(ctx, stage, frameCount);
+      break;
+
     case "portfolio-cv-engine":
     default: {
       const coreX = cx - 54 * scale;
@@ -913,6 +1049,18 @@ const getProjectsParticleDrawRgb = (
       ? { r: 40, g: 198, b: 124 }
       : { r: 245, g: 195, b: 65 };
   }
+  if (state.activeProjectId === "price-radar-ar") {
+    const endSources = Math.floor(total * 0.18);
+    const endStreams = Math.floor(total * 0.5);
+    const endBronze = Math.floor(total * 0.66);
+    const endSilver = Math.floor(total * 0.82);
+
+    if (idx < endSources) return { r: 66, g: 153, b: 225 };
+    if (idx < endStreams) return { r: 75, g: 185, b: 229 };
+    if (idx < endBronze) return { r: 183, g: 121, b: 63 };
+    if (idx < endSilver) return { r: 130, g: 162, b: 179 };
+    return { r: 212, g: 175, b: 55 };
+  }
   return fallbackRgb;
 };
 
@@ -928,8 +1076,7 @@ export const drawProjectsParticles = (
   mouse: ProjectsMouseState,
   globalDriftX: number,
   globalDriftY: number,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _frameCount: number
+  frameCount: number
 ): void => {
   const state = runtime.stateRef.current;
   const w = typeof window !== "undefined" ? window.innerWidth : ctx.canvas.width;
@@ -958,7 +1105,8 @@ export const drawProjectsParticles = (
         cy: stage.cy + globalDriftY,
       },
       state.activeProjectId,
-      activeColor
+      activeColor,
+      frameCount
     );
   }
 
